@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="it">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cotoletta di Suino - Macelleria da Ketti</title>
+    <!-- Assicurati che il percorso al tuo file CSS sia corretto -->
+    <link rel="stylesheet" href="../../../../style.css" />
+    <link rel="stylesheet" href="../CSS/product-page.css" />
+    <link
+      href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <!-- Puoi includere qui il tuo header comune -->
+    <header class="site-header">
+      <div class="logo-container">
+        <!-- Sostituisci con il percorso corretto del tuo logo -->
+        <a href="/">
+          <img
+            src="https://placehold.co/200x60/a34343/ffffff?text=Macelleria+da+Ketti"
+            alt="Logo Macelleria da Ketti"
+            class="logo"
+          />
+        </a>
+      </div>
+    </header>
+
+    <main class="product-detail-container">
+      <div class="product-detail-card">
+        <div class="product-image-gallery">
+          <div class="slider-container">
+            <div class="slide">
+              <img src="../../../../Img/prodotti/cotoletta.jpg" alt="Cotoletta di Suino - Vista 1" class="main-product-image">
+            </div>
+            <div class="slide" style="display: none;">
+              <img src="https://placehold.co/600x450/d48c7d/ffffff?text=Cotoletta+2" alt="Cotoletta di Suino - Vista 2" class="main-product-image">
+            </div>
+            <div class="slide" style="display: none;">
+              <img src="https://placehold.co/600x450/c26a5a/ffffff?text=Cotoletta+3" alt="Cotoletta di Suino - Vista 3" class="main-product-image">
+            </div>
+            <!-- Pulsanti di navigazione -->
+            <a class="prev" onclick="plusSlides(-1)">&#10094;</a>
+            <a class="next" onclick="plusSlides(1)">&#10095;</a>
+          </div>
+          <div class="thumbnail-container">
+            <img class="thumb-img active" src="../../../../Img/prodotti/cotoletta.jpg" onclick="currentSlide(1)" alt="Anteprima 1">
+            <img class="thumb-img" src="https://placehold.co/100x100/d48c7d/ffffff?text=2" onclick="currentSlide(2)" alt="Anteprima 2">
+            <img class="thumb-img" src="https://placehold.co/100x100/c26a5a/ffffff?text=3" onclick="currentSlide(3)" alt="Anteprima 3">
+          </div>
+        </div>
+        <div class="product-info">
+          <h1 class="product-title">Cotoletta di Suino</h1>
+          <p class="product-price">13,00 €/kg</p>
+          <p class="product-category">Categoria: Suino</p>
+
+          <div class="product-description">
+            <h2>Descrizione del Prodotto</h2>
+            <p>
+              Le nostre cotolette di suino sono tagliate da lonza di maiale di
+              prima scelta, garantendo una carne tenera e magra. Sono perfette
+              per una panatura croccante e una frittura dorata, come vuole la
+              tradizione. Un piatto classico amato da grandi e piccini, ideale
+              per una cena veloce ma ricca di gusto.
+            </p>
+            <h3>Consigli di Cottura:</h3>
+            <ul>
+              <li>
+                <strong>In padella:</strong> Passare nell'uovo e nel pangrattato,
+                poi friggere in olio caldo o burro chiarificato fino a doratura.
+              </li>
+              <li>
+                <strong>Al forno:</strong> Per una versione più leggera, cuocere
+                in forno a 200°C per circa 15-20 minuti.
+              </li>
+            </ul>
+          </div>
+
+          <a href="/#Prodotti" class="back-button" data-category="Suino">
+            <span class="material-icons">arrow_back</span>
+            Torna a tutti i prodotti
+          </a>
+        </div>
+      </div>
+    </main>
+
+    <!-- Puoi includere qui il tuo footer comune -->
+    <footer>
+      <!-- Esempio di footer -->
+    </footer>
+
+    <script src="../JS/Slider.js"></script>
+  </body>
+</html>
