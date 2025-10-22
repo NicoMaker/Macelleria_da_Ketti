@@ -1,6 +1,7 @@
 document.addEventListener("DOMContentLoaded", () => {
   const sectionIndicator = document.getElementById("section-indicator");
-  const sections = document.querySelectorAll("section[id]");
+  const sections = document.querySelectorAll("section[id], footer[id]"); // Include footer in observed elements
+  const baseTitle = "Macelleria da Ketti - Carne di Qualità dal 1985";
 
   if (!sectionIndicator || sections.length === 0) {
     return;
@@ -22,10 +23,17 @@ document.addEventListener("DOMContentLoaded", () => {
           sectionId.charAt(0).toUpperCase() + sectionId.slice(1);
         sectionIndicator.textContent = sectionName;
         sectionIndicator.style.opacity = "1";
-
+        
         // Update the URL hash without adding to history
         const newUrl = window.location.pathname + window.location.search + '#' + sectionId;
         history.replaceState(null, '', newUrl);
+
+        // Update the page title
+        if (sectionId.toLowerCase() === 'home') {
+          document.title = baseTitle;
+        } else {
+          document.title = `${sectionName} - Macelleria da Ketti`;
+        }
       }
     });
   }, observerOptions);

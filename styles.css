@@ -379,7 +379,7 @@ h6 {
 /* ===== About Section ===== */
 .about-section {
   padding: var(--spacing-2xl) 0;
-  background-color: var(--surface);
+  background-color: var(--background);
 }
 
 .about-grid {

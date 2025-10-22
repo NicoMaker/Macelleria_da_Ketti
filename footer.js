@@ -17,13 +17,16 @@ document.addEventListener("DOMContentLoaded", () => {
           emailEl.textContent = data.contatti.email
         }
         if (indirizzoEl && data.contatti.indirizzo) {
-          indirizzoEl.textContent = data.contatti.indirizzo
+          indirizzoEl.textContent = data.contatti.indirizzo;
+          const mapsQuery = encodeURIComponent(data.contatti.indirizzo);
+          indirizzoEl.href = `https://www.google.com/maps/search/?api=1&query=${mapsQuery}`;
+
         }
       }
 
-      // Initialize map
+      // Initialize map using coordinates from footer.json
       if (data.mappa && data.mappa.latitudine && data.mappa.longitudine) {
-        initMap(data.mappa.latitudine, data.mappa.longitudine)
+        initMap(data.mappa.latitudine, data.mappa.longitudine);
       }
     })
     .catch((error) => {
@@ -40,11 +43,10 @@ function initMap(lat, lon) {
   iframe.width = "100%"
   iframe.height = "100%"
   iframe.frameBorder = "0"
-  iframe.scrolling = "no"
-  iframe.marginHeight = "0"
-  iframe.marginWidth = "0"
-  iframe.src = `https://www.openstreetmap.org/export/embed.html?bbox=${lon - 0.01},${lat - 0.01},${lon + 0.01},${lat + 0.01}&layer=mapnik&marker=${lat},${lon}`
   iframe.style.border = "none"
+  const zoomLevel = 0.005; // Valore più piccolo per uno zoom maggiore
+  iframe.src = `https://www.openstreetmap.org/export/embed.html?bbox=${lon - zoomLevel},${lat - zoomLevel},${lon + zoomLevel},${lat + zoomLevel}&layer=mapnik&marker=${lat},${lon}`
+  iframe.loading = "lazy";
 
   mapContainer.appendChild(iframe)
 }
