@@ -1,4 +1,8 @@
 {
+  "info": {
+    "titolo": "Macelleria da Ketti",
+    "testo": "Tradizione e qualità dal 1985"
+  },
   "contatti": {
     "telefono": "+39 123 456 7890",
     "email": "info@macelleriadaketti.it",
@@ -12,5 +16,10 @@
   "mappa": {
     "latitudine": 41.9028,
     "longitudine": 12.4964
-  }
+  },
+  "orari": [
+    "Lun - Ven: 8:00 - 13:00 / 16:00 - 19:30",
+    "Sabato: 8:00 - 13:00",
+    "Domenica: Chiuso"
+  ]
 }
