@@ -624,6 +624,14 @@ footer {
     transform: translateY(-2px);
   }
 
+  /* Stili per i link del menu mobile quando attivi */
+  .mobile-nav-link.active {
+    background-color: transparent; /* Rimuove lo sfondo per un look più pulito */
+    color: var(--primary); /* Usa il colore primario come nella versione desktop */
+    font-weight: 700; /* Rende il testo in grassetto */
+    border-left: 4px solid var(--primary); /* Cambia il colore del bordo per coerenza */
+  }
+
   /* Main Container */
   .main-container {
     margin-top: 100px;
