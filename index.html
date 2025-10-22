@@ -1,272 +1,211 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="it">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Macelleria da Ketti | Carni Selezionate e Preparati Artigianali</title>
-    <meta
-      name="description"
-      content="Scopri la Macelleria da Ketti: carni di prima scelta, preparati artigianali e la passione per la qualità. Tradizione e gusto a portata di mano."
-    />
-    <meta
-      name="keywords"
-      content="macelleria, carne di qualità, preparati di carne, macelleria artigianale, tagli di carne, prodotti tipici, Macelleria da Ketti"
-    />
-    <link rel="canonical" href="https://www.macelleriadaKetti.it" />
-    <meta name="robots" content="index, follow" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Macelleria da Ketti - Carne di Qualità dal 1985</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="custom-styles.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Header -->
+    <header class="site-header">
+        <div class="header-container">
+            <div class="logo-container">
+                <a href="#Home">
+                    <img src="https://placehold.co/180x60/8B7355/ffffff?text=Macelleria+da+Ketti&font=playfair-display" alt="Macelleria da Ketti" class="logo">
+                </a>
+                <span id="section-indicator">Home</span>
+            </div>
+            
+            <nav class="main-nav">
+                <ul class="nav-list">
+                    <li><a href="#Home" class="nav-link">Home</a></li>
+                    <li><a href="#Prodotti" class="nav-link">Prodotti</a></li>
+                    <li><a href="#Contatti" class="nav-link">Contatti</a></li>
+                </ul>
+            </nav>
 
-    <!-- Open Graph per Facebook -->
-    <meta property="og:title" content="Macelleria da Ketti | Carni di Prima Scelta" />
-    <meta
-      property="og:description"
-      content="La nostra selezione di carni fresche e preparati fatti in casa. Qualità e tradizione per la tua tavola."
-    />
-    <meta
-      property="og:image"
-      content="https://www.macelleriadaKetti.it/Img/logo-macelleria.jpg"
-    />
-    <meta property="og:url" content="https://www.macelleriadaKetti.it" />
-    <meta property="og:type" content="website" />
-
-    <!-- Twitter Card -->
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Macelleria da Ketti | Carni Selezionate" />
-    <meta
-      name="twitter:description"
-      content="Scopri la nostra passione per la carne di qualità e i preparati artigianali."
-    />
-    <meta
-      name="twitter:image"
-      content="https://www.macelleriadaKetti.it/Img/logo-macelleria.jpg"
-    />
-
-    <!-- Favicon -->
-    <link rel="icon" type="image/png" sizes="32x32" href="Img/logo-macelleria.jpg" />
-
-    <!-- Font e CSS -->
-    <link rel="stylesheet" href="CSS/styles.css" />
-    <link rel="stylesheet" href="CSS/custom-styles.css" />
-    <link
-      href="https://fonts.googleapis.com/icon?family=Material+Icons"
-      rel="stylesheet"
-    />
-    <link
-      rel="stylesheet"
-      href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
-    />
-
-    <!-- JavaScript -->
-    <script src="Projects/Progetti.js" defer></script>
-    <script src="JS/footer.js" defer></script>
-    <script src="JS/colore_sezione.js" defer></script>
-    <script src="JS/mobile-menu.js" defer></script>
-    <script src="JS/animations-footer.js" defer></script>
-    <script src="JS/cookie-banner.js" defer></script>
-    <script src="JS/more_info_home.js" defer></script>
-    <script
-      src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
-      defer
-    ></script>
-
-    <!-- Structured Data JSON-LD -->
-    <script type="application/ld+json">
-      {
-        "@context": "https://schema.org",
-        "@type": "Butcher",
-        "name": "Macelleria da Ketti",
-        "url": "https://www.macelleriadaKetti.it/",
-        "logo": "https://www.macelleriadaKetti.it/Img/logo-macelleria.jpg",
-        "description": "Macelleria artigianale con carni selezionate e preparati freschi.",
-        "address": {
-          "@type": "PostalAddress",
-          "addressCountry": "IT"
-        }
-      }
-    </script>
-  </head>
-
-  <body>
-    <header>
-      <div class="header-content">
-        <a href="#Home" class="logo-link">
-          <div class="logo-container">
-            <img class="logo" src="Img/logo-macelleria.jpg" alt="Logo Macelleria da Ketti" />
-          </div>
-        </a>
-
-        <!-- Hamburger menu button for mobile -->
-        <div class="hamburger-menu" id="hamburger-menu">
-          <span></span>
-          <span></span>
-          <span></span>
+            <button class="mobile-menu-toggle" aria-label="Menu">
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+            </button>
         </div>
 
-        <nav class="menu" id="menu">
-          <div class="mobile-menu-content">
-            <div class="mobile-logo">
-              <a href="#Home" class="mobile-logo-link" id="mobile-logo-link">
-                <img src="Img/logo-macelleria.jpg" alt="Logo Macelleria da Ketti Mobile" />
-              </a>
-            </div>
-            <ul>
-              <li>
-                <a href="#Prodotti" class="nav-link">I nostri Prodotti</a>
-              </li>
-              <li>
-                <a href="#footer" class="nav-link"> I nostri Contatti</a>
-              </li>
+        <!-- Mobile Menu -->
+        <div class="mobile-menu">
+            <ul class="mobile-nav-list">
+                <li><a href="#Home" class="mobile-nav-link">Home</a></li>
+                <li><a href="#Prodotti" class="mobile-nav-link">Prodotti</a></li>
+                <li><a href="#Contatti" class="mobile-nav-link">Contatti</a></li>
             </ul>
-          </div>
-        </nav>
-      </div>
+        </div>
     </header>
 
-    <div id="cookie-banner" class="cookie-banner">
-      <p>
-        Questo sito utilizza i cookie per migliorare l'esperienza utente.
-        Continuando la navigazione, accetti il loro utilizzo.
-        <a href="Cookies/Cookie.html" class="iubenda-link" target="_blank"
-          >Leggi di più</a
-        >
-      </p>
-      <div class="cookie-buttons">
-        <button id="accept-cookies" class="cookie-btn">Accetta</button>
-        <button id="decline-cookies" class="cookie-btn decline">Rifiuta</button>
-      </div>
-    </div>
-
-    <!-- Pulsante per modificare le preferenze -->
-    <button id="revoke-cookies" class="cookie-btn revoke">
-      Modifica preferenze cookie
-    </button>
-
-    <main class="main-container">
-      <section id="Home" class="section animate-on-scroll">
-        <!-- Contenuto generale (sempre visibile) -->
-        <div class="general-info">
-          <h2>
-            <br />
-            <br />
-            Con la nostra passione per la qualità, unita alla cura nella
-            selezione, ogni piatto sulla tua tavola sarà reso unico ed esattamente
-            <br />come lo desideri tu.
-            <br />
-            <br />
-          </h2>
-          <p>
-            <br />
-            La nostra macelleria, un'attività di famiglia guidata da Ketti,
-            unisce la tradizione del mestiere di macellaio all'innovazione
-            nella preparazione di piatti pronti a cuocere.
-            <br />
-          </p>
+    <!-- Hero Section -->
+    <section id="Home" class="hero-section">
+        <div class="hero-overlay"></div>
+        <div class="hero-content">
+            <h1 class="hero-title">Tradizione e Qualità dal 1985</h1>
+            <p class="hero-subtitle">Carni selezionate, tagliate con passione</p>
+            <a href="#Prodotti" class="cta-button">Scopri i Nostri Prodotti</a>
         </div>
+        <div class="hero-image">
+            <img src="https://images.unsplash.com/photo-1607623814075-e51df1bdc82f?w=1200&h=800&fit=crop" alt="Macelleria" loading="lazy">
+        </div>
+    </section>
 
-        <!-- Contenuto dettagliato (inizialmente nascosto) - DENTRO la sezione Home -->
-        <div class="detailed-info" id="detailed-info">
-          <div id="ChiSiamo" class="info-section">
-            <h3>La Nostra Storia</h3>
-            <p>
-              Fondata con passione, la Macelleria da Ketti ha sempre mantenuto
-              viva la tradizione della macelleria italiana, combinandola con
-              creatività e un servizio attento al cliente. La nostra esperienza
-              ci permette di offrire solo il meglio.
-            </p>
-          </div>
-
-          <div class="info-section">
-            <h3>Cosa Offriamo</h3>
-            <div class="services-grid">
-              <div class="service-item">
-                <span class="material-icons">kebab_dining</span>
-                <h4>Tagli Freschi</h4>
-                <p>
-                  Una vasta selezione di carni bovine, suine e avicole,
-                  tagliate al momento secondo le tue esigenze.
-                </p>
-              </div>
-              <div class="service-item">
-                <span class="material-icons">restaurant_menu</span>
-                <h4>Preparati Artigianali</h4>
-                <p>
-                  Salsicce, hamburger, spiedini e piatti pronti da cuocere,
-                  preparati freschi ogni giorno con le nostre ricette.
-                </p>
-              </div>
-              <div class="service-item">
-                <span class="material-icons">tapas</span>
-                <h4>Salumi e Formaggi</h4>
-                <p>
-                  Una selezione di salumi e formaggi locali per accompagnare i
-                  tuoi piatti e aperitivi.
-                </p>
-              </div>
+    <!-- About Section -->
+    <section class="about-section">
+        <div class="container">
+            <div class="about-grid">
+                <div class="about-image">
+                    <img src="https://images.unsplash.com/photo-1603048588665-791ca8aea617?w=600&h=800&fit=crop" alt="La nostra storia">
+                </div>
+                <div class="about-content">
+                    <h2 class="section-title">La Nostra Storia</h2>
+                    <div class="about-text">
+                        <p>Dal 1985, la Macelleria da Ketti è sinonimo di qualità e tradizione. Situata nel cuore della città, la nostra macelleria è un punto di riferimento per chi cerca carni selezionate e tagliate con maestria.</p>
+                        <button class="more-info-btn" data-target="more-info-1">
+                            <span class="btn-text">Scopri di più</span>
+                            <span class="material-icons btn-icon">expand_more</span>
+                        </button>
+                        <div class="more-info-content" id="more-info-1">
+                            <p>Lavoriamo solo con allevatori locali che condividono i nostri valori di rispetto per gli animali e per l'ambiente. Ogni taglio è preparato con cura dai nostri maestri macellai, che vantano decenni di esperienza.</p>
+                            <p>La nostra filosofia è semplice: offrire ai nostri clienti solo il meglio, con trasparenza e passione per il nostro mestiere.</p>
+                        </div>
+                    </div>
+                </div>
             </div>
-          </div>
 
-          <div class="info-section">
-            <h3>Il Nostro Approccio</h3>
-            <p>
-              Crediamo che la qualità inizi dalla selezione. Ogni prodotto che
-              offriamo è frutto di una scelta accurata dei fornitori e di una
-              lavorazione artigianale che rispetta la materia prima. La nostra
-              priorità è la tua soddisfazione, offrendoti consigli e un
-              servizio personalizzato.
-            </p>
-          </div>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <span class="material-icons">verified</span>
+                    </div>
+                    <h3>Qualità Certificata</h3>
+                    <p>Carni selezionate da allevamenti italiani certificati</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <span class="material-icons">eco</span>
+                    </div>
+                    <h3>Sostenibilità</h3>
+                    <p>Rispetto per l'ambiente e il benessere animale</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <span class="material-icons">restaurant</span>
+                    </div>
+                    <h3>Tradizione</h3>
+                    <p>Tecniche artigianali tramandate da generazioni</p>
+                </div>
+            </div>
+        </div>
+    </section>
 
-          <div class="info-section">
-            <h3>Le Nostre Carni</h3>
-            <p>
-              Selezioniamo solo carni provenienti da allevamenti controllati e
-              sostenibili, per garantirti un prodotto sano, etico e dal gusto
-              autentico. La nostra attenzione per i dettagli si riflette in
-              ogni taglio e in ogni preparato.
-            </p>
-          </div>
+    <!-- Products Section -->
+    <section id="Prodotti" class="products-section">
+        <div class="container">
+            <h2 class="section-title">I Nostri Prodotti</h2>
+            <p class="section-subtitle">Scopri la nostra selezione di carni pregiate</p>
+
+            <!-- Search Bar -->
+            <div class="search-container">
+                <div class="search-input-wrapper">
+                    <input type="text" id="search-progetti" placeholder="Cerca prodotti..." class="search-input">
+                    <span class="search-icon material-icons">search</span>
+                </div>
+            </div>
+
+            <!-- Filter Buttons -->
+            <div class="filter-container">
+                <button class="filter-button active" data-category="all">Tutti</button>
+                <button class="filter-button" data-category="Bovino">Bovino</button>
+                <button class="filter-button" data-category="Suino">Suino</button>
+                <button class="filter-button" data-category="Pollame">Pollame</button>
+            </div>
+
+            <!-- Products Grid -->
+            <div class="progetti-container pc-view"></div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer id="Contatti" class="site-footer">
+        <div class="footer-content">
+            <div class="footer-grid">
+                <div class="footer-section">
+                    <h3 class="footer-title">Macelleria da Ketti</h3>
+                    <p class="footer-text">Tradizione e qualità dal 1985</p>
+                </div>
+                
+                <div class="footer-section">
+                    <h4 class="footer-subtitle">Contatti</h4>
+                    <ul class="footer-list">
+                        <li class="footer-item">
+                            <span class="material-icons">phone</span>
+                            <a href="tel:+391234567890" id="footer-telefono">+39 123 456 7890</a>
+                        </li>
+                        <li class="footer-item">
+                            <span class="material-icons">email</span>
+                            <a href="mailto:info@macelleriadaketti.it" id="footer-email">info@macelleriadaketti.it</a>
+                        </li>
+                        <li class="footer-item">
+                            <span class="material-icons">location_on</span>
+                            <span id="footer-indirizzo">Via Roma 123, 00100 Roma</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="footer-section">
+                    <h4 class="footer-subtitle">Orari</h4>
+                    <ul class="footer-list">
+                        <li>Lun - Ven: 8:00 - 13:00 / 16:00 - 19:30</li>
+                        <li>Sabato: 8:00 - 13:00</li>
+                        <li>Domenica: Chiuso</li>
+                    </ul>
+                </div>
+
+                <div class="footer-section">
+                    <h4 class="footer-subtitle">Seguici</h4>
+                    <div class="social-links">
+                        <a href="#" class="social-link" aria-label="Facebook">
+                            <img src="https://img.icons8.com/ios-filled/50/ffffff/facebook-new.png" alt="Facebook" style="width: 24px; height: 24px;"/>
+                        </a>
+                        <a href="#" class="social-link" aria-label="Instagram">
+                            <img src="https://img.icons8.com/ios-filled/50/ffffff/instagram-new.png" alt="Instagram" style="width: 24px; height: 24px;"/>
+                        </a>
+                        <a href="https://wa.me/391234567890" class="social-link" aria-label="WhatsApp" target="_blank" rel="noopener noreferrer">
+                            <img src="https://img.icons8.com/ios-filled/50/ffffff/whatsapp.png" alt="WhatsApp" style="width: 24px; height: 24px;"/>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Map -->
+            <div class="footer-map">
+                <div id="map"></div>
+            </div>
         </div>
 
-        <!-- Pulsante "Scopri di più"/"Mostra meno" in fondo alla sezione Home -->
-        <div class="info-toggle-container">
-          <!-- Pulsante V cliccabile -->
-          <div class="v-toggle" id="v-toggle">
-            <span class="material-icons">expand_more</span>
-            <span class="toggle-text">Scopri di più</span>
-          </div>
-
-          <!-- Pulsante per tornare su (inizialmente nascosto) -->
-          <div class="up-toggle" id="up-toggle">
-            <span class="material-icons">expand_less</span>
-            <span class="toggle-text">Mostra meno</span>
-          </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 Macelleria da Ketti. Tutti i diritti riservati.</p>
         </div>
-      </section>
+    </footer>
 
-      <section id="Prodotti" class="section animate-on-scroll">
-        <h2>I nostri prodotti</h2>
-
-        <!-- Filtri categoria -->
-        <div class="filter-container">
-          <button class="filter-button" data-category="Bovino">
-            Bovino
-          </button>
-          <button class="filter-button" data-category="Suino">Suino</button>
-          <button class="filter-button" data-category="Pollame">
-            Pollame
-          </button>
-          <button class="filter-button active" data-category="all">
-            Tutti
-          </button>
-        </div>
-
-        <div id="Progetti-container" class="progetti-container"></div>
-      </section>
-      <br />
-    </main>
-
-    <div id="footer">
-      <!-- Footer content will be loaded by footer.js -->
-    </div>
-  </body>
+    <!-- Scripts -->
+    <script src="mobile-menu.js"></script>
+    <script src="more-info-home.js"></script>
+    <script src="colore-sezione.js"></script>
+    <script src="progetti.js"></script>
+    <script src="footer.js"></script>
+    <script src="animations-footer.js"></script>
+    <script src="section-indicator.js"></script>
+</body>
 </html>

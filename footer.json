@@ -1,0 +1,16 @@
+{
+  "contatti": {
+    "telefono": "+39 123 456 7890",
+    "email": "info@macelleriadaketti.it",
+    "indirizzo": "Via Roma 123, 00100 Roma"
+  },
+  "social": {
+    "facebook": "https://facebook.com/macelleriadaketti",
+    "instagram": "https://instagram.com/macelleriadaketti",
+    "whatsapp": "https://wa.me/391234567890"
+  },
+  "mappa": {
+    "latitudine": 41.9028,
+    "longitudine": 12.4964
+  }
+}

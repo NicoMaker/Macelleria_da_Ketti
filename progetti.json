@@ -3,42 +3,42 @@
     {
       "nome": "Costata di Scottona",
       "descrizione": "Taglio pregiato con osso, perfetto per la griglia. La sua marezzatura garantisce un sapore intenso e una tenerezza unica.",
-      "immagine": "Img/prodotti/costata.jpg",
+      "immagine": "https://images.unsplash.com/photo-1603048588665-791ca8aea617?w=600&h=400&fit=crop",
       "categorie": ["Bovino"],
       "prezzo": "28,90 €/kg",
-      "link": "Projects/Pages/HTML/Prodotti/Costata.html"
+      "link": "prodotto-costata.html"
     },
     {
       "nome": "Salsiccia Artigianale",
       "descrizione": "Prodotta secondo la nostra ricetta tradizionale, con carne di suino 100% italiana, sale e spezie. Perfetta per la griglia o per un sugo ricco.",
-      "immagine": "Img/prodotti/salsiccia.jpg",
+      "immagine": "https://images.unsplash.com/photo-1607623814075-e51df1bdc82f?w=600&h=400&fit=crop",
       "categorie": ["Suino"],
       "prezzo": "12,50 €/kg",
-      "link": "Projects/Pages/HTML/Prodotti/Salsiccia.html"
+      "link": "prodotto-salsiccia.html"
     },
     {
       "nome": "Petto di Pollo",
       "descrizione": "Fette di petto di pollo da allevamenti italiani. Un taglio magro e versatile, ideale per scaloppine, involtini o una cottura veloce alla piastra.",
-      "immagine": "Img/prodotti/pollo.jpg",
+      "immagine": "https://images.unsplash.com/photo-1604503468506-a8da13d82791?w=600&h=400&fit=crop",
       "categorie": ["Pollame"],
       "prezzo": "11,90 €/kg",
-      "link": "Projects/Pages/HTML/Prodotti/Pollo.html"
+      "link": "prodotto-pollo.html"
     },
     {
       "nome": "Hamburger di Chianina",
       "descrizione": "Un hamburger gourmet preparato con sola polpa scelta di Chianina. Succoso, saporito e con un gusto inconfondibile.",
-      "immagine": "https://placehold.co/600x400/bf5036/ffffff?text=Hamburger",
+      "immagine": "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=600&h=400&fit=crop",
       "categorie": ["Bovino"],
       "prezzo": "19,90 €/kg",
-      "link": "Projects/Pages/HTML/Prodotti/Hamburger.html"
+      "link": "prodotto-hamburger.html"
     },
     {
       "nome": "Cotoletta di Suino",
       "descrizione": "Tagliate da lonza di maiale di prima scelta, garantendo una carne tenera e magra. Perfette per una panatura croccante.",
-      "immagine": "Img/prodotti/cotoletta.jpg",
+      "immagine": "https://images.unsplash.com/photo-1432139555190-58524dae6a55?w=600&h=400&fit=crop",
       "categorie": ["Suino"],
       "prezzo": "13,00 €/kg",
-      "link": "Projects/Pages/HTML/Cotoletta.html"
+      "link": "prodotto-cotoletta.html"
     }
   ]
 }
