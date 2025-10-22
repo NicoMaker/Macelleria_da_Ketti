@@ -817,3 +817,8 @@ footer {
     font-size: 0.9em;
   }
 }
+
+.footer-title,
+.hero-title{
+  color: white;
+}
