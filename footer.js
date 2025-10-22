@@ -28,6 +28,23 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       }
 
+      // Update social media links
+      if (data.social) {
+        const facebookEl = document.getElementById("social-facebook");
+        const instagramEl = document.getElementById("social-instagram");
+        const whatsappEl = document.getElementById("social-whatsapp");
+
+        if (facebookEl && data.social.facebook) {
+          facebookEl.href = data.social.facebook;
+        }
+        if (instagramEl && data.social.instagram) {
+          instagramEl.href = data.social.instagram;
+        }
+        if (whatsappEl && data.social.whatsapp) {
+          whatsappEl.href = data.social.whatsapp;
+        }
+      }
+
       // Initialize map using coordinates from footer.json
       if (data.mappa && data.mappa.latitudine && data.mappa.longitudine) {
         initMap(data.mappa.latitudine, data.mappa.longitudine);
