@@ -3,8 +3,14 @@ document.addEventListener("DOMContentLoaded", () => {
   const footer = document.getElementById("Contatti");
   if (!footer) return;
 
+  // Determine the correct path to footer.json based on the current URL
+  let jsonPath = "JSON/footer.json";
+  if (window.location.pathname.includes("/Projects/")) {
+    jsonPath = "../JSON/footer.json";
+  }
+
   // Load footer data
-  fetch("footer.json")
+  fetch(jsonPath)
     .then((response) => response.json())
     .then((data) => {
       footer.innerHTML = createFooterHTML(data);

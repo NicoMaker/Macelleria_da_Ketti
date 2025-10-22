@@ -17,7 +17,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function fetchData() {
-    return fetch("progetti.json")
+    return fetch("JSON/progetti.json")
       .then((response) => response.json())
       .then((data) => {
         progettiData = data.Prodotti
