@@ -1,7 +1,7 @@
 /* Product detail page styles */
 .product-detail-container {
   max-width: 1200px;
-  margin: var(--spacing-2xl) auto;
+  margin: var(--spacing-lg) auto;
   padding: var(--spacing-md);
 }
 
