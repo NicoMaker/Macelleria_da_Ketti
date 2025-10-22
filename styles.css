@@ -524,7 +524,7 @@ h6 {
 
 .search-input {
   width: 100%;
-  padding: var(--spacing-md) var(--spacing-md) var(--spacing-md) 3rem;
+  padding: var(--spacing-md);
   border: 2px solid var(--gray-medium);
   border-radius: var(--radius-lg);
   font-size: 1rem;
@@ -536,13 +536,6 @@ h6 {
   outline: none;
   border-color: var(--primary);
   box-shadow: 0 0 0 3px rgba(139, 115, 85, 0.1);
-}
-
-.search-icon {
-  position: absolute;
-  left: var(--spacing-md);
-  color: var(--text-muted);
-  pointer-events: none;
 }
 
 /* Filter Container */

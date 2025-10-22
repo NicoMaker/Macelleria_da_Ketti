@@ -44,7 +44,7 @@ function initMap(lat, lon) {
   iframe.height = "100%"
   iframe.frameBorder = "0"
   iframe.style.border = "none"
-  const zoomLevel = 0.005; // Valore più piccolo per uno zoom maggiore
+  const zoomLevel = 0.003; // Valore più piccolo per uno zoom maggiore
   iframe.src = `https://www.openstreetmap.org/export/embed.html?bbox=${lon - zoomLevel},${lat - zoomLevel},${lon + zoomLevel},${lat + zoomLevel}&layer=mapnik&marker=${lat},${lon}`
   iframe.loading = "lazy";
 
