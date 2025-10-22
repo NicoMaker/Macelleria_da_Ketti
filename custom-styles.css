@@ -3,7 +3,6 @@
 /* Header e Layout */
 header {
   padding: 12px 20px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
 }
 
 .header-content {
@@ -25,7 +24,6 @@ header {
   background-color: white;
   border-radius: 8px;
   padding: 4px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   overflow: hidden;
 }
@@ -65,7 +63,6 @@ header {
   );
   border-radius: 5px;
   padding: 6px;
-  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
   display: none;
   flex-direction: column;
   justify-content: space-between;
@@ -80,7 +77,6 @@ header {
   width: 100%;
   background-color: #fff;
   border-radius: 3px;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
   transition: all 0.3s ease;
   background-color: #fff; /* Linee interne bianche per contrasto */
 }
@@ -129,7 +125,6 @@ header nav ul li a {
   position: relative;
   font-weight: 500;
   letter-spacing: 0.5px;
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
 }
 
 header nav ul li a::after {
@@ -160,7 +155,6 @@ header nav ul li a.active::after {
 /* Footer */
 footer {
   padding: 40px 5%;
-  box-shadow: 0 -5px 15px rgba(0, 0, 0, 0.2);
 }
 
 .footer-container {
@@ -188,7 +182,6 @@ footer {
   position: relative;
   padding-bottom: 10px;
   letter-spacing: 1px;
-  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
 }
 
 .section-title:after {
@@ -200,7 +193,6 @@ footer {
   height: 3px;
   background-color: #ffcc80;
   border-radius: 3px;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
 .contact-list,
@@ -242,7 +234,6 @@ footer {
   padding: 8px 12px;
   border-radius: 30px;
   background-color: rgba(0, 0, 0, 0.2);
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
 }
 
 .contact-list a:hover,
@@ -257,7 +248,6 @@ footer {
   height: 24px;
   margin-right: 12px;
   object-fit: contain;
-  filter: drop-shadow(1px 1px 2px rgba(0, 0, 0, 0.3));
 }
 
 /* Map Section */
@@ -274,14 +264,12 @@ footer {
   margin-bottom: 15px;
   text-transform: uppercase;
   letter-spacing: 1px;
-  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
 }
 
 .map-section p {
   margin: 0 0 15px 0;
   font-size: 16px;
   line-height: 1.6;
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
 }
 
 #map-container {
@@ -290,7 +278,6 @@ footer {
   border-radius: 10px;
   margin: 20px 0;
   overflow: hidden;
-  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
   border: 3px solid #ffcc80;
   opacity: 0;
   transform: translateY(20px);
@@ -337,14 +324,12 @@ footer {
   color: #fff;
   background-color: transparent;
   margin-bottom: 10px;
-  text-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
 }
 
 .map-hover-text {
   color: #fff;
   font-size: 18px;
   font-weight: 600;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.6);
   background-color: rgba(0, 0, 0, 0.3);
   padding: 8px 16px;
   border-radius: 20px;
@@ -363,7 +348,6 @@ footer {
   transition: all 0.3s ease;
   margin-top: 15px;
   background-color: rgba(139, 90, 43, 0.8);
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
 }
 
 .map-link .material-icons {
@@ -377,7 +361,6 @@ footer {
   background-color: #ffcc80;
   color: #8b5a2b;
   transform: translateY(-3px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 .copyright {
@@ -387,7 +370,6 @@ footer {
   padding-top: 20px;
   margin-top: 30px;
   text-align: center;
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
   letter-spacing: 0.5px;
 }
 
@@ -415,14 +397,12 @@ footer {
   transition: all 0.3s ease;
   font-weight: 500;
   font-size: 1.1em;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .filter-button:hover,
 .filter-button.active {
   background-color: #5a3a1a;
   transform: translateY(-3px);
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
 }
 
 .Progetti-container {
@@ -437,7 +417,6 @@ footer {
   background-color: #fff;
   border-radius: 15px;
   overflow: hidden;
-  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
   transition: all 0.3s ease;
   width: 100%;
   max-width: 350px;
@@ -456,7 +435,6 @@ footer {
 
 .Progetti-card:hover {
   transform: translateY(-10px);
-  box-shadow: 0 12px 25px rgba(0, 0, 0, 0.15);
 }
 
 .container-immagine {
@@ -562,8 +540,7 @@ footer {
     height: 100vh;
     background-image: url("Img/Legno.jpg");
     background-size: cover;
-    background-position: center;
-    flex-direction: column;
+    background-position: center;    flex-direction: column;
     justify-content: flex-start;
     align-items: center;
     transition: right 0.3s ease;
@@ -608,7 +585,6 @@ footer {
     border-radius: 75px;
     overflow: hidden;
     border: 4px solid #ffcc80;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
     animation: pulse 2s infinite alternate;
   }
 
@@ -638,7 +614,6 @@ footer {
     border-radius: 30px;
     background-color: rgba(0, 0, 0, 0.2);
     transition: all 0.3s ease;
-    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
     width: 100%;
   }
 
@@ -767,13 +742,11 @@ footer {
   background-color: white;
   color: #333;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .search-input:focus {
   outline: none;
   border-color: #5a3a1a;
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
   transform: translateY(-2px);
 }
 
@@ -789,7 +762,6 @@ footer {
   color: #666;
   background-color: rgba(255, 255, 255, 0.8);
   border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   margin: 20px auto;
   max-width: 80%;
 }

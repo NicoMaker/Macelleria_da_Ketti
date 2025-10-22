@@ -41,9 +41,9 @@
   --font-body: "Inter", sans-serif;
 
   /* Shadows */
-  --shadow-sm: 0 2px 8px rgba(92, 74, 58, 0.08);
-  --shadow-md: 0 4px 16px rgba(92, 74, 58, 0.12);
-  --shadow-lg: 0 8px 32px rgba(92, 74, 58, 0.16);
+  --shadow-sm: none;
+  --shadow-md: none;
+  --shadow-lg: none;
 
   /* Border Radius */
   --radius-sm: 4px;
@@ -67,6 +67,7 @@
 html {
   scroll-behavior: smooth;
   font-size: 16px;
+  scroll-padding-top: 80px; /* Offset for sticky header */
 }
 
 body {
@@ -158,16 +159,6 @@ h6 {
   display: flex;
   align-items: center;
   gap: var(--spacing-md);
-}
-
-#section-indicator {
-  font-family: var(--font-heading);
-  font-size: 1.25rem;
-  color: var(--primary);
-  font-weight: 600;
-  opacity: 0;
-  transition: opacity var(--transition-base);
-  display: none; /* Hidden on mobile by default */
 }
 
 .logo {
@@ -338,7 +329,6 @@ h6 {
 .hero-title {
   font-size: clamp(2.5rem, 6vw, 4rem);
   margin-bottom: var(--spacing-md);
-  text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3);
 }
 
 .hero-subtitle {
@@ -355,14 +345,12 @@ h6 {
   font-weight: 600;
   font-size: 1.125rem;
   border-radius: var(--radius-md);
-  box-shadow: var(--shadow-md);
   transition: all var(--transition-base);
 }
 
 .cta-button:hover {
   background-color: var(--accent-rust);
   transform: translateY(-2px);
-  box-shadow: var(--shadow-lg);
 }
 
 @keyframes fadeInUp {
@@ -392,7 +380,6 @@ h6 {
 .about-image {
   border-radius: var(--radius-lg);
   overflow: hidden;
-  box-shadow: var(--shadow-md);
 }
 
 .about-image img {
@@ -473,7 +460,6 @@ h6 {
 
 .feature-card:hover {
   transform: translateY(-5px);
-  box-shadow: var(--shadow-md);
   border-color: var(--primary);
 }
 
@@ -535,7 +521,6 @@ h6 {
 .search-input:focus {
   outline: none;
   border-color: var(--primary);
-  box-shadow: 0 0 0 3px rgba(139, 115, 85, 0.1);
 }
 
 /* Filter Container */
@@ -579,7 +564,6 @@ h6 {
   background-color: var(--surface);
   border-radius: var(--radius-lg);
   overflow: hidden;
-  box-shadow: var(--shadow-sm);
   transition: all var(--transition-base);
   cursor: pointer;
   border: 2px solid transparent;
@@ -590,7 +574,6 @@ h6 {
 
 .Progetti-card:hover {
   transform: translateY(-8px);
-  box-shadow: var(--shadow-lg);
   border-color: var(--primary);
 }
 
@@ -767,10 +750,6 @@ h6 {
 
   .mobile-menu-toggle {
     display: none;
-  }
-
-  #section-indicator {
-    display: inline-block; /* Shown on desktop */
   }
 
   .about-grid {
