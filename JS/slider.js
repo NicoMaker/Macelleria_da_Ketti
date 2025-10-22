@@ -6,21 +6,21 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 // Controlli Avanti/Indietro
-function plusSlides(n) {
-  showSlides((slideIndex += n));
-}
+const plusSlides = (n) => showSlides((slideIndex += n));
 
 // Controllo tramite anteprime
-function currentSlide(n) {
-  showSlides((slideIndex = n));
-}
+const currentSlide = (n) => showSlides((slideIndex = n));
 
 function showSlides(n) {
   let i;
   let slides = document.getElementsByClassName("slide");
   let thumbs = document.getElementsByClassName("thumb-img");
-  if (n > slides.length) { slideIndex = 1 }
-  if (n < 1) { slideIndex = slides.length }
+  if (n > slides.length) {
+    slideIndex = 1;
+  }
+  if (n < 1) {
+    slideIndex = slides.length;
+  }
   for (i = 0; i < slides.length; i++) {
     slides[i].style.display = "none";
   }
