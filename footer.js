@@ -1,5 +1,9 @@
 // Footer dynamic content and map initialization
 document.addEventListener("DOMContentLoaded", () => {
+  // Update copyright year
+  const yearSpan = document.getElementById("copyright-year");
+  if (yearSpan) yearSpan.textContent = new Date().getFullYear();
+
   // Load footer data
   fetch("footer.json")
     .then((response) => response.json())
