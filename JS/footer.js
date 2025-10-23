@@ -98,7 +98,9 @@ function createFooterHTML(data) {
     </div>
 
     <div class="footer-bottom">
-        <p>&copy; ${new Date().getFullYear()} Macelleria da Ketti. Tutti i diritti riservati.</p>
+        <p>&copy; ${new Date().getFullYear()} Macelleria da Ketti. Tutti i diritti riservati.
+        ${info.p_iva ? ` - P.IVA: ${info.p_iva}` : ''}
+        </p>
     </div>
   `;
 }

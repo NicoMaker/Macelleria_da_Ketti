@@ -1,7 +1,8 @@
 {
   "info": {
     "titolo": "Macelleria da Ketti",
-    "testo": "Tradizione e qualità dal 1985"
+    "testo": "Tradizione e qualità dal 1985",
+    "p_iva": "12345678901"
   },
   "contatti": {
     "telefono": "+39 123 456 7890",
