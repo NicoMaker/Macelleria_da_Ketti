@@ -802,3 +802,44 @@ footer {
 .hero-title{
   color: white;
 }
+
+/* Stile per il pulsante CTA nella hero section */
+.hero-section .cta-button {
+  border-radius: 50px; /* Aumenta l'arrotondamento */
+}
+
+/* Stile per la freccia di scorrimento */
+.scroll-down-arrow {
+  display: block; /* La rende un elemento a blocco per andare a capo */
+  margin: 2rem auto 0; /* Aggiunge margine sopra e la centra orizzontalmente */
+  position: relative; /* Necessario per l'animazione bounce */
+  color: var(--white);
+  animation: bounce 2s infinite;
+  align-items: center;
+  justify-content: center;
+  width: 50px;
+  height: 50px;
+  border: 2px solid rgba(255, 255, 255, 0.7);
+  border-radius: 50%;
+  transition: background-color var(--transition-base);
+}
+
+.scroll-down-arrow:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.scroll-down-arrow .material-icons {
+  font-size: 36px;
+}
+
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-10px);
+  }
+  60% {
+    transform: translateY(-5px);
+  }
+}
