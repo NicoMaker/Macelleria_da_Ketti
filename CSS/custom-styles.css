@@ -810,7 +810,7 @@ footer {
 
 /* Stile per la freccia di scorrimento */
 .scroll-down-arrow {
-  display: block; /* La rende un elemento a blocco per andare a capo */
+  display: flex; /* Impostato su flex per centrare l'icona interna */
   margin: 2rem auto 0; /* Aggiunge margine sopra e la centra orizzontalmente */
   position: relative; /* Necessario per l'animazione bounce */
   color: var(--white);
