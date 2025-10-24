@@ -40,14 +40,17 @@
   cursor: pointer;
   position: absolute;
   top: 50%;
-  width: auto;
-  padding: var(--spacing-md);
-  margin-top: -22px;
+  transform: translateY(-50%);
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   color: var(--white);
   font-weight: bold;
   font-size: 20px;
   transition: all var(--transition-base);
-  border-radius: var(--radius-md);
+  border-radius: 50%;
   user-select: none;
   background-color: rgba(139, 115, 85, 0.7);
   z-index: 10;
@@ -64,7 +67,6 @@
 .prev:hover,
 .next:hover {
   background-color: var(--primary);
-  transform: scale(1.1);
 }
 
 /* Stili per i pallini di navigazione */
@@ -210,7 +212,9 @@
   .prev,
   .next {
     padding: var(--spacing-sm);
-    font-size: 16px;
-    margin-top: -20px;
+    font-size: 18px;
+    width: 40px;
+    height: 40px;
+    /* transform: translateY(-50%) is inherited */
   }
 }
