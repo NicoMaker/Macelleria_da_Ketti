@@ -24,7 +24,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (!novitaData || novitaData.length === 0) {
       container.innerHTML =
-        "<p class='no-results'>Al momento non ci sono novità. Torna a trovarci presto!</p>";
+        "<p class='no-results'>Al momento non ci sono novità. Torna a trovarci presto! nel frattempo esplore i nostri prodotti</p>";
     } else {
       novitaData.forEach((item) => {
         container.appendChild(createCard(item));
