@@ -127,9 +127,9 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     }
 
-    // Mostra sempre la categoria se disponibile
+    // Mostra la categoria solo se il filtro è "Tutti" e la categoria è disponibile
     const categoriaHtml =
-      progetto.categorie && progetto.categorie.length > 0
+      currentCategory === "all" && progetto.categorie && progetto.categorie.length > 0
         ? `<p class="categoria">${progetto.categorie.length > 1 ? "Categorie" : "Categoria"}: ${progetto.categorie.join(", ")}</p>`
         : "";
 
