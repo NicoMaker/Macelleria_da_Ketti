@@ -542,8 +542,9 @@ h6 {
 }
 
 .filter-button:hover {
-  border-color: var(--primary);
-  color: var(--primary);
+  background-color: var(--accent-warm);
+  color: var(--white);
+  border-color: var(--accent-warm);
 }
 
 .filter-button.active {
@@ -553,9 +554,10 @@ h6 {
 }
 
 /* Products Grid */
-.progetti-container {
+.progetti-container,
+.novita-container {
   display: grid;
-  grid-template-columns: 1fr;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: var(--spacing-lg);
 }
 
@@ -644,6 +646,31 @@ h6 {
   padding: var(--spacing-2xl);
   color: var(--text-muted);
   font-size: 1.125rem;
+}
+
+/* Novita Card Specific Styles */
+.novita-card {
+  background-color: var(--accent-cream);
+  border-color: transparent;
+}
+
+.novita-card:hover {
+  border-color: var(--accent-warm);
+}
+
+.novita-badge {
+  position: absolute;
+  top: var(--spacing-md);
+  left: var(--spacing-md);
+  background-color: var(--accent-warm);
+  color: var(--white);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  font-size: 0.8rem;
+  font-weight: 600;
+  border-radius: var(--radius-md);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  z-index: 2;
 }
 
 /* ===== Footer ===== */
@@ -776,6 +803,13 @@ h6 {
 
   .footer-grid {
     grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+@media (max-width: 767px) {
+  .progetti-container,
+  .novita-container {
+    grid-template-columns: 1fr;
   }
 }
 

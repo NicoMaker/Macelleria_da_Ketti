@@ -34,8 +34,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function createCard(item) {
     const card = document.createElement("div");
-    card.className = "Progetti-card"; // Riutilizzo la classe delle card dei prodotti
-    card.style.cursor = "pointer";
+    // Aggiungo classi specifiche per le novità
+    card.className = "Progetti-card novita-card";
     card.addEventListener("click", () => {
       if (item.link && item.link !== "#") {
         window.location.href = item.link;
@@ -44,6 +44,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     card.innerHTML = `  
       <div class="container-immagine">
+        <span class="novita-badge">Novità</span>
         <img class="immagine" src="${item.immagine}" alt="${item.nome}" loading="lazy">
       </div>
       <div class="Progetti-card-content">
