@@ -349,7 +349,6 @@ h6 {
 }
 
 .cta-button:hover {
-  background-color: var(--accent-rust);
   transform: translateY(-2px);
 }
 
