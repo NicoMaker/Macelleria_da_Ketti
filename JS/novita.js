@@ -42,6 +42,13 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
 
+    const categoriaHtml =
+      item.categorie && item.categorie.length > 0
+        ? `<p class="categoria">${
+            item.categorie.length > 1 ? "Categorie" : "Categoria"
+          }: ${item.categorie.join(", ")}</p>`
+        : "";
+
     card.innerHTML = `  
       <div class="container-immagine">
         <span class="novita-badge">Novità</span>
@@ -51,6 +58,7 @@ document.addEventListener("DOMContentLoaded", () => {
         <h3>${item.nome}</h3>
         <p class="descrizione">${item.descrizione}</p>
         <p class="prezzo">${item.prezzo}</p>
+        ${categoriaHtml}
       </div>
     `;
     return card;

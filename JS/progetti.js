@@ -104,12 +104,10 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     }
 
-    // Mostra la categoria solo se il filtro è "Tuti"
+    // Mostra sempre la categoria se disponibile
     const categoriaHtml =
-      currentCategory === "all"
-        ? `<p class="categoria">${
-            progetto.categorie.length > 1 ? "Categorie" : "Categoria"
-          }: ${progetto.categorie.join(", ")}</p>`
+      progetto.categorie && progetto.categorie.length > 0
+        ? `<p class="categoria">${progetto.categorie.length > 1 ? "Categorie" : "Categoria"}: ${progetto.categorie.join(", ")}</p>`
         : "";
 
     card.innerHTML = `  

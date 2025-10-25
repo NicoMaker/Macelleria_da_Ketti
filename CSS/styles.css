@@ -601,7 +601,7 @@ h6 {
   flex-direction: column;
   gap: var(--spacing-xs);
   flex-grow: 1;
-  text-align: center; /* Centra il testo all'interno della card */
+  text-align: center;
 }
 
 .Progetti-card h3 {
