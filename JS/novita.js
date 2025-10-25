@@ -4,10 +4,13 @@ document.addEventListener("DOMContentLoaded", () => {
   if (!container) return;
 
   function fetchData() {
-    fetch("JSON/novita.json")
+    // Ora fetchiamo dal file unificato dei prodotti
+    fetch("JSON/progetti.json")
       .then((response) => response.json())
       .then((data) => {
-        displayNovita(data.Novita);
+        // Filtriamo i prodotti che hanno isNovita = true
+        const novitaItems = data.Prodotti.filter(item => item.isNovita);
+        displayNovita(novitaItems);
       })
       .catch((error) => {
         console.error("Errore nel caricamento delle novità:", error);
