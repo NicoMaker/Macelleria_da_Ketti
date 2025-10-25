@@ -639,6 +639,7 @@ h6 {
   color: var(--text-muted);
   display: flex;
   align-items: center;
+  justify-content: center; /* Centra il contenuto della categoria */
   gap: var(--spacing-xs);
 }
 
