@@ -52,15 +52,15 @@ document.addEventListener("DOMContentLoaded", () => {
       currentCategory === "all"
         ? progettiData
         : progettiData.filter((progetto) =>
-            progetto.categorie.includes(currentCategory)
+            progetto.categorie && progetto.categorie.includes(currentCategory)
           );
 
     if (searchTerm) {
       tempFiltered = tempFiltered.filter((progetto) => {
         return (
-          progetto.nome.toLowerCase().includes(searchTerm) ||
-          progetto.categorie.some((cat) =>
-            cat.toLowerCase().includes(searchTerm)
+          (progetto.nome && progetto.nome.toLowerCase().includes(searchTerm)) ||
+          (progetto.categorie && progetto.categorie.some((cat) =>
+            cat.toLowerCase().includes(searchTerm))
           )
         );
       });
@@ -84,7 +84,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (filteredProjects.length === 0) {
       container.innerHTML =
-        "<p class='no-results'>Nessun prodotto trovato. Prova a modificare i criteri di ricerca.</p>";
+        "<p class='no-results'>Nessun prodotto trovato. Torneranno presto disponibili!</p>";
     } else {
       filteredProjects.forEach((project) => {
         container.appendChild(createCard(project));
@@ -96,11 +96,13 @@ document.addEventListener("DOMContentLoaded", () => {
     const card = document.createElement("div");
     card.className = "Progetti-card";
 
-    card.addEventListener("click", () => {
-      window.location.href = progetto.link;
-    });
-
-    card.style.cursor = "pointer";
+    // Rendi la card cliccabile solo se esiste un link
+    if (progetto.link && progetto.link !== "#") {
+      card.style.cursor = "pointer";
+      card.addEventListener("click", () => {
+        window.location.href = progetto.link;
+      });
+    }
 
     // Mostra la categoria solo se il filtro è "Tuti"
     const categoriaHtml =
