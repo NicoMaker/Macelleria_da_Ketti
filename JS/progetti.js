@@ -2,7 +2,7 @@
 document.addEventListener("DOMContentLoaded", () => {
   const container = document.querySelector(".progetti-container");
   const filterButtons = document.querySelectorAll(".filter-button");
-
+  const filterContainer = document.querySelector(".filter-container");
   let progettiData = [];
   let filteredProjects = [];
   let currentCategory = "all";
@@ -22,6 +22,7 @@ document.addEventListener("DOMContentLoaded", () => {
       .then((response) => response.json())
       .then((data) => {
         progettiData = data.Prodotti;
+        generateFilterButtons();
         filterProjects();
       })
       .catch((error) => {
@@ -29,6 +30,28 @@ document.addEventListener("DOMContentLoaded", () => {
         container.innerHTML =
           "<p class='no-results'>Errore nel caricamento dei prodotti.</p>";
       });
+  }
+
+  function generateFilterButtons() {
+    if (!filterContainer) return;
+
+    // Estrai tutte le categorie uniche dai prodotti
+    const categories = [...new Set(progettiData.flatMap(p => p.categorie || []))];
+    
+    // Crea il pulsante "Tutti"
+    let buttonsHTML = `<button class="filter-button active" data-category="all">Tutti</button>`;
+
+    // Crea un pulsante per ogni categoria
+    categories.forEach(category => {
+      buttonsHTML += `<button class="filter-button" data-category="${category}">${category}</button>`;
+    });
+
+    filterContainer.innerHTML = buttonsHTML;
+
+    // Aggiungi gli event listener ai nuovi pulsanti
+    filterContainer.querySelectorAll('.filter-button').forEach(button => {
+      button.addEventListener('click', () => updateFilter(button.dataset.category, true));
+    });
   }
 
   function updateFilter(category, shouldScroll = true) {
@@ -71,7 +94,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function updateFilterStyle() {
-    filterButtons.forEach((button) => {
+    document.querySelectorAll('.filter-container .filter-button').forEach((button) => {
       button.classList.toggle(
         "active",
         button.dataset.category === currentCategory
@@ -125,12 +148,6 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function addEventListeners() {
-    filterButtons.forEach((button) => {
-      button.addEventListener("click", () => {
-        updateFilter(button.dataset.category, true);
-      });
-    });
-
     // Search functionality
     const searchInput = document.getElementById("search-progetti");
     if (searchInput) {
@@ -146,10 +163,12 @@ document.addEventListener("DOMContentLoaded", () => {
   function init() {
     let savedCategory = "all";
     try {
+      // Non è più necessario validare le categorie qui, dato che vengono generate dinamicamente
       const stored = localStorage.getItem("selectedCategory");
-      if (stored && ["Bovino", "Suino", "Pollame", "all"].includes(stored)) {
+      if (stored) {
         savedCategory = stored;
       }
+
     } catch (e) {}
 
     const cameFromProjects = document.referrer.includes("/Projects/");
