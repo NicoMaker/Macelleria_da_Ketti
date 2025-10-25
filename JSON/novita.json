@@ -1,0 +1,25 @@
+{
+  "Novita": [
+    {
+      "nome": "Tartare Selezionata",
+      "descrizione": "Carne di Scottona battuta al coltello dai nostri maestri macellai, pronta da condire e gustare. Freschezza e qualità assolute.",
+      "immagine": "https://images.unsplash.com/photo-1551028150-64b9f398f67b?w=600&h=400&fit=crop",
+      "prezzo": "35,00 €/kg",
+      "link": "#"
+    },
+    {
+      "nome": "Spiedini del Macellaio",
+      "descrizione": "Spiedini misti preparati con cura, alternando salsiccia, lonza di suino, peperoni e cipolle. Perfetti per una grigliata in compagnia.",
+      "immagine": "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=600&h=400&fit=crop",
+      "prezzo": "15,90 €/kg",
+      "link": "#"
+    },
+        {
+      "nome": "Cotoletta di Suino",
+      "descrizione": "Tagliate da lonza di maiale di prima scelta, garantendo una carne tenera e magra. Perfette per una panatura croccante.",
+      "immagine": "https://images.unsplash.com/photo-1432139555190-58524dae6a55?w=600&h=400&fit=crop",
+      "prezzo": "13,00 €/kg",
+      "link": "Projects/prodotto-cotoletta.html"
+    }
+  ]
+}

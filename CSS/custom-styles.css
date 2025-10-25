@@ -405,12 +405,14 @@ footer {
   transform: translateY(-3px);
 }
 
+.novita-container,
 .Progetti-container {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 30px;
   justify-items: center;
   margin-top: 30px;
+  min-height: 200px; /* Aggiunto per evitare "salti" durante il caricamento */
 }
 
 .Progetti-card {
@@ -510,6 +512,11 @@ footer {
 
   .section p {
     font-size: 1rem;
+  }
+
+  .novita-container,
+  .Progetti-container {
+    grid-template-columns: repeat(2, 1fr);
   }
 
   .Progetti-container {
@@ -644,6 +651,11 @@ footer {
 
   .section p {
     font-size: 1rem;
+  }
+
+  .novita-container,
+  .Progetti-container {
+    grid-template-columns: 1fr;
   }
 
   .Progetti-container {
@@ -842,4 +854,37 @@ footer {
   60% {
     transform: translateY(-5px);
   }
+}
+
+/* Stile per il contenitore del pulsante CTA nelle sezioni */
+.section-cta {
+  text-align: center;
+  margin-top: 40px; /* Aggiunge spazio sopra il pulsante */
+}
+
+/* Contenitore per i pulsanti nella hero section */
+.hero-cta-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: var(--spacing-md);
+  flex-wrap: wrap; /* Permette ai pulsanti di andare a capo su schermi piccoli */
+  margin-bottom: var(--spacing-xl);
+}
+
+/* Stile per il pulsante secondario */
+.cta-button-secondary {
+  background-color: transparent;
+  border: 2px solid var(--white);
+  color: var(--white);
+}
+
+.cta-button-secondary:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  transform: translateY(-2px); /* Mantiene l'animazione al passaggio del mouse */
+}
+
+/* Rimuove il margine inferiore dal singolo pulsante quando è nel contenitore */
+.hero-cta-container .cta-button {
+  margin-bottom: 0;
 }

@@ -41,6 +41,7 @@
                 <ul class="nav-list">
                     <li><a href="#Home" class="nav-link">Home</a></li>
                     <li><a href="#storia" class="nav-link">Storia</a></li>
+                    <li><a href="#novita" class="nav-link">Novità</a></li>
                     <li><a href="#Prodotti" class="nav-link">Prodotti</a></li>
                     <li><a href="#Contatti" class="nav-link">Contatti</a></li>
                 </ul>
@@ -58,6 +59,7 @@
             <ul class="mobile-nav-list">
                 <li><a href="#Home" class="mobile-nav-link">Home</a></li>
                 <li><a href="#storia" class="mobile-nav-link">Storia</a></li>
+                <li><a href="#novita" class="mobile-nav-link">Novità</a></li>
                 <li><a href="#Prodotti" class="mobile-nav-link">Prodotti</a></li>
                 <li><a href="#Contatti" class="mobile-nav-link">Contatti</a></li>
             </ul>
@@ -70,7 +72,10 @@
         <div class="hero-content">
             <h1 class="hero-title">Tradizione e Qualità dal 1985</h1>
             <p class="hero-subtitle">Carni selezionate, tagliate con passione</p>
-            <a href="#Prodotti" class="cta-button">Scopri i Nostri Prodotti</a>
+            <div class="hero-cta-container">
+                <a href="#Prodotti" class="cta-button">Scopri i Nostri Prodotti</a>
+                <a href="#novita" class="cta-button cta-button-secondary">Scopri le Novità</a>
+            </div>
             <a href="#storia" class="scroll-down-arrow" aria-label="Scorri verso la storia">
                 <span class="material-icons">keyboard_arrow_down</span>
             </a>
@@ -129,6 +134,21 @@
         </div>
     </section>
 
+    <!-- Novita Section -->
+    <section id="novita" class="products-section">
+        <div class="container">
+            <h2 class="section-title">Le Nostre Novità</h2>
+            <p class="section-subtitle">Le ultime proposte e i tagli speciali del momento</p>
+
+            <!-- Novita Grid -->
+            <div class="novita-container"></div>
+
+            <div class="section-cta">
+                <a href="#Prodotti" class="cta-button">Scopri tutti i prodotti</a>
+            </div>
+        </div>
+    </section>
+
     <!-- Products Section -->
     <section id="Prodotti" class="products-section">
         <div class="container">
@@ -163,6 +183,7 @@
     <!-- Scripts -->
     <script src="JS/mobile-menu.js"></script>
     <script src="JS/more-info-home.js"></script>
+    <script src="JS/novita.js"></script>
     <script src="JS/colore-sezione.js"></script>
     <script src="JS/progetti.js"></script>
     <script src="JS/footer.js"></script>

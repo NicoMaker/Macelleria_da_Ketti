@@ -2,7 +2,7 @@
 document.addEventListener("DOMContentLoaded", () => {
   const sections = document.querySelectorAll("section[id], footer[id]")
   const navLinks = document.querySelectorAll(".nav-link, .mobile-nav-link")
-  const headerOffset = 80; // Offset to account for the sticky header, matching scroll-padding-top in styles.css
+  // const headerOffset = 80; // Non più necessario con il nuovo approccio
 
   function highlightNavigation() {
     const scrollY = window.pageYOffset;
