@@ -457,11 +457,6 @@ h6 {
   border: 2px solid transparent;
 }
 
-.feature-card:hover {
-  transform: translateY(-5px);
-  border-color: var(--primary);
-}
-
 .feature-icon {
   width: 70px;
   height: 70px;
