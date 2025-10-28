@@ -155,7 +155,7 @@ header nav ul li a.active::after {
 
 /* Footer */
 footer {
-  padding: 40px 5%;
+  padding: 20px 5%;
 }
 
 .footer-container {
@@ -376,7 +376,7 @@ footer {
 /* Progetti Section */
 #Progetti {
   text-align: center;
-  padding: 40px 5%;
+  padding: 20px 5%;
 }
 
 .filter-container {

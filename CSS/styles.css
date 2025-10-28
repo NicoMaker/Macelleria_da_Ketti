@@ -67,7 +67,7 @@
 html {
   scroll-behavior: smooth;
   font-size: 16px;
-  scroll-padding-top: 80px; /* Offset for sticky header */
+  scroll-padding-top: 120px; /* Offset for sticky header, increased for better visibility */
 }
 
 body {
@@ -365,7 +365,7 @@ h6 {
 
 /* ===== About Section ===== */
 .about-section {
-  padding: var(--spacing-2xl) 0;
+  padding: var(--spacing-lg) 0;
   background-color: var(--background);
 }
 
@@ -486,7 +486,7 @@ h6 {
 
 /* ===== Products Section ===== */
 .products-section {
-  padding: var(--spacing-2xl) 0;
+  padding: var(--spacing-lg) 0;
   background-color: var(--background);
 }
 
