@@ -900,3 +900,13 @@ footer {
 .hero-cta-container .cta-button {
   margin-bottom: 0;
 }
+
+/* Assicura che il testo dei pulsanti nella hero section non vada a capo su mobile */
+@media (max-width: 480px) {
+  .hero-cta-container {
+    flex-direction: column; /* Impila i pulsanti verticalmente */
+  }
+  .hero-cta-container .cta-button {    
+    width: 280px; /* Imposta una larghezza fissa per entrambi i pulsanti */
+  }
+}
