@@ -861,6 +861,17 @@ footer {
   margin-top: 40px; /* Aggiunge spazio sopra il pulsante */
 }
 
+/* Stile unificato per i pulsanti CTA nelle sezioni */
+.section-cta .cta-button {
+  border-radius: 50px; /* Aumenta l'arrotondamento per un look moderno */
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  transition: all var(--transition-base);
+}
+
+.section-cta .cta-button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+}
 /* Contenitore per i pulsanti nella hero section */
 .hero-cta-container {
   display: flex;
@@ -872,15 +883,17 @@ footer {
 }
 
 /* Stile per il pulsante secondario */
-.cta-button-secondary {
+.cta-button.cta-button-secondary {
   background-color: transparent;
   border: 2px solid var(--white);
   color: var(--white);
+  transition: all var(--transition-base);
 }
 
-.cta-button-secondary:hover {
-  background-color: rgba(255, 255, 255, 0.1);
-  transform: translateY(-2px); /* Mantiene l'animazione al passaggio del mouse */
+.cta-button.cta-button-secondary:hover {
+  background-color: var(--white);
+  color: var(--primary);
+  transform: translateY(-3px);
 }
 
 /* Rimuove il margine inferiore dal singolo pulsante quando è nel contenitore */

@@ -528,24 +528,23 @@ h6 {
 
 .filter-button {
   padding: var(--spacing-sm) var(--spacing-lg);
-  background-color: var(--surface);
-  color: var(--text-secondary);
-  border: 2px solid var(--gray-medium);
-  border-radius: var(--radius-lg);
-  font-weight: 500;
-  transition: all var(--transition-fast);
+  background-color: var(--accent-warm);
+  color: var(--white);
+  border: none;
+  border-radius: 50px; /* Arrotondamento per un look moderno */
+  font-weight: 600;
+  transition: all var(--transition-base);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 }
 
 .filter-button:hover {
-  background-color: var(--accent-warm);
-  color: var(--white);
-  border-color: var(--accent-warm);
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
 }
 
 .filter-button.active {
   background-color: var(--primary);
   color: var(--white);
-  border-color: var(--primary);
 }
 
 /* Products Grid */
