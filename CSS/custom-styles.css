@@ -48,10 +48,6 @@ header {
   }
 }
 
-.logo-container:hover .logo {
-  transform: scale(1.08);
-}
-
 /* Menu Hamburger */
 .hamburger-menu {
   width: 40px;

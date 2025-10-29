@@ -167,10 +167,6 @@ h6 {
   transition: transform var(--transition-base);
 }
 
-.logo:hover {
-  transform: scale(1.05);
-}
-
 .main-nav {
   display: none;
 }
@@ -386,10 +382,6 @@ h6 {
   height: 100%;
   object-fit: cover;
   transition: transform var(--transition-slow);
-}
-
-.about-image:hover img {
-  transform: scale(1.05);
 }
 
 .about-content {
