@@ -533,6 +533,20 @@ footer {
   }
 }
 
+/* Regole per schermi desktop e tablet (min-width: 768px) */
+@media (min-width: 768px) {
+  /* Assicura che la sezione "Home" occupi l'intera altezza della viewport su PC,
+     spingendo la sezione "Storia" sotto la piega senza un margine aggiuntivo. */
+  .hero-section {
+    min-height: 100vh;
+  }
+  /* Rende l'immagine della storia più piccola rispetto al testo su schermi più grandi */
+  .about-grid {
+    grid-template-columns: 0.8fr 1.2fr; /* Immagine 40%, Testo 60% */
+    align-items: center;
+  }
+}
+
 @media (max-width: 768px) {
   body {
     font-size: 16px;
