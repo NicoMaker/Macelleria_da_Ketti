@@ -1,193 +1,187 @@
-// Products loading and filtering
 document.addEventListener("DOMContentLoaded", () => {
-  const container = document.querySelector(".progetti-container");
-  const filterButtons = document.querySelectorAll(".filter-button");
+  const progettiContainer = document.querySelector(".progetti-container");
   const filterContainer = document.querySelector(".filter-container");
-  let progettiData = [];
-  let filteredProjects = [];
-  let currentCategory = "all";
-  let searchTerm = "";
+  const searchInput = document.getElementById("search-progetti");
 
-  function updateLayout() {
-    const width = window.innerWidth;
-    if (width <= 600) container.className = "progetti-container mobile-view";
-    else if (width <= 900)
-      container.className = "progetti-container tablet-view";
-    else container.className = "progetti-container pc-view";
-    updateDisplay();
-  }
+  let allProducts = [];
+  let currentFilter = "Tutti"; // Filtro predefinito
+  let currentSearchTerm = ""; // Termine di ricerca predefinito
 
-  function fetchData() {
-    return fetch("JSON/progetti.json")
+  // Funzione per recuperare i prodotti e inizializzare la sezione
+  function initProgetti() {
+    fetch("JSON/progetti.json")
       .then((response) => response.json())
       .then((data) => {
-        progettiData = data.Prodotti;
-        generateFilterButtons();
-        filterProjects();
+        allProducts = data.Prodotti;
+        populateFilters();
+        loadStateFromLocalStorage(); // Carica lo stato (filtro/ricerca) da localStorage
+        applyFiltersAndSearch(); // Applica i filtri e la ricerca
+
+        // Se l'URL ha l'hash #Prodotti, scorri alla sezione
+        if (window.location.hash === "#Prodotti") {
+          scrollToProductsSection();
+        }
       })
       .catch((error) => {
-        console.error("Errore nel caricamento:", error);
-        container.innerHTML =
+        console.error("Errore nel caricamento dei prodotti:", error);
+        progettiContainer.innerHTML =
           "<p class='no-results'>Errore nel caricamento dei prodotti.</p>";
       });
   }
 
-  function generateFilterButtons() {
-    if (!filterContainer) return;
-
-    // Estrai tutte le categorie uniche dai prodotti
-    const categories = [...new Set(progettiData.flatMap(p => p.categorie || []))];
-    
-    // Crea il pulsante "Tutti"
-    let buttonsHTML = `<button class="filter-button active" data-category="all">Tutti</button>`;
-
-    // Crea un pulsante per ogni categoria
-    categories.forEach(category => {
-      buttonsHTML += `<button class="filter-button" data-category="${category}">${category}</button>`;
+  // Funzione per popolare i pulsanti di filtro
+  function populateFilters() {
+    const categories = new Set(["Tutti"]); // Inizia con 'Tutti'
+    allProducts.forEach((product) => {
+      product.categorie.forEach((cat) => categories.add(cat));
     });
 
-    filterContainer.innerHTML = buttonsHTML;
-
-    // Aggiungi gli event listener ai nuovi pulsanti
-    filterContainer.querySelectorAll('.filter-button').forEach(button => {
-      button.addEventListener('click', () => updateFilter(button.dataset.category, true));
+    filterContainer.innerHTML = ""; // Pulisci i pulsanti esistenti
+    categories.forEach((category) => {
+      const button = document.createElement("button");
+      button.classList.add("filter-button");
+      button.textContent = category;
+      button.dataset.category = category;
+      button.addEventListener("click", () => {
+        currentFilter = category;
+        saveStateToLocalStorage(); // Salva il filtro in localStorage
+        applyFiltersAndSearch();
+        updateFilterButtons(); // Aggiorna lo stato attivo dei pulsanti
+      });
+      filterContainer.appendChild(button);
     });
+    updateFilterButtons(); // Imposta lo stato attivo iniziale
   }
 
-  function updateFilter(category, shouldScroll = true) {
-    currentCategory = category;
-    try {
-      localStorage.setItem("selectedCategory", category);
-    } catch (e) {}
-    filterProjects();
-    updateFilterStyle();
-
-    if (shouldScroll && category !== "all") {
-      const progettiSection = document.getElementById("Prodotti");
-      if (progettiSection) {
-        progettiSection.scrollIntoView({ behavior: "smooth" });
+  // Funzione per aggiornare lo stato attivo dei pulsanti di filtro
+  function updateFilterButtons() {
+    document.querySelectorAll(".filter-button").forEach((button) => {
+      if (button.dataset.category === currentFilter) {
+        button.classList.add("active");
+      } else {
+        button.classList.remove("active");
       }
-    }
-  }
-
-  function filterProjects() {
-    let tempFiltered =
-      currentCategory === "all"
-        ? progettiData
-        : progettiData.filter((progetto) =>
-            progetto.categorie && progetto.categorie.includes(currentCategory)
-          );
-
-    if (searchTerm) {
-      tempFiltered = tempFiltered.filter((progetto) => {
-        return (
-          (progetto.nome && progetto.nome.toLowerCase().includes(searchTerm)) ||
-          (progetto.categorie && progetto.categorie.some((cat) =>
-            cat.toLowerCase().includes(searchTerm))
-          )
-        );
-      });
-    }
-
-    filteredProjects = tempFiltered;
-    updateDisplay();
-  }
-
-  function updateFilterStyle() {
-    document.querySelectorAll('.filter-container .filter-button').forEach((button) => {
-      button.classList.toggle(
-        "active",
-        button.dataset.category === currentCategory
-      );
     });
   }
 
-  function updateDisplay() {
-    container.innerHTML = "";
+  // Funzione per applicare filtri e ricerca
+  function applyFiltersAndSearch() {
+    let filteredProducts = allProducts;
 
-    if (filteredProjects.length === 0) {
-      container.innerHTML =
-        "<p class='no-results'>Nessun prodotto trovato. Torneranno presto disponibili!</p>";
-    } else {
-      filteredProjects.forEach((project) => {
-        container.appendChild(createCard(project));
-      });
+    // Applica il filtro per categoria
+    if (currentFilter !== "Tutti") {
+      filteredProducts = filteredProducts.filter((product) =>
+        product.categorie.includes(currentFilter)
+      );
     }
+
+    // Applica il filtro per termine di ricerca
+    if (currentSearchTerm) {
+      const lowerCaseSearchTerm = currentSearchTerm.toLowerCase();
+      filteredProducts = filteredProducts.filter(
+        (product) =>
+          product.nome.toLowerCase().includes(lowerCaseSearchTerm) ||
+          product.descrizione.toLowerCase().includes(lowerCaseSearchTerm) ||
+          product.categorie.some((cat) =>
+            cat.toLowerCase().includes(lowerCaseSearchTerm)
+          )
+      );
+    }
+
+    displayProducts(filteredProducts);
   }
 
-  function createCard(progetto) {
+  // Funzione per visualizzare i prodotti
+  function displayProducts(products) {
+    progettiContainer.innerHTML = ""; // Pulisci i prodotti esistenti
+
+    if (products.length === 0) {
+      progettiContainer.innerHTML =
+        "<p class='no-results'>Nessun prodotto trovato con i criteri selezionati.</p>";
+      return;
+    }
+
+    products.forEach((product) => {
+      const card = createProductCard(product);
+      progettiContainer.appendChild(card);
+    });
+  }
+
+  // Funzione per creare una singola card prodotto
+  function createProductCard(item) {
     const card = document.createElement("div");
     card.className = "Progetti-card";
+    card.addEventListener("click", () => {
+      if (item.link && item.link !== "#") {
+        window.location.href = item.link;
+      }
+    });
 
-    // Rendi la card cliccabile solo se esiste un link
-    if (progetto.link && progetto.link !== "#") {
-      card.style.cursor = "pointer";
-      card.addEventListener("click", () => {
-        window.location.href = progetto.link;
-      });
-    }
-
-    // Mostra la categoria solo se il filtro è "Tutti" e la categoria è disponibile
     const categoriaHtml =
-      currentCategory === "all" && progetto.categorie && progetto.categorie.length > 0
-        ? `<p class="categoria">${progetto.categorie.length > 1 ? "Categorie" : "Categoria"}: ${progetto.categorie.join(", ")}</p>`
+      item.categorie && item.categorie.length > 0
+        ? `<p class="categoria">${item.categorie.join(", ")}</p>`
         : "";
 
-    card.innerHTML = `  
+    card.innerHTML = `
       <div class="container-immagine">
-        <img class="immagine" src="${progetto.immagine}" alt="${progetto.nome}" loading="lazy">
+        <img class="immagine" src="${item.immagine}" alt="${item.nome}" loading="lazy">
       </div>
       <div class="Progetti-card-content">
-        <h3>${progetto.nome}</h3>
-        <p class="descrizione">${progetto.descrizione}</p>
+        <h3>${item.nome}</h3>
+        <p class="descrizione">${item.descrizione}</p>
+        <p class="prezzo">${item.prezzo}</p>
         ${categoriaHtml}
       </div>
     `;
     return card;
   }
 
-  function addEventListeners() {
-    // Search functionality
-    const searchInput = document.getElementById("search-progetti");
-    if (searchInput) {
-      searchInput.addEventListener("input", (e) => {
-        searchTerm = e.target.value.toLowerCase().trim();
-        filterProjects();
-      });
-    }
-
-    window.addEventListener("resize", updateLayout);
-  }
-
-  function init() {
-    let savedCategory = "all";
+  // Funzione per salvare il filtro corrente e il termine di ricerca in localStorage
+  function saveStateToLocalStorage() {
     try {
-      // Non è più necessario validare le categorie qui, dato che vengono generate dinamicamente
-      const stored = localStorage.getItem("selectedCategory");
-      if (stored) {
-        savedCategory = stored;
-      }
-
-    } catch (e) {}
-
-    const cameFromProjects = document.referrer.includes("/Projects/");
-
-    fetchData().then(() => {
-      updateFilter(savedCategory, false);
-
-      if (cameFromProjects && savedCategory !== "all") {
-        setTimeout(() => {
-          const progettiSection = document.getElementById("Prodotti");
-          if (progettiSection) {
-            progettiSection.scrollIntoView({ behavior: "smooth" });
-          }
-        }, 500);
-      }
-    });
-
-    addEventListeners();
-    updateLayout();
+      localStorage.setItem("selectedCategory", currentFilter);
+      localStorage.setItem("searchTerm", currentSearchTerm);
+    } catch (e) {
+      console.error("Impossibile salvare lo stato nel localStorage:", e);
+    }
   }
 
-  init();
+  // Funzione per caricare il filtro e il termine di ricerca da localStorage
+  function loadStateFromLocalStorage() {
+    try {
+      const storedCategory = localStorage.getItem("selectedCategory");
+      const storedSearchTerm = localStorage.getItem("searchTerm");
+
+      if (storedCategory) {
+        currentFilter = storedCategory;
+      }
+      if (storedSearchTerm) {
+        currentSearchTerm = storedSearchTerm;
+        searchInput.value = storedSearchTerm; // Imposta il valore dell'input di ricerca
+      }
+    } catch (e) {
+      console.error("Impossibile caricare lo stato dal localStorage:", e);
+    }
+  }
+
+  // Funzione per scorrere alla sezione prodotti
+  function scrollToProductsSection() {
+    const productsSection = document.getElementById("Prodotti");
+    if (productsSection) {
+      // Scorrimento fluido all'inizio della sezione
+      productsSection.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }
+
+  // Listener per l'input di ricerca
+  if (searchInput) {
+    searchInput.addEventListener("input", () => {
+      currentSearchTerm = searchInput.value;
+      saveStateToLocalStorage(); // Salva il termine di ricerca in localStorage
+      applyFiltersAndSearch();
+    });
+  }
+
+  // Inizializza la sezione prodotti
+  initProgetti();
 });
