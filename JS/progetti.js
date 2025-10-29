@@ -14,8 +14,9 @@ document.addEventListener("DOMContentLoaded", () => {
       .then((data) => {
         allProducts = data.Prodotti;
         populateFilters();
-        loadStateFromStorage(); // Carica lo stato (filtro/ricerca) dallo storage
+        loadStateFromStorage(); // Carica lo stato (filtro/ricerca) da localStorage
         applyFiltersAndSearch(); // Applica i filtri e la ricerca
+        updateFilterButtons(); // Aggiorna lo stato visivo dei pulsanti dopo aver caricato lo stato
 
         // Se l'URL ha l'hash #Prodotti, scorri alla sezione
         if (window.location.hash === "#Prodotti") {
@@ -50,7 +51,6 @@ document.addEventListener("DOMContentLoaded", () => {
       });
       filterContainer.appendChild(button);
     });
-    updateFilterButtons(); // Imposta lo stato attivo iniziale
   }
 
   // Funzione per aggiornare lo stato attivo dei pulsanti di filtro
@@ -117,10 +117,15 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
 
-    const categoriaHtml =
-      item.categorie && item.categorie.length > 0
-        ? `<p class="categoria">${item.categorie.join(", ")}</p>`
-        : "";
+    // Assicurati che item.categorie sia un array, altrimenti usa un array vuoto
+    const categories = item.categorie || [];
+    let categoriaHtml = "";
+
+    // Mostra la categoria solo se il filtro è "Tutti" e il prodotto ha categorie
+    if (currentFilter === "Tutti" && categories.length > 0) {
+      const prefix = categories.length > 1 ? "Categorie" : "Categoria";
+      categoriaHtml = `<p class="categoria">${prefix}: ${categories.join(", ")}</p>`;
+    }
 
     card.innerHTML = `
       <div class="container-immagine">
@@ -149,8 +154,8 @@ document.addEventListener("DOMContentLoaded", () => {
   // Funzione per caricare il filtro e il termine di ricerca da localStorage
   function loadStateFromStorage() {
     try {
-      const storedCategory = sessionStorage.getItem("selectedCategory");
-      const storedSearchTerm = sessionStorage.getItem("searchTerm");
+      const storedCategory = localStorage.getItem("selectedCategory");
+      const storedSearchTerm = localStorage.getItem("searchTerm");
 
       if (storedCategory) {
         currentFilter = storedCategory;
@@ -184,4 +189,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Inizializza la sezione prodotti
   initProgetti();
+
+  // Aggiungi un listener per l'evento 'pageshow' per gestire il ripristino dello stato
+  // quando si torna indietro nella cronologia del browser.
+  window.addEventListener('pageshow', function(event) {
+    // 'persisted' è true se la pagina è stata caricata dalla cache del browser (bfcache)
+    if (event.persisted) {
+      loadStateFromStorage();
+      applyFiltersAndSearch();
+      updateFilterButtons(); // Aggiunto per aggiornare lo stato visivo dei pulsanti
+    }
+  });
 });

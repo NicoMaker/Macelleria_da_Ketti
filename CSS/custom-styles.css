@@ -395,10 +395,14 @@ footer {
   font-size: 1.1em;
 }
 
-.filter-button:hover,
+.filter-button:hover {
+  background-color: #a0522d; /* Colore più caldo per l'hover */
+  transform: translateY(-3px);
+}
+
 .filter-button.active {
   background-color: #5a3a1a;
-  transform: translateY(-3px);
+  transform: translateY(0); /* Rimuove l'effetto di sollevamento quando è attivo */
 }
 
 .novita-container,
