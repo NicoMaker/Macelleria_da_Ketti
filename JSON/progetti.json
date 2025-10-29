@@ -6,7 +6,6 @@
       "immagine": "https://images.unsplash.com/photo-1603048588665-791ca8aea617?w=600&h=400&fit=crop",
       "categorie": ["Bovino"],
       "isNovita": false,
-      "prezzo": "28,90 €/kg",
       "link": "prodotto-costata.html"
     },
     {
@@ -15,7 +14,6 @@
       "immagine": "https://images.unsplash.com/photo-1607623814075-e51df1bdc82f?w=600&h=400&fit=crop",
       "categorie": ["Suino"],
       "isNovita": false,
-      "prezzo": "12,50 €/kg",
       "link": "prodotto-salsiccia.html"
     },
     {
@@ -24,7 +22,6 @@
       "immagine": "https://images.unsplash.com/photo-1604503468506-a8da13d82791?w=600&h=400&fit=crop",
       "categorie": ["Pollame"],
       "isNovita": false,
-      "prezzo": "11,90 €/kg",
       "link": "prodotto-pollo.html"
     },
     {
@@ -33,7 +30,6 @@
       "immagine": "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=600&h=400&fit=crop",
       "categorie": ["Bovino"],
       "isNovita": false,
-      "prezzo": "19,90 €/kg",
       "link": "prodotto-hamburger.html"
     },
     {
@@ -42,7 +38,6 @@
       "immagine": "https://images.unsplash.com/photo-1432139555190-58524dae6a55?w=600&h=400&fit=crop",
       "categorie": ["Suino"],
       "isNovita": true,
-      "prezzo": "13,00 €/kg",
       "link": "Projects/prodotto-cotoletta.html"
     },
     {
@@ -51,7 +46,6 @@
       "immagine": "https://images.unsplash.com/photo-1551028150-64b9f398f67b?w=600&h=400&fit=crop",
       "categorie": ["Bovino"],
       "isNovita": true,
-      "prezzo": "35,00 €/kg",
       "link": "#"
     },
     {
@@ -60,7 +54,6 @@
       "immagine": "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=600&h=400&fit=crop",
       "categorie": ["Suino", "Preparati"],
       "isNovita": true,
-      "prezzo": "15,90 €/kg",
       "link": "#"
     }
   ]

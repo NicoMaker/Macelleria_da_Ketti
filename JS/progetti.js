@@ -134,7 +134,6 @@ document.addEventListener("DOMContentLoaded", () => {
       <div class="Progetti-card-content">
         <h3>${item.nome}</h3>
         <p class="descrizione">${item.descrizione}</p>
-        <p class="prezzo">${item.prezzo}</p>
         ${categoriaHtml}
       </div>
     `;
