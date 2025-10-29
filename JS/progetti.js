@@ -14,7 +14,7 @@ document.addEventListener("DOMContentLoaded", () => {
       .then((data) => {
         allProducts = data.Prodotti;
         populateFilters();
-        loadStateFromLocalStorage(); // Carica lo stato (filtro/ricerca) da localStorage
+        loadStateFromStorage(); // Carica lo stato (filtro/ricerca) dallo storage
         applyFiltersAndSearch(); // Applica i filtri e la ricerca
 
         // Se l'URL ha l'hash #Prodotti, scorri alla sezione
@@ -147,10 +147,10 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // Funzione per caricare il filtro e il termine di ricerca da localStorage
-  function loadStateFromLocalStorage() {
+  function loadStateFromStorage() {
     try {
-      const storedCategory = localStorage.getItem("selectedCategory");
-      const storedSearchTerm = localStorage.getItem("searchTerm");
+      const storedCategory = sessionStorage.getItem("selectedCategory");
+      const storedSearchTerm = sessionStorage.getItem("searchTerm");
 
       if (storedCategory) {
         currentFilter = storedCategory;
