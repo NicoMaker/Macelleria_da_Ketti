@@ -17,11 +17,6 @@ document.addEventListener("DOMContentLoaded", () => {
         loadStateFromStorage(); // Carica lo stato (filtro/ricerca) da localStorage
         applyFiltersAndSearch(); // Applica i filtri e la ricerca
         updateFilterButtons(); // Aggiorna lo stato visivo dei pulsanti dopo aver caricato lo stato
-
-        // Se l'URL ha l'hash #Prodotti, scorri alla sezione
-        if (window.location.hash === "#Prodotti") {
-          scrollToProductsSection();
-        }
       })
       .catch((error) => {
         console.error("Errore nel caricamento dei prodotti:", error);
@@ -165,15 +160,6 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     } catch (e) {
       console.error("Impossibile caricare lo stato dal localStorage:", e);
-    }
-  }
-
-  // Funzione per scorrere alla sezione prodotti
-  function scrollToProductsSection() {
-    const productsSection = document.getElementById("Prodotti");
-    if (productsSection) {
-      // Scorrimento fluido all'inizio della sezione
-      productsSection.scrollIntoView({ behavior: "smooth", block: "start" });
     }
   }
 

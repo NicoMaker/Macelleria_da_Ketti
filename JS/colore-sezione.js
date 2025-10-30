@@ -2,7 +2,6 @@
 document.addEventListener("DOMContentLoaded", () => {
   const sections = document.querySelectorAll("section[id], footer[id]")
   const navLinks = document.querySelectorAll(".nav-link, .mobile-nav-link")
-  // const headerOffset = 80; // Non più necessario con il nuovo approccio
 
   function highlightNavigation() {
     const scrollY = window.pageYOffset;
@@ -40,7 +39,14 @@ document.addEventListener("DOMContentLoaded", () => {
       } else {
         link.classList.remove("active")
       }
-    })
+    });
+
+    // Aggiorna l'hash nell'URL senza far saltare la pagina
+    const newUrl = `${window.location.pathname}#${currentSectionId}`;
+    // Usiamo replaceState per non inquinare la cronologia del browser con ogni scroll
+    if (history.replaceState && window.location.hash !== `#${currentSectionId}`) {
+      history.replaceState(null, '', newUrl);
+    }
   }
 
   window.addEventListener("scroll", highlightNavigation)
