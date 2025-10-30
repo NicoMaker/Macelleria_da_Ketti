@@ -115,11 +115,11 @@ document.addEventListener("DOMContentLoaded", () => {
     // Assicurati che item.categorie sia un array, altrimenti usa un array vuoto
     const categories = item.categorie || [];
     let categoriaHtml = "";
-
-    // Mostra la categoria solo se il filtro è "Tutti" e il prodotto ha categorie
-    if (currentFilter === "Tutti" && categories.length > 0) {
+    
+    // Mostra la categoria solo se il filtro è "Tutti" e il prodotto ha effettivamente delle categorie
+    if (currentFilter === "Tutti" && Array.isArray(categories) && categories.length > 0) {
       const prefix = categories.length > 1 ? "Categorie" : "Categoria";
-      categoriaHtml = `<p class="categoria">${prefix}: ${categories.join(", ")}</p>`;
+      categoriaHtml = `<p class="descrizione categoria">${prefix}: ${categories.join(", ")}</p>`;
     }
 
     card.innerHTML = `
