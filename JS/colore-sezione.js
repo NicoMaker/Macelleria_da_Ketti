@@ -40,13 +40,6 @@ document.addEventListener("DOMContentLoaded", () => {
         link.classList.remove("active")
       }
     });
-
-    // Aggiorna l'hash nell'URL senza far saltare la pagina
-    const newUrl = `${window.location.pathname}#${currentSectionId}`;
-    // Usiamo replaceState per non inquinare la cronologia del browser con ogni scroll
-    if (history.replaceState && window.location.hash !== `#${currentSectionId}`) {
-      history.replaceState(null, '', newUrl);
-    }
   }
 
   window.addEventListener("scroll", highlightNavigation)

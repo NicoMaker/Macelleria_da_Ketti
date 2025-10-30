@@ -22,6 +22,16 @@ document.addEventListener("DOMContentLoaded", () => {
         console.error("Errore nel caricamento dei prodotti:", error);
         progettiContainer.innerHTML =
           "<p class='no-results'>Errore nel caricamento dei prodotti.</p>";
+      })
+      .finally(() => {
+        // Se l'URL contiene #Prodotti, scorri fino alla sezione.
+        // Utile quando si torna da una pagina di dettaglio prodotto.
+        if (window.location.hash === "#Prodotti") {
+          const prodottiSection = document.getElementById("Prodotti");
+          if (prodottiSection) {
+            prodottiSection.scrollIntoView({ behavior: "smooth" });
+          }
+        }
       });
   }
 
