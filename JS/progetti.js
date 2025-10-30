@@ -151,8 +151,15 @@ document.addEventListener("DOMContentLoaded", () => {
       const storedCategory = localStorage.getItem("selectedCategory");
       const storedSearchTerm = localStorage.getItem("searchTerm");
 
+      // Ottieni le categorie disponibili dai pulsanti di filtro
+      const availableCategories = Array.from(
+        document.querySelectorAll(".filter-button")
+      ).map((btn) => btn.dataset.category);
+
       if (storedCategory) {
-        currentFilter = storedCategory;
+        // Controlla se la categoria salvata esiste ancora.
+        // Se non esiste, imposta il filtro a "Tutti".
+        currentFilter = availableCategories.includes(storedCategory) ? storedCategory : "Tutti";
       }
       if (storedSearchTerm) {
         currentSearchTerm = storedSearchTerm;
