@@ -880,7 +880,7 @@ h6 {
 /* ===== Hero Section ===== */
 .hero-section {
   position: relative;
-  min-height: 600px;
+  min-height: 100vh; /* Occupa l'intera altezza dello schermo */
   display: flex;
   align-items: center;
   justify-content: center;
