@@ -1,25 +1,17 @@
 /* Stili personalizzati per migliorare l'UX design */
 
 /* Header e Layout */
-.header-container-wrapper {
-  padding: 0 20px;
-  background-color: var(--surface);
+header {
+  padding: 12px 20px;
 }
 
-.header-container {
+.header-content {
   display: flex;
   justify-content: space-between;
   align-items: center;
   width: 100%;
   max-width: 1200px;
   margin: 0 auto;
-  padding: 12px 0;
-}
-
-.header-top {
-  display: flex;
-  align-items: center;
-  gap: 24px;
 }
 
 /* Logo */
@@ -640,6 +632,10 @@ footer {
     padding-top: 20px;
   }
 
+  .section-title {
+    font-size: 1.7rem; /* Ridotta la dimensione per mobile */
+  }
+
   .section h2 {
     font-size: 1.6em;
   }
@@ -900,48 +896,5 @@ footer {
   }
   .hero-cta-container .cta-button {
     width: 280px; /* Imposta una larghezza fissa per entrambi i pulsanti */
-  }
-}
-
-/* Barra Annuncio Prossima Apertura */
-.opening-announcement {
-  color: var(--text-secondary);
-  margin: 0; /* Rimuove margini laterali */
-  text-align: left;
-}
-
-.announcement-text {
-  font-size: 1em;
-  font-weight: 600;
-  margin: 0;
-  letter-spacing: 0.5px;
-}
-
-/* Hero section a schermo intero per PC */
-@media (min-width: 1024px) {
-  .hero-section {
-    height: 100vh; /* Imposta l'altezza al 100% dell'altezza dello schermo */
-    min-height: 700px; /* Altezza minima per schermi non molto alti */
-  }
-}
-
-@media (max-width: 768px) {
-  .header-container {
-    flex-wrap: wrap;
-  }
-  .header-top {
-    order: 1;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 8px;
-  }
-  .main-nav {
-    order: 3;
-  }
-  .mobile-menu-toggle {
-    order: 2;
-  }
-  .opening-announcement {
-    padding: 0;
   }
 }
