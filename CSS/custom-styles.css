@@ -901,14 +901,14 @@ footer {
 
 /* Barra Annuncio Prossima Apertura */
 .opening-announcement {
-  background-color: var(--ash-darkest); /* Colore legno più scuro del footer */
+  background-color: var(--primary); /* Colore legno ripreso dal footer */
   color: var(--white);
   padding: 10px 20px;
   width: 100%; /* Occupa tutta la larghezza */
   margin: 0; /* Rimuove margini laterali */
   text-align: center;
   animation: fadeIn 0.5s ease-out;
-  border-radius: 0; /* Rimuove i bordi arrotondati */
+  border-radius: 0 0 var(--radius-md) var(--radius-md); /* Arrotonda solo gli angoli inferiori */
 }
 
 .announcement-text {
