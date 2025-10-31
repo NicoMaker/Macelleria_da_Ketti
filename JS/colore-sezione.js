@@ -1,8 +1,9 @@
 // Active section highlighting on scroll
 document.addEventListener("DOMContentLoaded", () => {
-  const sections = document.querySelectorAll("section[id], footer[id]")
-  const navLinks = document.querySelectorAll(".nav-link, .mobile-nav-link")
-
+  const sections = document.querySelectorAll("section[id], footer[id]");
+  const navLinks = document.querySelectorAll(".nav-link, .mobile-nav-link");
+  const baseTitle = "Macelleria da Ketti - Carne di Qualità dal 1985";
+  
   function highlightNavigation() {
     const scrollY = window.pageYOffset;
     let bestMatch = { id: "Home", visibleRatio: 0 }; // Inizia con Home come predefinito
@@ -40,8 +41,24 @@ document.addEventListener("DOMContentLoaded", () => {
         link.classList.remove("active")
       }
     });
+
+    // Aggiorna l'hash nell'URL senza aggiungere alla cronologia
+    // e solo se è cambiato per evitare chiamate non necessarie.
+    const currentHash = window.location.hash.substring(1);
+    if (currentSectionId && currentHash !== currentSectionId) {
+      history.replaceState(null, null, '#' + currentSectionId);
+    }
+
+    // Aggiorna il titolo della pagina
+    const sectionElement = document.getElementById(currentSectionId);
+    const sectionName = sectionElement.dataset.sectionName || currentSectionId.charAt(0).toUpperCase() + currentSectionId.slice(1);
+    if (currentSectionId.toLowerCase() === 'home') {
+      document.title = baseTitle;
+    } else {
+      document.title = `${sectionName} - Macelleria da Ketti`;
+    }
   }
 
   window.addEventListener("scroll", highlightNavigation)
   highlightNavigation() // Chiama la funzione al caricamento per impostare lo stato iniziale
-})
+});
