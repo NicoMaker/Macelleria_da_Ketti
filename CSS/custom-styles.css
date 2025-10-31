@@ -171,9 +171,8 @@ footer {
   flex: 1;
 }
 
-/* Aumentata dimensione font del section-title da 22px a 32px per maggiore visibilità */
 .section-title {
-  font-size: 32px;
+  font-size: 2.2rem; /* Aumentata la dimensione per maggiore impatto visivo (35.2px) */
   font-weight: 700;
   margin-bottom: 20px;
   text-transform: uppercase;
@@ -455,15 +454,6 @@ footer {
   transition: transform 0.5s ease;
 }
 
-.Progetti-card h3 {
-  padding: 20px 20px 5px;
-  font-size: 1.4em;
-  color: #8b5a2b;
-  border-top: 2px solid #8b5a2b;
-  margin-top: 0;
-  text-transform: uppercase;
-}
-
 .Progetti-card p {
   padding: 0 20px 20px;
   color: #555;
@@ -527,24 +517,6 @@ footer {
     font-size: 1em;
   }
 
-  /* Ridotta dimensione section-title per tablet */
-  .section-title {
-    font-size: 28px;
-  }
-}
-
-/* Regole per schermi desktop e tablet (min-width: 768px) */
-@media (min-width: 768px) {
-  /* Assicura che la sezione "Home" occupi l'intera altezza della viewport su PC,
-     spingendo la sezione "Storia" sotto la piega senza un margine aggiuntivo. */
-  .hero-section {
-    min-height: 100vh;
-  }
-  /* Rende l'immagine della storia più piccola rispetto al testo su schermi più grandi */
-  .about-grid {
-    grid-template-columns: 0.8fr 1.2fr; /* Immagine 40%, Testo 60% */
-    align-items: center;
-  }
 }
 
 @media (max-width: 768px) {
@@ -696,11 +668,6 @@ footer {
     gap: 30px;
   }
 
-  /* Ridotta dimensione section-title per mobile */
-  .section-title {
-    font-size: 24px;
-  }
-
   #map-container {
     height: 200px;
   }
@@ -724,11 +691,6 @@ footer {
   .filter-button {
     padding: 8px 15px;
     font-size: 0.9em;
-  }
-
-  /* Ridotta dimensione section-title per schermi molto piccoli */
-  .section-title {
-    font-size: 20px;
   }
 
   .contact-list a,
