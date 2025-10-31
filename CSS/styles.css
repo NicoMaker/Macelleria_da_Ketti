@@ -67,7 +67,7 @@
 html {
   scroll-behavior: smooth;
   font-size: 16px;
-  scroll-padding-top: 120px; /* Offset for sticky header, increased for better visibility */
+  scroll-padding-top: 170px; /* Aumentato ulteriormente l'offset per l'header fisso su mobile */
 }
 
 body {

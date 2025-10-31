@@ -898,3 +898,36 @@ footer {
     width: 280px; /* Imposta una larghezza fissa per entrambi i pulsanti */
   }
 }
+
+/* Barra Annuncio Prossima Apertura */
+.opening-announcement {
+  background-color: var(--primary); /* Colore legno scuro, ripreso dal footer */
+  color: var(--white);
+  padding: 10px 20px;
+  width: 100%;
+  text-align: center;
+  animation: fadeIn 0.5s ease-out;
+}
+
+.announcement-text {
+  font-size: 1em;
+  font-weight: 600;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  letter-spacing: 0.5px;
+}
+
+.announcement-text .material-icons {
+  font-size: 1.2em;
+}
+
+/* Hero section a schermo intero per PC */
+@media (min-width: 1024px) {
+  .hero-section {
+    height: 100vh; /* Imposta l'altezza al 100% dell'altezza dello schermo */
+    min-height: 700px; /* Altezza minima per schermi non molto alti */
+  }
+}
