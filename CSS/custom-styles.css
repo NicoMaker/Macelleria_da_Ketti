@@ -898,3 +898,44 @@ footer {
     width: 280px; /* Imposta una larghezza fissa per entrambi i pulsanti */
   }
 }
+
+/* Banner Prossima Apertura nella Hero Section */
+.opening-soon-banner {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background-color: rgba(255, 255, 255, 0.2); /* Sfondo bianco semi-trasparente */
+  color: var(--white);
+  padding: 10px 20px;
+  border-radius: 50px; /* Forma a pillola */
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 20px; /* Spazio sotto il banner */
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  backdrop-filter: blur(5px); /* Effetto vetro smerigliato */
+  -webkit-backdrop-filter: blur(5px); /* Supporto per Safari */
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4); /* Ombra per migliorare la leggibilità */
+  animation: fadeIn 1s ease-out;
+}
+
+.opening-soon-banner .material-icons {
+  font-size: 20px;
+  background-color: transparent; /* Assicura che l'icona non abbia sfondo */
+  color: inherit; /* Eredita il colore dal genitore */
+}
+
+/* Stili responsive per il banner */
+@media (max-width: 768px) {
+  .opening-soon-banner {
+    font-size: 1rem;
+    padding: 8px 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .opening-soon-banner {
+    font-size: 0.9rem;
+    padding: 6px 12px;
+  }
+}
+}
