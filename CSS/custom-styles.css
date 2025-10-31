@@ -640,10 +640,6 @@ footer {
     padding-top: 20px;
   }
 
-  .section-title {
-    font-size: 1.7rem; /* Ridotta la dimensione per mobile */
-  }
-
   .section h2 {
     font-size: 1.6em;
   }
