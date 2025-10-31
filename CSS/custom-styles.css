@@ -904,18 +904,15 @@ footer {
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  background-color: rgba(255, 255, 255, 0.2); /* Sfondo bianco semi-trasparente */
-  color: var(--white);
+  background-color: var(--accent-warm);
+  color: var(--accent-cream); /* Colore crema per un contrasto più morbido */
   padding: 10px 20px;
   border-radius: 50px; /* Forma a pillola */
   font-size: 1.1rem;
   font-weight: 600;
   margin-bottom: 20px; /* Spazio sotto il banner */
-  border: 1px solid rgba(255, 255, 255, 0.5);
-  backdrop-filter: blur(5px); /* Effetto vetro smerigliato */
-  -webkit-backdrop-filter: blur(5px); /* Supporto per Safari */
-  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4); /* Ombra per migliorare la leggibilità */
-  animation: fadeIn 1s ease-out;
+  border: none; /* Rimuovo il bordo per coerenza con i pulsanti */
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); /* Stessa ombra dei pulsanti CTA */
 }
 
 .opening-soon-banner .material-icons {
