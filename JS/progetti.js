@@ -4,8 +4,18 @@ document.addEventListener("DOMContentLoaded", () => {
   const searchInput = document.getElementById("search-progetti");
 
   let allProducts = [];
-  let currentFilter = "Tutti"; // Filtro predefinito
-  let currentSearchTerm = ""; // Termine di ricerca predefinito
+  let currentFilter = "Tutti";
+  let currentSearchTerm = "";
+
+  // Funzione per resettare filtri e ricerca
+  function resetFiltersAndSearch() {
+    currentFilter = "Tutti";
+    currentSearchTerm = "";
+    if (searchInput) {
+      searchInput.value = "";
+    }
+    saveStateToLocalStorage();
+  }
 
   // Funzione per recuperare i prodotti e inizializzare la sezione
   function initProgetti() {
@@ -14,9 +24,16 @@ document.addEventListener("DOMContentLoaded", () => {
       .then((data) => {
         allProducts = data.Prodotti;
         populateFilters();
-        loadStateFromStorage(); // Carica lo stato (filtro/ricerca) da localStorage
-        applyFiltersAndSearch(); // Applica i filtri e la ricerca
-        updateFilterButtons(); // Aggiorna lo stato visivo dei pulsanti dopo aver caricato lo stato
+
+        // Se l'URL contiene #Prodotti, resetta i filtri. Altrimenti, carica lo stato.
+        if (window.location.hash === "#Prodotti") {
+          resetFiltersAndSearch();
+        } else {
+          loadStateFromStorage();
+        }
+
+        applyFiltersAndSearch();
+        updateFilterButtons();
       })
       .catch((error) => {
         console.error("Errore nel caricamento dei prodotti:", error);
@@ -28,7 +45,8 @@ document.addEventListener("DOMContentLoaded", () => {
         // Utile quando si torna da una pagina di dettaglio prodotto.
         if (window.location.hash === "#Prodotti") {
           const prodottiSection = document.getElementById("Prodotti");
-          if (prodottiSection) {
+          // Usiamo un piccolo timeout per assicurare che il rendering sia completo
+          if (prodottiSection) { 
             prodottiSection.scrollIntoView({ behavior: "smooth" });
           }
         }
@@ -188,6 +206,15 @@ document.addEventListener("DOMContentLoaded", () => {
       applyFiltersAndSearch();
     });
   }
+
+  // Aggiungi un listener a tutti i link che puntano a #Prodotti
+  document.querySelectorAll('a[href*="#Prodotti"]').forEach((link) => {
+    link.addEventListener("click", () => {
+      resetFiltersAndSearch();
+      applyFiltersAndSearch();
+      updateFilterButtons();
+    });
+  });
 
   // Inizializza la sezione prodotti
   initProgetti();

@@ -66,41 +66,41 @@
   <body>
     <!-- Header -->
     <header class="site-header">
-      <div class="header-container">
-        <div class="logo-container">
-          <a href="#Home" class="logo-link">
-            <img
-              src="https://placehold.co/180x60/8B7355/ffffff?text=Macelleria+da+Ketti&font=playfair-display"
-              alt="Macelleria da Ketti"
-              class="logo"
-            />
-          </a>
+      <div class="header-container-wrapper">
+        <div class="header-container">
+          <div class="header-top">
+            <div class="logo-container">
+              <a href="#Home" class="logo-link">
+                <img
+                  src="https://placehold.co/180x60/8B7355/ffffff?text=Macelleria+da+Ketti&font=playfair-display"
+                  alt="Macelleria da Ketti"
+                  class="logo"
+                />
+              </a>
+            </div>
+            <!-- Announcement Bar -->
+            <div class="opening-announcement">
+              <p class="announcement-text">Prossima Apertura: Dicembre 2025!</p>
+            </div>
+          </div>
+
+          <nav class="main-nav">
+            <ul class="nav-list">
+              <li><a href="#Home" class="nav-link">Home</a></li>
+              <li><a href="#storia" class="nav-link">Storia</a></li>
+              <li><a href="#novita" class="nav-link">Novità</a></li>
+              <li><a href="#Prodotti" class="nav-link">Prodotti</a></li>
+              <li><a href="#Contatti" class="nav-link">Contatti</a></li>
+            </ul>
+          </nav>
+
+          <button class="mobile-menu-toggle" aria-label="Menu">
+            <span class="hamburger-line"></span>
+            <span class="hamburger-line"></span>
+            <span class="hamburger-line"></span>
+          </button>
         </div>
-
-        <nav class="main-nav">
-          <ul class="nav-list">
-            <li><a href="#Home" class="nav-link">Home</a></li>
-            <li><a href="#storia" class="nav-link">Storia</a></li>
-            <li><a href="#novita" class="nav-link">Novità</a></li>
-            <li><a href="#Prodotti" class="nav-link">Prodotti</a></li>
-            <li><a href="#Contatti" class="nav-link">Contatti</a></li>
-          </ul>
-        </nav>
-
-        <button class="mobile-menu-toggle" aria-label="Menu">
-          <span class="hamburger-line"></span>
-          <span class="hamburger-line"></span>
-          <span class="hamburger-line"></span>
-        </button>
       </div>
-      <!-- Announcement Bar -->
-      <div class="opening-announcement">
-        <p class="announcement-text">
-          <span class="material-icons">storefront</span> Prossima Apertura:
-          Dicembre 2025!
-        </p>
-      </div>
-
       <!-- Mobile Menu -->
       <div class="mobile-menu">
         <ul class="mobile-nav-list">
@@ -261,8 +261,7 @@
     <script src="JS/mobile-menu.js"></script>
     <script src="JS/more_info_story.js"></script>
     <script src="JS/novita.js"></script>
-    <script src="JS/colore-sezione.js"></script>
-    <!-- Includi il nuovo script progetti.js -->
+    <script src="JS/smooth-scroll.js"></script>
     <script src="JS/progetti.js"></script>
     <script src="JS/footer.js"></script>
     <script src="JS/animations-footer.js"></script>

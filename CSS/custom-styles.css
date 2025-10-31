@@ -1,17 +1,25 @@
 /* Stili personalizzati per migliorare l'UX design */
 
 /* Header e Layout */
-header {
-  padding: 12px 20px;
+.header-container-wrapper {
+  padding: 0 20px;
+  background-color: var(--surface);
 }
 
-.header-content {
+.header-container {
   display: flex;
   justify-content: space-between;
   align-items: center;
   width: 100%;
   max-width: 1200px;
   margin: 0 auto;
+  padding: 12px 0;
+}
+
+.header-top {
+  display: flex;
+  align-items: center;
+  gap: 24px;
 }
 
 /* Logo */
@@ -901,29 +909,16 @@ footer {
 
 /* Barra Annuncio Prossima Apertura */
 .opening-announcement {
-  background-color: var(--primary); /* Colore legno ripreso dal footer */
-  color: var(--white);
-  padding: 10px 20px;
-  width: 100%; /* Occupa tutta la larghezza */
+  color: var(--text-secondary);
   margin: 0; /* Rimuove margini laterali */
-  text-align: center;
-  animation: fadeIn 0.5s ease-out;
-  border-radius: 0 0 var(--radius-md) var(--radius-md); /* Arrotonda solo gli angoli inferiori */
+  text-align: left;
 }
 
 .announcement-text {
   font-size: 1em;
   font-weight: 600;
   margin: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
   letter-spacing: 0.5px;
-}
-
-.announcement-text .material-icons {
-  font-size: 1.2em;
 }
 
 /* Hero section a schermo intero per PC */
@@ -931,5 +926,26 @@ footer {
   .hero-section {
     height: 100vh; /* Imposta l'altezza al 100% dell'altezza dello schermo */
     min-height: 700px; /* Altezza minima per schermi non molto alti */
+  }
+}
+
+@media (max-width: 768px) {
+  .header-container {
+    flex-wrap: wrap;
+  }
+  .header-top {
+    order: 1;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  .main-nav {
+    order: 3;
+  }
+  .mobile-menu-toggle {
+    order: 2;
+  }
+  .opening-announcement {
+    padding: 0;
   }
 }
