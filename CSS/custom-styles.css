@@ -392,6 +392,8 @@ footer {
   transition: all 0.3s ease;
   font-weight: 500;
   font-size: 1.1em;
+  text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000,
+    1px 1px 0 #000; /* Aggiunge un contorno nero al testo */
 }
 
 .filter-button:hover {
@@ -908,11 +910,13 @@ footer {
   color: var(--accent-cream); /* Colore crema per un contrasto più morbido */
   padding: 10px 20px;
   border-radius: 50px; /* Forma a pillola */
-  font-size: 1.1rem;
+  font-size: 1.2rem; /* Aumentata la dimensione del testo */
   font-weight: 600;
   margin-bottom: 20px; /* Spazio sotto il banner */
   border: none; /* Rimuovo il bordo per coerenza con i pulsanti */
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); /* Stessa ombra dei pulsanti CTA */
+  text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000,
+    1px 1px 0 #000; /* Aggiunge un contorno nero al testo */
 }
 
 .opening-soon-banner .material-icons {
@@ -924,14 +928,14 @@ footer {
 /* Stili responsive per il banner */
 @media (max-width: 768px) {
   .opening-soon-banner {
-    font-size: 1rem;
+    font-size: 1.1rem;
     padding: 8px 16px;
   }
 }
 
 @media (max-width: 480px) {
   .opening-soon-banner {
-    font-size: 0.9rem;
+    font-size: 1rem;
     padding: 6px 12px;
   }
 }

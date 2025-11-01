@@ -945,6 +945,8 @@ h6 {
   border-radius: var(--radius-button);
   transition: all var(--transition-base);
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000,
+    1px 1px 0 #000; /* Contorno nero al testo */
 }
 
 .cta-button:hover {
@@ -963,6 +965,8 @@ h6 {
   font-weight: 600;
   transition: all var(--transition-base);
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000,
+    1px 1px 0 #000; /* Contorno nero al testo */
 }
 
 .filter-button:hover {
