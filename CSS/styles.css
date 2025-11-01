@@ -500,6 +500,23 @@ h6 {
   line-height: 1.6;
 }
 
+/* Stili per l'immagine della sezione "Storia" su mobile e tablet */
+@media (max-width: 1024px) {
+/* Stili per l'immagine della sezione "Storia" su mobile e tablet standard */
+@media (max-width: 1023px) {
+  .about-image {
+    max-height: 400px; /* Limita l'altezza dell'immagine */
+    margin: 0 auto; /* Centra l'immagine se il contenitore è più largo */
+  }
+}
+
+/* Stili per l'immagine della sezione "Storia" su tablet grandi (es. iPad Pro) */
+@media (min-width: 1024px) and (max-width: 1200px) {
+  .about-image {
+    max-height: 550px;
+  }
+}
+
 /* ===== Products Section ===== */
 .products-section {
   padding: var(--spacing-lg) 0;
