@@ -572,6 +572,7 @@ h6 {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: var(--spacing-lg);
+  align-items: stretch; /* Assicura che le card abbiano la stessa altezza */
 }
 
 .Progetti-card {
@@ -618,7 +619,7 @@ h6 {
 }
 
 .Progetti-card h3 {
-  font-size: 1.5rem;
+  font-size: 2rem;
   /* Removed padding, now handled by card-content wrapper */
   padding: 0;
   color: var(--primary);
@@ -629,11 +630,10 @@ h6 {
   /* Removed padding and improved text display */
   padding: 0;
   color: var(--text-muted);
-  font-size: 0.95rem;
+  color: var(--ash-darkest);
+  font-size: 1.1rem;
   line-height: 1.6;
-  margin-bottom: auto; /* Pushes price and category to the bottom */
-  padding-bottom: var(--spacing-sm); /* Adds some space before price */
-  flex-grow: 1;
+  flex-grow: 1; /* Fa espandere la descrizione per riempire lo spazio */
 }
 
 .prezzo {
@@ -854,4 +854,9 @@ h6 {
   to {
     opacity: 1;
   }
+}
+
+
+.nome{
+  color: #8b7355 !important;
 }

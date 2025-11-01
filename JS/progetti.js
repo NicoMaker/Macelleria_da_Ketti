@@ -137,7 +137,7 @@ document.addEventListener("DOMContentLoaded", () => {
         <img class="immagine" src="${item.immagine}" alt="${item.nome}" loading="lazy">
       </div>
       <div class="Progetti-card-content">
-        <h3>${item.nome}</h3>
+        <h3 class="nome">${item.nome}</h3>
         <p class="descrizione">${item.descrizione}</p>
         ${categoriaHtml}
       </div>
