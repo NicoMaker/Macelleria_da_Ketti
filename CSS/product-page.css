@@ -167,15 +167,14 @@
   display: inline-flex;
   align-items: center;
   gap: var(--spacing-sm);
-  padding: var(--spacing-md) var(--spacing-xl);
+  padding: 12px 30px; /* Allineato con .cta-button */
   background-color: var(--accent-warm);
   color: var(--white);
   font-weight: 600;
   border-radius: var(--radius-button);
   transition: all var(--transition-base);
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000,
-    1px 1px 0 #000; /* Contorno nero al testo */
+  text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
 }
 
 .back-button:hover {

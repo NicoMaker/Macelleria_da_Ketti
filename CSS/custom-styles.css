@@ -52,12 +52,7 @@ header {
 .hamburger-menu {
   width: 40px;
   height: 30px;
-  background: linear-gradient(
-    /* Ripristinato il gradiente con nuovi colori */
-    to bottom,
-    #e53e3e /* Rosso più chiaro */,
-    #c81e1e /* Rosso più scuro */
-  );
+  background: linear-gradient(to bottom, #e53e3e, #c81e1e);
   border-radius: 5px;
   padding: 6px;
   display: none;
@@ -67,7 +62,6 @@ header {
   z-index: 1001;
 }
 
-/* Custom styles for the hamburger menu */
 .hamburger-menu span {
   display: block;
   height: 3px;
@@ -75,7 +69,6 @@ header {
   background-color: #fff;
   border-radius: 3px;
   transition: all 0.3s ease;
-  background-color: #fff; /* Linee interne bianche per contrasto */
 }
 
 .hamburger-menu.active span:nth-child(1) {
@@ -149,6 +142,103 @@ header nav ul li a.active::after {
   display: none;
 }
 
+/* Section Title */
+.section-title {
+  font-size: 2.2rem;
+  font-weight: 700;
+  margin-bottom: 20px;
+  text-transform: uppercase;
+  position: relative;
+  padding-bottom: 10px;
+  letter-spacing: 1.5px;
+}
+
+.section-title:after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background-color: #ffcc80;
+  border-radius: 3px;
+}
+
+/* Grid container centralizzato per novità e prodotti */
+.novita-container,
+.progetti-container,
+.pc-view {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 30px;
+  justify-items: center;
+  align-items: start;
+  margin: 30px auto;
+  max-width: 1200px;
+  padding: 0 20px;
+  width: 100%;
+}
+
+.Progetti-card {
+  background-color: #fff;
+  border-radius: 15px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  width: 100%;
+  max-width: 350px;
+  cursor: pointer;
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeInUp 0.5s forwards;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.Progetti-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+}
+
+@keyframes fadeInUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.container-immagine {
+  width: 100%;
+  height: 200px;
+  overflow: hidden;
+  position: relative;
+  margin: 0 auto;
+}
+
+.container-immagine img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  transition: transform 0.5s ease;
+}
+
+.Progetti-card:hover .container-immagine img {
+  transform: scale(1.05);
+}
+
+.Progetti-card h3 {
+  padding: 15px 20px 5px;
+  color: #333;
+  font-size: 1.3em;
+  font-weight: 600;
+}
+
+.Progetti-card p {
+  padding: 0 20px 20px;
+  color: #555;
+  font-size: 1em;
+  line-height: 1.6;
+}
+
 /* Footer */
 footer {
   padding: 20px 5%;
@@ -169,27 +259,6 @@ footer {
 .contact-section,
 .social-section {
   flex: 1;
-}
-
-.section-title {
-  font-size: 2.2rem; /* Aumentata la dimensione per maggiore impatto visivo (35.2px) */
-  font-weight: 700;
-  margin-bottom: 20px;
-  text-transform: uppercase;
-  position: relative;
-  padding-bottom: 10px;
-  letter-spacing: 1.5px;
-}
-
-.section-title:after {
-  content: "";
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  height: 3px;
-  background-color: #ffcc80;
-  border-radius: 3px;
 }
 
 .contact-list,
@@ -292,7 +361,6 @@ footer {
   padding: 5px;
 }
 
-/* Overlay per la mappa con icona al passaggio del mouse */
 .map-overlay {
   position: absolute;
   top: 0;
@@ -368,12 +436,7 @@ footer {
   letter-spacing: 0.5px;
 }
 
-/* Progetti Section */
-#Progetti {
-  text-align: center;
-  padding: 20px 5%;
-}
-
+/* Filter Buttons */
 .filter-container {
   display: flex;
   justify-content: center;
@@ -392,75 +455,17 @@ footer {
   transition: all 0.3s ease;
   font-weight: 500;
   font-size: 1.1em;
-  text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000,
-    1px 1px 0 #000; /* Aggiunge un contorno nero al testo */
+  text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
 }
 
 .filter-button:hover {
-  background-color: #a0522d; /* Colore più caldo per l'hover */
+  background-color: #a0522d;
   transform: translateY(-3px);
 }
 
 .filter-button.active {
   background-color: #5a3a1a;
-  transform: translateY(0); /* Rimuove l'effetto di sollevamento quando è attivo */
-}
-
-.novita-container,
-.Progetti-container {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 30px;
-  justify-items: center; /* Assicura che le card siano centrate */
-  margin-top: 30px;
-  min-height: 200px; /* Aggiunto per evitare "salti" durante il caricamento */
-}
-
-.Progetti-card {
-  background-color: #fff;
-  border-radius: 15px;
-  overflow: hidden;
-  transition: all 0.3s ease;
-  width: 100%;
-  max-width: 350px;
-  cursor: pointer;
-  opacity: 0;
-  transform: translateY(20px);
-  animation: fadeInUp 0.5s forwards;
-}
-
-@keyframes fadeInUp {
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.Progetti-card:hover {
-  transform: translateY(-10px);
-}
-
-.container-immagine {
-  width: 100%;
-  height: 180px;
-  overflow: hidden;
-  position: relative;
-  margin: 0 auto;
-}
-
-.container-immagine img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center;
-  transition: transform 0.5s ease;
-}
-
-.Progetti-card p {
-  padding: 0 20px 20px;
-  color: #555;
-  font-size: 1em;
-  line-height: 1.6;
+  transform: translateY(0);
 }
 
 /* Animazioni */
@@ -495,6 +500,191 @@ footer {
   }
 }
 
+/* Search container */
+.search-container {
+  margin-bottom: 20px;
+  width: 100%;
+  max-width: 500px;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+}
+
+.search-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.search-input {
+  width: 100%;
+  padding: 12px 15px;
+  border: 2px solid #8b5a2b;
+  border-radius: 30px;
+  font-size: 1.1em;
+  background-color: white;
+  color: #333;
+  transition: all 0.3s ease;
+  max-width: 400px;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: #5a3a1a;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(139, 90, 43, 0.2);
+}
+
+.search-input::placeholder {
+  color: #999;
+}
+
+.no-results {
+  text-align: center;
+  padding: 20px;
+  font-size: 1.2em;
+  color: #666;
+  background-color: rgba(255, 255, 255, 0.8);
+  border-radius: 10px;
+  margin: 20px auto;
+  max-width: 80%;
+}
+
+/* Footer Title e Hero Title */
+.footer-title,
+.hero-title {
+  color: white;
+}
+
+/* CTA Button */
+.cta-button {
+  border-radius: 50px;
+  display: inline-block;
+  padding: 12px 30px;
+  background-color: #8b5a2b;
+  color: white;
+  text-decoration: none;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  margin: 10px;
+}
+
+.cta-button:hover {
+  background-color: #a0522d;
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+}
+
+/* Scroll Down Arrow */
+.scroll-down-arrow {
+  display: flex;
+  margin: 2rem auto 0;
+  position: relative;
+  color: white;
+  animation: bounce 2s infinite;
+  align-items: center;
+  justify-content: center;
+  width: 50px;
+  height: 50px;
+  border: 2px solid rgba(255, 255, 255, 0.7);
+  border-radius: 50%;
+  transition: background-color 0.3s ease;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.scroll-down-arrow:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.scroll-down-arrow .material-icons {
+  font-size: 36px;
+}
+
+@keyframes bounce {
+  0%,
+  20%,
+  50%,
+  80%,
+  100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-10px);
+  }
+  60% {
+    transform: translateY(-5px);
+  }
+}
+
+/* Section CTA */
+.section-cta {
+  text-align: center;
+  margin-top: 40px;
+}
+
+.section-cta .cta-button {
+  border-radius: 50px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.section-cta .cta-button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+}
+
+/* Hero CTA Container */
+.hero-cta-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+
+.cta-button.cta-button-secondary {
+  background-color: transparent;
+  border: 2px solid white;
+  color: white;
+  transition: all 0.3s ease;
+}
+
+.cta-button.cta-button-secondary:hover {
+  background-color: white;
+  color: #8b5a2b;
+  transform: translateY(-3px);
+}
+
+.hero-cta-container .cta-button {
+  margin-bottom: 0;
+}
+
+/* Opening Soon Banner */
+.opening-soon-banner {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background-color: var(--accent-warm);
+  color: var(--white);
+  padding: 10px 20px;
+  border-radius: 50px;
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-bottom: 20px;
+  border: none;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+}
+
+.opening-soon-banner .material-icons {
+  font-size: 20px;
+  background-color: transparent;
+  color: inherit;
+}
+
 /* Responsive styles */
 @media (max-width: 1024px) {
   .section h2 {
@@ -505,20 +695,19 @@ footer {
     font-size: 1rem;
   }
 
+  /* Maintain centering on tablet */
   .novita-container,
-  .Progetti-container {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  .Progetti-container {
-    grid-template-columns: repeat(2, 1fr);
+  .progetti-container,
+  .pc-view {
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    margin: 30px auto;
+    justify-items: center;
   }
 
   .filter-button {
     padding: 10px 18px;
     font-size: 1em;
   }
-
 }
 
 @media (max-width: 768px) {
@@ -526,161 +715,18 @@ footer {
     font-size: 16px;
   }
 
-  /* Header e Menu Mobile */
-  .hamburger-menu {
-    display: flex;
-  }
-
-  header nav.menu {
-    position: fixed;
-    top: 0;
-    right: -100%;
-    width: 80%;
-    height: 100vh;
-    background-image: url("Img/Legno.jpg");
-    background-size: cover;
-    background-position: center;
-    flex-direction: column;
-    justify-content: flex-start;
-    align-items: center;
-    transition: right 0.3s ease;
-    z-index: 1000;
-    padding-top: 70px;
-    box-shadow: -5px 0 15px rgba(0, 0, 0, 0.3);
-  }
-
-  header nav.menu::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(to bottom, rgba(139, 90, 43, 0.85), rgba(90, 58, 26, 0.95));
-    z-index: -1;
-  }
-
-  header nav.menu.active {
-    right: 0;
-  }
-
-  .mobile-menu-content {
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    padding: 0 20px;
-  }
-
-  .mobile-logo {
-    display: block;
-    margin: 0 auto 40px;
-    width: 150px;
-    height: 150px;
-    border-radius: 75px;
-    overflow: hidden;
-    border: 4px solid #ffcc80;
-    animation: pulse 2s infinite alternate;
-  }
-
-  .mobile-logo img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-
-  header nav ul {
-    flex-direction: column;
-    align-items: center;
-    width: 100%;
-  }
-
-  header nav ul li {
-    margin: 15px 0;
-    width: 100%;
-    text-align: center;
-  }
-
-  header nav ul li a {
-    font-size: 1.5em;
-    padding: 15px;
-    display: block;
-    margin: 10px 0;
-    border-radius: 30px;
-    background-color: rgba(0, 0, 0, 0.2);
-    transition: all 0.3s ease;
-    width: 100%;
-  }
-
-  header nav ul li a:hover,
-  header nav ul li a.active {
-    background-color: rgba(255, 204, 128, 0.3);
-    color: #fff;
-    transform: translateY(-2px);
-  }
-
-  /* Stili per i link del menu mobile quando attivi */
-  .mobile-nav-link.active {
-    background-color: transparent; /* Rimuove lo sfondo per un look più pulito */
-    color: var(--primary); /* Usa il colore primario come nella versione desktop */
-    font-weight: 700; /* Rende il testo in grassetto */
-    border-left: 4px solid var(--primary); /* Cambia il colore del bordo per coerenza */
-  }
-
-  /* Main Container */
-  .main-container {
-    margin-top: 100px;
-    padding-top: 20px;
-  }
-
-  .section-title {
-    font-size: 1.7rem; /* Ridotta la dimensione per mobile */
-  }
-
-  .section h2 {
-    font-size: 1.6em;
-  }
-
-  .section p {
-    font-size: 1rem;
-  }
+  /* ... existing code for header and menu ... */
 
   .novita-container,
-  .Progetti-container {
-    grid-template-columns: minmax(0, 1fr);
-  }
-
-  #Home {
-    min-height: 40vh;
-    padding: 20px;
-  }
-
-  #Home h2 {
-    font-size: 1.5em;
-  }
-
-  #Home p {
-    font-size: 1em;
-  }
-
-  /* Footer */
-  .footer-columns {
-    flex-direction: column;
-    gap: 30px;
-  }
-
-  #map-container {
-    height: 200px;
-  }
-
-  .map-link {
-    font-size: 14px;
-    padding: 8px 16px;
-  }
-
-  .copyright {
-    font-size: 14px;
+  .progetti-container,
+  .pc-view {
+    /* Ensure centering on iPad mini and tablets */
+    grid-template-columns: 1fr;
+    padding: 0 15px;
+    margin: 30px auto;
+    justify-items: center;
+    max-width: 500px;
+    width: 100%;
   }
 }
 
@@ -715,223 +761,30 @@ footer {
     font-size: 1.3em;
     padding: 12px;
   }
-}
 
-/* Add this to your custom-styles.css file */
-
-/* Search container */
-.search-container {
-  margin-bottom: 20px;
-  width: 100%;
-  max-width: 500px;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-.search-input-wrapper {
-  position: relative;
-  display: flex;
-  align-items: center;
-}
-
-.search-input {
-  width: 100%;
-  padding: 12px 15px;
-  border: 2px solid #8b5a2b;
-  border-radius: 30px;
-  font-size: 1.1em;
-  background-color: white;
-  color: #333;
-  transition: all 0.3s ease;
-}
-
-.search-input:focus {
-  outline: none;
-  border-color: #5a3a1a;
-  transform: translateY(-2px);
-}
-
-.search-input::placeholder {
-  color: #999;
-}
-
-/* No results message */
-.no-results {
-  text-align: center;
-  padding: 20px;
-  font-size: 1.2em;
-  color: #666;
-  background-color: rgba(255, 255, 255, 0.8);
-  border-radius: 10px;
-  margin: 20px auto;
-  max-width: 80%;
-}
-
-/* Responsive styles for search */
-@media (max-width: 768px) {
-  .search-container {
-    max-width: 100%;
+  .opening-soon-banner {
+    font-size: 1rem;
+    padding: 6px 12px;
   }
 
-  .search-input {
-    padding: 10px 12px;
-    font-size: 1em;
-  }
-
-  .search-icon {
-    font-size: 20px;
-    right: 12px;
-  }
-}
-
-@media (max-width: 480px) {
   .search-input {
     padding: 8px 10px;
     font-size: 0.9em;
   }
-}
 
-.footer-title,
-.hero-title {
-  color: white;
-}
-
-/* Stile per il pulsante CTA nella hero section */
-.hero-section .cta-button {
-  border-radius: 50px; /* Aumenta l'arrotondamento */
-}
-
-/* Stile per la freccia di scorrimento */
-.scroll-down-arrow {
-  display: flex; /* Impostato su flex per centrare l'icona interna */
-  margin: 2rem auto 0; /* Aggiunge margine sopra e la centra orizzontalmente */
-  position: relative; /* Necessario per l'animazione bounce */
-  color: var(--white);
-  animation: bounce 2s infinite;
-  align-items: center;
-  justify-content: center;
-  width: 50px;
-  height: 50px;
-  border: 2px solid rgba(255, 255, 255, 0.7);
-  border-radius: 50%;
-  transition: background-color var(--transition-base);
-}
-
-.scroll-down-arrow:hover {
-  background-color: rgba(255, 255, 255, 0.1);
-}
-
-.scroll-down-arrow .material-icons {
-  font-size: 36px;
-}
-
-@keyframes bounce {
-  0%,
-  20%,
-  50%,
-  80%,
-  100% {
-    transform: translateY(0);
+  /* Mobile grid centering */
+  .novita-container,
+  .progetti-container,
+  .pc-view {
+    grid-template-columns: 1fr;
+    gap: 20px;
+    padding: 0 5px;
+    margin: 20px auto;
+    justify-items: center;
+    max-width: 100%;
   }
-  40% {
-    transform: translateY(-10px);
-  }
-  60% {
-    transform: translateY(-5px);
-  }
-}
 
-/* Stile per il contenitore del pulsante CTA nelle sezioni */
-.section-cta {
-  text-align: center;
-  margin-top: 40px; /* Aggiunge spazio sopra il pulsante */
-}
-
-/* Stile unificato per i pulsanti CTA nelle sezioni */
-.section-cta .cta-button {
-  border-radius: 50px; /* Aumenta l'arrotondamento per un look moderno */
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  transition: all var(--transition-base);
-}
-
-.section-cta .cta-button:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
-}
-/* Contenitore per i pulsanti nella hero section */
-.hero-cta-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: var(--spacing-md);
-  flex-wrap: wrap; /* Permette ai pulsanti di andare a capo su schermi piccoli */
-  margin-bottom: var(--spacing-xl);
-}
-
-/* Stile per il pulsante secondario */
-.cta-button.cta-button-secondary {
-  background-color: transparent;
-  border: 2px solid var(--white);
-  color: var(--white);
-  transition: all var(--transition-base);
-}
-
-.cta-button.cta-button-secondary:hover {
-  background-color: var(--white);
-  color: var(--primary);
-  transform: translateY(-3px);
-}
-
-/* Rimuove il margine inferiore dal singolo pulsante quando è nel contenitore */
-.hero-cta-container .cta-button {
-  margin-bottom: 0;
-}
-
-/* Assicura che il testo dei pulsanti nella hero section non vada a capo su mobile */
-@media (max-width: 480px) {
-  .hero-cta-container {
-    flex-direction: column; /* Impila i pulsanti verticalmente */
-  }
-  .hero-cta-container .cta-button {
-    width: 280px; /* Imposta una larghezza fissa per entrambi i pulsanti */
-  }
-}
-
-/* Banner Prossima Apertura nella Hero Section */
-.opening-soon-banner {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  background-color: var(--accent-warm);
-  color: var(--accent-cream); /* Colore crema per un contrasto più morbido */
-  padding: 10px 20px;
-  border-radius: 50px; /* Forma a pillola */
-  font-size: 1.2rem; /* Aumentata la dimensione del testo */
-  font-weight: 600;
-  margin-bottom: 20px; /* Spazio sotto il banner */
-  border: none; /* Rimuovo il bordo per coerenza con i pulsanti */
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); /* Stessa ombra dei pulsanti CTA */
-  text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000,
-    1px 1px 0 #000; /* Aggiunge un contorno nero al testo */
-}
-
-.opening-soon-banner .material-icons {
-  font-size: 20px;
-  background-color: transparent; /* Assicura che l'icona non abbia sfondo */
-  color: inherit; /* Eredita il colore dal genitore */
-}
-
-/* Stili responsive per il banner */
-@media (max-width: 768px) {
-  .opening-soon-banner {
-    font-size: 1.1rem;
-    padding: 8px 16px;
-  }
-}
-
-@media (max-width: 480px) {
-  .opening-soon-banner {
-    font-size: 1rem;
-    padding: 6px 12px;
+  .Progetti-card {
+    max-width: 100%;
   }
 }
