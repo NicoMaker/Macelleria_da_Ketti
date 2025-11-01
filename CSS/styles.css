@@ -500,23 +500,6 @@ h6 {
   line-height: 1.6;
 }
 
-/* Stili per l'immagine della sezione "Storia" su mobile e tablet */
-@media (max-width: 1024px) {
-/* Stili per l'immagine della sezione "Storia" su mobile e tablet standard */
-@media (max-width: 1023px) {
-  .about-image {
-    max-height: 400px; /* Limita l'altezza dell'immagine */
-    margin: 0 auto; /* Centra l'immagine se il contenitore è più largo */
-  }
-}
-
-/* Stili per l'immagine della sezione "Storia" su tablet grandi (es. iPad Pro) */
-@media (min-width: 1024px) and (max-width: 1200px) {
-  .about-image {
-    max-height: 550px;
-  }
-}
-
 /* ===== Products Section ===== */
 .products-section {
   padding: var(--spacing-lg) 0;
@@ -589,7 +572,6 @@ h6 {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: var(--spacing-lg);
-  align-items: stretch; /* Assicura che le card abbiano la stessa altezza */
 }
 
 .Progetti-card {
@@ -636,7 +618,7 @@ h6 {
 }
 
 .Progetti-card h3 {
-  font-size: 2rem;
+  font-size: 1.5rem;
   /* Removed padding, now handled by card-content wrapper */
   padding: 0;
   color: var(--primary);
@@ -647,10 +629,11 @@ h6 {
   /* Removed padding and improved text display */
   padding: 0;
   color: var(--text-muted);
-  color: var(--ash-darkest);
-  font-size: 1.1rem;
+  font-size: 0.95rem;
   line-height: 1.6;
-  flex-grow: 1; /* Fa espandere la descrizione per riempire lo spazio */
+  margin-bottom: auto; /* Pushes price and category to the bottom */
+  padding-bottom: var(--spacing-sm); /* Adds some space before price */
+  flex-grow: 1;
 }
 
 .prezzo {
@@ -871,9 +854,4 @@ h6 {
   to {
     opacity: 1;
   }
-}
-
-
-.nome{
-  color: #8b7355 !important;
 }
