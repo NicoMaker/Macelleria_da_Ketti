@@ -51,7 +51,6 @@
   font-size: 20px;
   transition: all var(--transition-base);
   border-radius: 50%;
-  user-select: none;
   background-color: rgba(139, 115, 85, 0.7);
   z-index: 10;
 }
