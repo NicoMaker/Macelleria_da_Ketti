@@ -59,6 +59,18 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  window.addEventListener("scroll", highlightNavigation)
-  highlightNavigation() // Chiama la funzione al caricamento per impostare lo stato iniziale
+  // Funzione di inizializzazione per lo script di highlighting.
+  function initializeHighlighting() {
+    window.addEventListener("scroll", highlightNavigation);
+    highlightNavigation(); // Imposta lo stato iniziale corretto.
+  }
+
+  // Controlla se l'URL contiene un hash (es. #Prodotti).
+  // Se sì, ritarda l'inizializzazione per permettere al browser di scorrere alla sezione.
+  if (window.location.hash) {
+    setTimeout(initializeHighlighting, 150); // Un piccolo ritardo è sufficiente.
+  } else {
+    // Se non c'è un hash, inizializza subito.
+    initializeHighlighting();
+  }
 });
