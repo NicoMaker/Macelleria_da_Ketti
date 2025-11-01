@@ -42,13 +42,11 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
 
-    // Gestione categorie come in progetti.js
-    const categories = item.categorie || [];
-    let categoriaHtml = "";
-    if (Array.isArray(categories) && categories.length > 0) {
-      const prefix = categories.length > 1 ? "Categorie" : "Categoria";
-      categoriaHtml = `<p class="categoria">${prefix}: ${categories.join(", ")}</p>`;
-    }
+    // Mostra la categoria se disponibile
+    const categoriaHtml =
+      item.categorie && item.categorie.length > 0
+        ? `<p class="categoria">${item.categorie.length > 1 ? "Categorie" : "Categoria"}: ${item.categorie.join(", ")}</p>`
+        : "";
 
     card.innerHTML = `  
       <div class="container-immagine">

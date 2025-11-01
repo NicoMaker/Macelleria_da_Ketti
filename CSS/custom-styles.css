@@ -1,5 +1,10 @@
 /* Stili personalizzati per migliorare l'UX design */
 
+/* Header e Layout */
+header {
+  padding: 12px 20px;
+}
+
 .header-content {
   display: flex;
   justify-content: space-between;
@@ -361,6 +366,12 @@ footer {
   margin-top: 30px;
   text-align: center;
   letter-spacing: 0.5px;
+}
+
+/* Progetti Section */
+#Progetti {
+  text-align: center;
+  padding: 20px 5%;
 }
 
 .filter-container {

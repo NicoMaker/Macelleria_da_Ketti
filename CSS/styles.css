@@ -106,7 +106,7 @@ ul {
 .container {
   max-width: 1200px;
   margin: 0 auto;
-  /* padding: 0 var(--spacing-md); */ /* Rimosso per un controllo più granulare a livello di sezione */
+  padding: 0 var(--spacing-md);
 }
 
 /* ===== Typography ===== */
@@ -148,8 +148,8 @@ h6 {
 
 .header-container {
   max-width: 1400px;
-  margin: 0 auto; /* Mantiene il contenuto centrato su schermi molto grandi */
-  padding: var(--spacing-md) var(--spacing-lg); /* Aggiunge padding laterale per il contenuto */
+  margin: 0 auto;
+  padding: var(--spacing-md);
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -157,7 +157,6 @@ h6 {
 
 .logo-container {
   display: flex;
-  margin-left: calc(-1 * var(--spacing-lg)); /* Sposta il logo a filo con il bordo sinistro */
   align-items: center;
   gap: var(--spacing-md);
 }
@@ -280,7 +279,7 @@ h6 {
 /* ===== Hero Section ===== */
 .hero-section {
   position: relative;
-  min-height: 100vh; /* Occupa l'intera altezza dello schermo */
+  min-height: 600px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -362,7 +361,7 @@ h6 {
 
 /* ===== About Section ===== */
 .about-section {
-  padding: var(--spacing-lg) var(--spacing-lg);
+  padding: var(--spacing-lg) 0;
   background-color: var(--background);
 }
 
@@ -479,7 +478,7 @@ h6 {
 
 /* ===== Products Section ===== */
 .products-section {
-  padding: var(--spacing-lg) var(--spacing-lg);
+  padding: var(--spacing-lg) 0;
   background-color: var(--background);
 }
 
@@ -577,7 +576,7 @@ h6 {
 .immagine {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
   transition: transform var(--transition-slow);
 }
 
@@ -668,7 +667,7 @@ h6 {
 .site-footer {
   background: linear-gradient(135deg, var(--ash-darkest) 0%, var(--primary) 100%);
   color: var(--white);
-  padding: var(--spacing-2xl) var(--spacing-lg) 0;
+  padding: var(--spacing-2xl) 0 0;
 }
 
 .footer-content {
@@ -761,6 +760,14 @@ h6 {
 
 /* ===== Responsive Design ===== */
 @media (min-width: 768px) {
+  .main-nav {
+    display: block;
+  }
+
+  .mobile-menu-toggle {
+    display: none;
+  }
+
   .about-grid {
     grid-template-columns: 1fr 1fr;
     gap: var(--spacing-2xl);
@@ -770,8 +777,7 @@ h6 {
     grid-template-columns: repeat(3, 1fr);
   }
 
-  .progetti-container,
-  .novita-container {
+  .progetti-container {
     grid-template-columns: repeat(2, 1fr);
   }
 
@@ -780,13 +786,20 @@ h6 {
   }
 }
 
-@media (min-width: 769px) {
-  .main-nav {
-    display: block;
+@media (min-width: 1024px) {
+  .progetti-container {
+    grid-template-columns: repeat(3, 1fr);
   }
 
-  .mobile-menu-toggle {
-    display: none;
+  .footer-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+@media (max-width: 767px) {
+  .progetti-container,
+  .novita-container {
+    grid-template-columns: 1fr;
   }
 }
 
@@ -801,13 +814,6 @@ h6 {
   }
   to {
     opacity: 1;
-  }
-}
-
-@media (min-width: 992px) {
-  .progetti-container,
-  .novita-container {
-    grid-template-columns: repeat(3, 1fr);
   }
 }
 
