@@ -270,12 +270,29 @@ h6 {
   font-weight: 500;
   border-bottom: 1px solid var(--gray-light);
   transition: all var(--transition-fast);
+  position: relative;
 }
 
 .mobile-nav-link:hover {
   color: var(--primary);
   background-color: var(--gray-light);
   padding-left: var(--spacing-lg);
+}
+
+.mobile-nav-link.active {
+  color: var(--primary); /* Mantiene il colore del testo per il link attivo */
+}
+
+.mobile-nav-link.active::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 4px;
+  height: 60%;
+  background-color: var(--primary);
+  border-radius: 2px;
 }
 
 /* ===== Hero Section ===== */
