@@ -399,6 +399,9 @@ h6 {
 .about-image {
   border-radius: var(--radius-lg);
   overflow: hidden;
+  /* Rende l'immagine più piccola su mobile e la centra */
+  max-width: 80%;
+  margin: 0 auto;
 }
 
 .about-image img {
@@ -803,7 +806,9 @@ h6 {
   }
 
   .about-grid {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 0.8fr 1.2fr; /* Immagine più piccola, testo più grande */
+    /* Rimuove il max-width per consentire al grid di gestire la larghezza */
+    max-width: none;
     gap: var(--spacing-2xl);
   }
 

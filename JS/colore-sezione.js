@@ -42,13 +42,12 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
 
-    // Aggiorna il titolo della pagina
-    const sectionElement = document.getElementById(currentSectionId);
-    const sectionName = sectionElement.dataset.sectionName || currentSectionId.charAt(0).toUpperCase() + currentSectionId.slice(1);
-    if (currentSectionId.toLowerCase() === 'home') {
-      document.title = baseTitle;
-    } else {
-      document.title = `${sectionName} - Macelleria da Ketti`;
+    // Aggiorna l'hash nell'URL senza aggiungere alla cronologia di navigazione.
+    const currentHash = window.location.hash;
+    const newHash = `#${currentSectionId}`;
+    
+    if (currentHash !== newHash) {
+      history.replaceState(null, null, newHash);
     }
   }
 
