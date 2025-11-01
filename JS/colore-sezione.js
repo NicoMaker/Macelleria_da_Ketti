@@ -60,14 +60,17 @@ document.addEventListener("DOMContentLoaded", () => {
   if (window.location.hash) {
     // Se la pagina viene caricata con un hash (es. #Contatti), il browser tenterà di scorrere.
     // Diamo un piccolo ritardo per assicurarci che lo scorrimento del browser sia terminato.
-    window.addEventListener('load', () => {
+    document.addEventListener('readystatechange', event => {
       // Forziamo l'evidenziazione della sezione dall'hash iniziale per evitare che lo script
       // la cambi erroneamente al caricamento.
-      scrollToHash();
-      forceHighlightFromHash();
-      // Solo dopo aver impostato lo stato corretto, aggiungiamo il listener per lo scroll.
-      initializeHighlighting();
-    });
+      if (event.target.readyState === 'complete') {
+        // Diamo al browser un istante per completare lo scroll prima di inizializzare l'highlighting.
+        // Questo previene una race condition in cui l'highlighting si attiva prima che lo scroll sia terminato.
+        setTimeout(() => {
+          initializeHighlighting();
+        }, 100); // Un piccolo ritardo è sufficiente
+      }
+    }, { once: true });
   } else {
     // Se non c'è un hash, inizializza subito.
     initializeHighlighting();
