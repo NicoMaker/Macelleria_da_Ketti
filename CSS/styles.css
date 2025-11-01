@@ -759,7 +759,7 @@ h6 {
 }
 
 /* ===== Responsive Design ===== */
-@media (min-width: 768px) {
+@media (min-width: 1025px) {
   .main-nav {
     display: block;
   }
@@ -796,7 +796,7 @@ h6 {
   }
 }
 
-@media (max-width: 767px) {
+@media (max-width: 1024px) {
   .progetti-container,
   .novita-container {
     grid-template-columns: 1fr;
