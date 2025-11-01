@@ -93,25 +93,35 @@ document.addEventListener("DOMContentLoaded", () => {
   function initializePage() {
     const hash = window.location.hash.substring(1);
     
-    if (hash) {
-      const targetElement = document.getElementById(hash);
-      
+    // Funzione helper per eseguire lo scroll e l'evidenziazione
+    const scrollToHash = (targetId) => {
+      const targetElement = document.getElementById(targetId);
       if (targetElement) {
-        // Evidenzia il link
-        updateActiveLink(hash);
-        
-        // Forza lo scroll alla sezione corretta IMMEDIATAMENTE
+        updateActiveLink(targetId);
         targetElement.scrollIntoView({ behavior: "auto" });
         
-        // Blocca gli aggiornamenti dell'hash per 2 secondi
         preventHashUpdate = true;
         setTimeout(() => {
           preventHashUpdate = false;
         }, 2000);
       } else {
-        // Hash non valido
+        // Hash non valido o elemento non trovato
         preventHashUpdate = false;
         highlightNavigation();
+      }
+    };
+
+    if (hash) {
+      // Se l'hash è "Contatti", il footer viene caricato dinamicamente.
+      // Dobbiamo attendere un evento personalizzato che segnali il caricamento del footer.
+      if (hash === 'Contatti') {
+        document.addEventListener('footerLoaded', () => {
+          scrollToHash(hash);
+        }, { once: true }); // L'evento viene ascoltato solo una volta
+      } else {
+        // Per tutte le altre sezioni, esegui subito lo scroll
+        // perché sono già presenti nel DOM.
+        scrollToHash(hash);
       }
     } else {
       // Nessun hash: calcola e imposta l'hash

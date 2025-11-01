@@ -19,6 +19,9 @@ document.addEventListener("DOMContentLoaded", () => {
       if (data.mappa && data.mappa.latitudine && data.mappa.longitudine) {
         initMap(data.mappa.latitudine, data.mappa.longitudine);
       }
+
+      // Notifica gli altri script che il footer è stato caricato
+      document.dispatchEvent(new CustomEvent('footerLoaded'));
     })
     .catch((error) => {
       console.error("Errore nel caricamento dei dati del footer:", error);
