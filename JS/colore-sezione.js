@@ -63,15 +63,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Gestione del caricamento iniziale.
   if (window.location.hash) {
-    // Se c'è un hash, il browser tenterà di scorrere. Diamo un piccolo ritardo
-    // all'inizializzazione per assicurarci che lo scroll sia completato.
+    // Se la pagina viene caricata con un hash (es. #Contatti), il browser tenterà di scorrere.
+    // Diamo un piccolo ritardo per assicurarci che lo scorrimento del browser sia terminato.
     setTimeout(() => {
+      // Forziamo l'evidenziazione della sezione dall'hash iniziale per evitare che lo script
+      // la cambi erroneamente al caricamento.
+      forceHighlightFromHash();
+      // Solo dopo aver impostato lo stato corretto, aggiungiamo il listener per lo scroll.
       initializeHighlighting();
-      // Se l'hash è #Contatti, forziamo un ricalcolo immediato per essere sicuri
-      // che la sezione corretta sia evidenziata, specialmente al refresh.
-      if (window.location.hash === '#Contatti') {
-        highlightNavigation();
-      }
     }, 150); // Aumentato leggermente il ritardo per maggiore stabilità
   } else {
     // Se non c'è un hash, inizializza subito.
@@ -79,3 +78,20 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
 });
+
+function forceHighlightFromHash() {
+  const hash = window.location.hash;
+  if (!hash) return;
+
+  const currentSectionId = hash.substring(1);
+  const navLinks = document.querySelectorAll(".nav-link, .mobile-nav-link");
+
+  navLinks.forEach((link) => {
+    const linkHref = link.getAttribute("href").substring(1);
+    if (linkHref === currentSectionId) {
+      link.classList.add("active");
+    } else {
+      link.classList.remove("active");
+    }
+  });
+}
