@@ -1,8 +1,7 @@
 // Active section highlighting on scroll
 document.addEventListener("DOMContentLoaded", () => {
-  const sections = document.querySelectorAll("section[id], footer[id]");
+  const sections = document.querySelectorAll("section[id], footer#Contatti");
   const navLinks = document.querySelectorAll(".nav-link, .mobile-nav-link");
-  const baseTitle = "Macelleria da Ketti - Carne di Qualità dal 1985";
   
   function highlightNavigation() {
     const scrollY = window.pageYOffset;
@@ -25,8 +24,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
     let currentSectionId = bestMatch.id;
 
-    // Caso speciale per la fine della pagina: se siamo quasi alla fine, forza l'evidenziazione di "Contatti".
-    if ((window.innerHeight + scrollY) >= (document.body.offsetHeight - 5)) {
+    // Caso speciale per la fine della pagina: se il footer è visibile nella parte inferiore
+    // della finestra, forza l'evidenziazione di "Contatti".
+    const footer = document.getElementById('Contatti');
+    if (footer && footer.getBoundingClientRect().top <= window.innerHeight) {
       currentSectionId = "Contatti";
     }
 
@@ -47,22 +48,34 @@ document.addEventListener("DOMContentLoaded", () => {
     const newHash = `#${currentSectionId}`;
     
     if (currentHash !== newHash) {
-      history.replaceState(null, null, newHash);
+      // Usiamo un try-catch perché in alcuni contesti (es. iframe) potrebbe fallire
+      try {
+        history.replaceState(null, null, newHash);
+      } catch (e) { console.error("Impossibile aggiornare l'hash dell'URL:", e); }
     }
   }
 
   // Funzione di inizializzazione per lo script di highlighting.
   function initializeHighlighting() {
     window.addEventListener("scroll", highlightNavigation);
-    highlightNavigation(); // Imposta lo stato iniziale corretto.
+    highlightNavigation(); // Imposta lo stato iniziale corretto al primo caricamento.
   }
 
-  // Controlla se l'URL contiene un hash (es. #Prodotti).
-  // Se sì, ritarda l'inizializzazione per permettere al browser di scorrere alla sezione.
+  // Gestione del caricamento iniziale.
   if (window.location.hash) {
-    setTimeout(initializeHighlighting, 150); // Un piccolo ritardo è sufficiente.
+    // Se c'è un hash, il browser tenterà di scorrere. Diamo un piccolo ritardo
+    // all'inizializzazione per assicurarci che lo scroll sia completato.
+    setTimeout(() => {
+      initializeHighlighting();
+      // Se l'hash è #Contatti, forziamo un ricalcolo immediato per essere sicuri
+      // che la sezione corretta sia evidenziata, specialmente al refresh.
+      if (window.location.hash === '#Contatti') {
+        highlightNavigation();
+      }
+    }, 150); // Aumentato leggermente il ritardo per maggiore stabilità
   } else {
     // Se non c'è un hash, inizializza subito.
     initializeHighlighting();
   }
+
 });
