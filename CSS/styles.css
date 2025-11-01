@@ -665,6 +665,7 @@ h6 {
 
 /* Novita Card Specific Styles */
 .novita-card {
+  background-color: #8b5a2b;
   background-color: var(--accent-cream);
   border-color: transparent;
 }
@@ -678,6 +679,7 @@ h6 {
   top: var(--spacing-md);
   left: var(--spacing-md);
   background-color: var(--accent-warm);
+  background-color: #8b5a2b;
   color: var(--white);
   padding: var(--spacing-xs) var(--spacing-sm);
   font-size: 0.8rem;
