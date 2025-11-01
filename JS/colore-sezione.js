@@ -1,58 +1,50 @@
 // Active section highlighting on scroll
-// Correzione definitiva del bug "Contatti → Novità"
+// Questo script è il SOLO responsabile di aggiornare l'hash dell'URL
 
 document.addEventListener("DOMContentLoaded", () => {
-  const sections = document.querySelectorAll("section[id], #Contatti");
+  const sections = document.querySelectorAll("section[id], footer#Contatti");
   const navLinks = document.querySelectorAll(".nav-link, .mobile-nav-link");
-
+  
   let isManualNavigation = false;
   let scrollTimeout;
-  let ignoreScroll = false;
+  let preventHashUpdate = false;
 
   function highlightNavigation() {
-    if (ignoreScroll) return;
-
-    const scrollY = window.scrollY;
-    const windowHeight = window.innerHeight;
-    const pageHeight = document.body.scrollHeight;
-
+    const scrollY = window.pageYOffset;
     let currentSectionId = "";
 
-    // Se siamo in fondo, segna Contatti
-    if (scrollY + windowHeight >= pageHeight - 10) {
-      currentSectionId = "#Contatti";
+    // PRIMA controlla se siamo alla fine della pagina (Contatti)
+    if ((window.innerHeight + scrollY) >= document.body.offsetHeight - 50) {
+      currentSectionId = "Contatti";
     } else {
-      // Trova la sezione più visibile al centro della viewport
-      let bestSection = null;
-      let minDistance = Infinity;
-
+      // Trova la sezione corrente
       sections.forEach((section) => {
         const rect = section.getBoundingClientRect();
-        const distance = Math.abs(rect.top - windowHeight / 2);
-
-        if (distance < minDistance && rect.bottom > 100) {
-          minDistance = distance;
-          bestSection = section;
+        if (rect.top <= window.innerHeight * 0.3) {
+          currentSectionId = section.getAttribute("id");
         }
       });
 
-      if (bestSection) {
-        currentSectionId = bestSection.getAttribute("id");
-      } else {
+      // Se nessuna sezione trovata, è Home
+      if (!currentSectionId) {
         currentSectionId = "Home";
       }
     }
 
-    // Aggiorna i link
-    navLinks.forEach((link) => {
-      const targetId = link.getAttribute("href").substring(1);
-      link.classList.toggle("active", targetId === currentSectionId);
-    });
+    // Aggiorna i link di navigazione
+    updateActiveLink(currentSectionId);
 
-    // Aggiorna hash
+    // NON aggiornare l'hash se è bloccato
+    if (preventHashUpdate) return;
+
+    // Aggiorna l'hash SOLO se è diverso dall'attuale
     const currentHash = window.location.hash.substring(1);
     if (currentHash !== currentSectionId) {
-      history.replaceState(null, null, `#${currentSectionId}`);
+      try {
+        history.replaceState(null, null, `#${currentSectionId}`);
+      } catch (e) {
+        console.error("Errore nell'aggiornamento dell'hash:", e);
+      }
     }
   }
 
@@ -73,18 +65,16 @@ document.addEventListener("DOMContentLoaded", () => {
       if (!targetElement) return;
 
       isManualNavigation = true;
-      ignoreScroll = true;
+      preventHashUpdate = false; // Permetti aggiornamenti dopo il click
 
       updateActiveLink(targetId);
       history.replaceState(null, null, `#${targetId}`);
 
       targetElement.scrollIntoView({ behavior: "smooth" });
 
-      // Blocca il ricalcolo fino a fine scroll (1s circa)
+      // Blocca il ricalcolo fino a fine scroll
       setTimeout(() => {
-        ignoreScroll = false;
         isManualNavigation = false;
-        highlightNavigation(); // forza l’aggiornamento corretto
       }, 1200);
     });
   });
@@ -92,16 +82,30 @@ document.addEventListener("DOMContentLoaded", () => {
   // Scroll listener
   window.addEventListener("scroll", () => {
     if (isManualNavigation) return;
+    
     clearTimeout(scrollTimeout);
     scrollTimeout = setTimeout(highlightNavigation, 100);
   });
 
   // Inizializzazione
-  if (window.location.hash) {
+  function initializePage() {
     const hash = window.location.hash.substring(1);
-    updateActiveLink(hash);
-    setTimeout(highlightNavigation, 800);
-  } else {
-    highlightNavigation();
+    
+    if (hash) {
+      // C'è un hash: evidenzia SOLO il link, NON cambiare l'hash
+      updateActiveLink(hash);
+      
+      // Blocca gli aggiornamenti dell'hash per 3 secondi
+      preventHashUpdate = true;
+      setTimeout(() => {
+        preventHashUpdate = false;
+      }, 3000);
+    } else {
+      // Nessun hash: calcola e imposta l'hash
+      preventHashUpdate = false;
+      highlightNavigation();
+    }
   }
+
+  initializePage();
 });
