@@ -648,11 +648,7 @@ footer {
 
   .novita-container,
   .Progetti-container {
-    grid-template-columns: 1fr;
-  }
-
-  .Progetti-container {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
 
   #Home {

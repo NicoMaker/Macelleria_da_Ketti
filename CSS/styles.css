@@ -801,6 +801,11 @@ h6 {
   .novita-container {
     grid-template-columns: 1fr;
   }
+
+  /* Riduci l'altezza della hero section su tablet per una migliore visibilità */
+  .hero-section {
+    min-height: 70vh;
+  }
 }
 
 /* ===== Utility Classes ===== */
