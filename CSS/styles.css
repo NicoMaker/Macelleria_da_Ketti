@@ -659,6 +659,8 @@ h6 {
   text-transform: uppercase;
   letter-spacing: 0.5px;
   z-index: 2;
+  text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000,
+    1px 1px 0 #000; /* Aggiunge un contorno nero al testo per visibilità */
 }
 
 /* ===== Footer ===== */
