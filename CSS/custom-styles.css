@@ -685,6 +685,12 @@ footer {
   color: inherit;
 }
 
+/* Rimuove l'effetto hover dal banner di prossima apertura senza modificare gli altri .cta-button */
+.opening-soon-banner.cta-button:hover {
+  transform: none;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
 /* Responsive styles */
 @media (max-width: 1024px) {
   .section h2 {

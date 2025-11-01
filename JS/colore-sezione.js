@@ -42,13 +42,6 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
 
-    // Aggiorna l'hash nell'URL senza aggiungere alla cronologia
-    // e solo se è cambiato per evitare chiamate non necessarie.
-    const currentHash = window.location.hash.substring(1);
-    if (currentSectionId && currentHash !== currentSectionId) {
-      history.replaceState(null, null, '#' + currentSectionId);
-    }
-
     // Aggiorna il titolo della pagina
     const sectionElement = document.getElementById(currentSectionId);
     const sectionName = sectionElement.dataset.sectionName || currentSectionId.charAt(0).toUpperCase() + currentSectionId.slice(1);
