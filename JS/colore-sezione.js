@@ -14,7 +14,11 @@ document.addEventListener("DOMContentLoaded", () => {
     let currentSectionId = "";
 
     // PRIMA controlla se siamo alla fine della pagina (Contatti)
-    if ((window.innerHeight + scrollY) >= document.body.offsetHeight - 50) {
+    // Aggiunto controllo per assicurarsi che l'elemento #Contatti esista.
+    // Questo previene che la sezione "Contatti" venga impostata erroneamente
+    // durante il caricamento iniziale prima che il footer sia renderizzato.
+    const contattiSection = document.getElementById('Contatti');
+    if (contattiSection && (window.innerHeight + scrollY) >= document.body.offsetHeight - 50) {
       currentSectionId = "Contatti";
     } else {
       // Trova la sezione corrente
@@ -115,8 +119,15 @@ document.addEventListener("DOMContentLoaded", () => {
       // Se l'hash è "Contatti", il footer viene caricato dinamicamente.
       // Dobbiamo attendere un evento personalizzato che segnali il caricamento del footer.
       if (hash === 'Contatti') {
+        // Disabilita temporaneamente il listener dello scroll per evitare che
+        // highlightNavigation() venga eseguito prima che lo scroll a #Contatti sia completato.
+        isManualNavigation = true; 
         document.addEventListener('footerLoaded', () => {
           scrollToHash(hash);
+          // Riattiva il listener dello scroll dopo che lo scroll è avvenuto.
+          setTimeout(() => {
+            isManualNavigation = false;
+          }, 500); // Un piccolo ritardo per sicurezza
         }, { once: true }); // L'evento viene ascoltato solo una volta
       } else {
         // Per tutte le altre sezioni, esegui subito lo scroll
