@@ -55,7 +55,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // Click su link — con scroll fluido
+  // Click su link — SENZA scroll fluido per evitare problemi
   navLinks.forEach((link) => {
     link.addEventListener("click", (event) => {
       event.preventDefault();
@@ -65,17 +65,19 @@ document.addEventListener("DOMContentLoaded", () => {
       if (!targetElement) return;
 
       isManualNavigation = true;
-      preventHashUpdate = false; // Permetti aggiornamenti dopo il click
+      preventHashUpdate = true;
 
       updateActiveLink(targetId);
       history.replaceState(null, null, `#${targetId}`);
 
-      targetElement.scrollIntoView({ behavior: "smooth" });
+      // Scroll immediato senza animazione
+      targetElement.scrollIntoView({ behavior: "auto" });
 
-      // Blocca il ricalcolo fino a fine scroll
+      // Sblocca dopo un momento
       setTimeout(() => {
+        preventHashUpdate = false;
         isManualNavigation = false;
-      }, 1200);
+      }, 500);
     });
   });
 
@@ -92,14 +94,25 @@ document.addEventListener("DOMContentLoaded", () => {
     const hash = window.location.hash.substring(1);
     
     if (hash) {
-      // C'è un hash: evidenzia SOLO il link, NON cambiare l'hash
-      updateActiveLink(hash);
+      const targetElement = document.getElementById(hash);
       
-      // Blocca gli aggiornamenti dell'hash per 3 secondi
-      preventHashUpdate = true;
-      setTimeout(() => {
+      if (targetElement) {
+        // Evidenzia il link
+        updateActiveLink(hash);
+        
+        // Forza lo scroll alla sezione corretta IMMEDIATAMENTE
+        targetElement.scrollIntoView({ behavior: "auto" });
+        
+        // Blocca gli aggiornamenti dell'hash per 2 secondi
+        preventHashUpdate = true;
+        setTimeout(() => {
+          preventHashUpdate = false;
+        }, 2000);
+      } else {
+        // Hash non valido
         preventHashUpdate = false;
-      }, 3000);
+        highlightNavigation();
+      }
     } else {
       // Nessun hash: calcola e imposta l'hash
       preventHashUpdate = false;
