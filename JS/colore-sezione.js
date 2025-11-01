@@ -1,70 +1,107 @@
 // Active section highlighting on scroll
+// Correzione definitiva del bug "Contatti → Novità"
+
 document.addEventListener("DOMContentLoaded", () => {
-  const sections = document.querySelectorAll("section[id], footer#Contatti");
+  const sections = document.querySelectorAll("section[id], #Contatti");
   const navLinks = document.querySelectorAll(".nav-link, .mobile-nav-link");
 
+  let isManualNavigation = false;
+  let scrollTimeout;
+  let ignoreScroll = false;
+
   function highlightNavigation() {
-    const scrollY = window.pageYOffset;
+    if (ignoreScroll) return;
+
+    const scrollY = window.scrollY;
+    const windowHeight = window.innerHeight;
+    const pageHeight = document.body.scrollHeight;
+
     let currentSectionId = "";
 
-    // Trova la sezione corrente basandosi sulla posizione rispetto alla finestra
-    sections.forEach((section) => {
-      const rect = section.getBoundingClientRect();
-      const sectionTop = rect.top + scrollY;
-      // Attiva la sezione se la parte superiore è sopra il 30% della finestra
-      if (scrollY >= sectionTop - window.innerHeight * 0.3) {
-        currentSectionId = section.getAttribute("id");
-      }
-    });
+    // Se siamo in fondo, segna Contatti
+    if (scrollY + windowHeight >= pageHeight - 10) {
+      currentSectionId = "#Contatti";
+    } else {
+      // Trova la sezione più visibile al centro della viewport
+      let bestSection = null;
+      let minDistance = Infinity;
 
-    // Se nessuna sezione trovata (cioè siamo in cima)
-    if (!currentSectionId) {
-      currentSectionId = "Home";
-    }
+      sections.forEach((section) => {
+        const rect = section.getBoundingClientRect();
+        const distance = Math.abs(rect.top - windowHeight / 2);
 
-    // Caso speciale: siamo in fondo alla pagina → forza “Contatti”
-    if ((window.innerHeight + scrollY) >= document.body.offsetHeight - 50) {
-      currentSectionId = "Contatti";
-    }
+        if (distance < minDistance && rect.bottom > 100) {
+          minDistance = distance;
+          bestSection = section;
+        }
+      });
 
-    // Aggiorna la classe "active" sui link di navigazione
-    navLinks.forEach((link) => {
-      const linkHref = link.getAttribute("href").substring(1);
-      if (linkHref === currentSectionId) {
-        link.classList.add("active");
+      if (bestSection) {
+        currentSectionId = bestSection.getAttribute("id");
       } else {
-        link.classList.remove("active");
+        currentSectionId = "Home";
       }
+    }
+
+    // Aggiorna i link
+    navLinks.forEach((link) => {
+      const targetId = link.getAttribute("href").substring(1);
+      link.classList.toggle("active", targetId === currentSectionId);
     });
 
-    // Aggiorna l'hash nell'URL senza aggiungere alla cronologia
-    const currentHash = window.location.hash;
-    const newHash = `#${currentSectionId}`;
-    if (currentHash !== newHash) {
-      try {
-        history.replaceState(null, null, newHash);
-      } catch (e) {
-        console.error("Impossibile aggiornare l'hash dell'URL:", e);
-      }
+    // Aggiorna hash
+    const currentHash = window.location.hash.substring(1);
+    if (currentHash !== currentSectionId) {
+      history.replaceState(null, null, `#${currentSectionId}`);
     }
   }
 
-  function initializeHighlighting() {
-    window.addEventListener("scroll", highlightNavigation);
-    highlightNavigation(); // Stato iniziale
+  function updateActiveLink(sectionId) {
+    navLinks.forEach((link) => {
+      const targetId = link.getAttribute("href").substring(1);
+      link.classList.toggle("active", targetId === sectionId);
+    });
   }
 
-  // Gestione del caricamento iniziale
+  // Click su link — con scroll fluido
+  navLinks.forEach((link) => {
+    link.addEventListener("click", (event) => {
+      event.preventDefault();
+      const targetId = link.getAttribute("href").substring(1);
+      const targetElement = document.getElementById(targetId);
+
+      if (!targetElement) return;
+
+      isManualNavigation = true;
+      ignoreScroll = true;
+
+      updateActiveLink(targetId);
+      history.replaceState(null, null, `#${targetId}`);
+
+      targetElement.scrollIntoView({ behavior: "smooth" });
+
+      // Blocca il ricalcolo fino a fine scroll (1s circa)
+      setTimeout(() => {
+        ignoreScroll = false;
+        isManualNavigation = false;
+        highlightNavigation(); // forza l’aggiornamento corretto
+      }, 1200);
+    });
+  });
+
+  // Scroll listener
+  window.addEventListener("scroll", () => {
+    if (isManualNavigation) return;
+    clearTimeout(scrollTimeout);
+    scrollTimeout = setTimeout(highlightNavigation, 100);
+  });
+
+  // Inizializzazione
   if (window.location.hash) {
-    // Se carichiamo con un hash (#Contatti, #Novita, ecc.)
-    window.scrollTo(0, 0); // Reset temporaneo per evitare glitch visivi
-    setTimeout(() => {
-      // Dopo che il browser ha completato lo scroll automatico verso l’hash
-      highlightNavigation();
-      initializeHighlighting();
-    }, 500); // 500ms di delay per lasciare tempo al browser
+    const hash = window.location.hash.substring(1);
+    updateActiveLink(hash);
+    setTimeout(highlightNavigation, 800);
   } else {
-    // Nessun hash → inizializza subito
-    initializeHighlighting();
+    highlightNavigation();
   }
 });
