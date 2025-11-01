@@ -26,8 +26,10 @@ document.addEventListener("DOMContentLoaded", () => {
     document.addEventListener("click", (e) => {
       if (!menuToggle.contains(e.target) && !mobileMenu.contains(e.target)) {
         menuToggle.classList.remove("active")
-        mobileMenu.classList.remove("active")
-        document.body.style.overflow = ""
+        if (mobileMenu.classList.contains("active")) {
+          mobileMenu.classList.remove("active")
+          document.body.style.overflow = ""
+        }
       }
     })
   }
