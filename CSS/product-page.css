@@ -225,3 +225,14 @@
 .back-button{
   background-color: #8b5a2b;
 }
+
+/* Disabilita gli effetti hover su dispositivi touch */
+@media (hover: none) and (pointer: coarse) {
+  .prev:hover,
+  .next:hover,
+  .dot:hover,
+  .back-button:hover {
+    transform: none;
+    box-shadow: none;
+  }
+}

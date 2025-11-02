@@ -689,6 +689,7 @@ footer {
 .opening-soon-banner.cta-button:hover {
   transform: none;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  background-color: var(--accent-warm); /* Mantiene il colore di sfondo originale */
 }
 
 /* Responsive styles */
@@ -792,5 +793,25 @@ footer {
 
   .Progetti-card {
     max-width: 100%;
+  }
+}
+
+/* Disabilita gli effetti hover su dispositivi touch */
+@media (hover: none) and (pointer: coarse) {
+  .logo-link:hover,
+  .logo-container:hover,
+  header nav ul li a:hover,
+  .Progetti-card:hover,
+  .contact-list li:hover,
+  .social-list li:hover,
+  .contact-list a:hover,
+  .social-list a:hover,
+  .map-link:hover,
+  .filter-button:hover,
+  .search-input:focus,
+  .cta-button:hover,
+  .scroll-down-arrow:hover {
+    transform: none;
+    box-shadow: none;
   }
 }

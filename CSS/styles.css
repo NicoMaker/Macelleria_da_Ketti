@@ -414,7 +414,7 @@ h6 {
 .about-content {
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start; /* Allinea il contenuto all'inizio (in alto) */
 }
 
 .about-text p {
@@ -424,8 +424,13 @@ h6 {
   margin-bottom: var(--spacing-md);
 }
 
+/* Rimuove il margine inferiore dal paragrafo che precede direttamente il pulsante */
+.about-text p + .more-info-btn {
+  margin-top: calc(-1 * var(--spacing-md));
+}
+
 .more-info-btn {
-  display: inline-flex;
+  display: flex; /* Modificato da inline-flex a flex */
   align-items: center;
   gap: var(--spacing-xs);
   color: var(--primary);
@@ -445,7 +450,7 @@ h6 {
 }
 
 .more-info-btn.active .btn-icon {
-  transform: rotate(180deg);
+  transform: rotate(180deg);  /* Rimosso per evitare la rotazione dell'icona */
 }
 
 .more-info-content {
@@ -456,7 +461,7 @@ h6 {
 
 .more-info-content.active {
   max-height: 500px;
-  margin-top: var(--spacing-md);
+  /* margin-top: var(--spacing-md); */ /* Rimosso il margine superiore */
 }
 
 /* Features Grid */
@@ -864,4 +869,22 @@ h6 {
 
 .nome{
   color: #8b7355 !important;
+}
+
+/* Disabilita gli effetti hover su dispositivi touch */
+@media (hover: none) and (pointer: coarse) {
+  .logo:hover,
+  .nav-link:hover,
+  .mobile-nav-link:hover,
+  .cta-button:hover,
+  .more-info-btn:hover,
+  .Progetti-card:hover,
+  .filter-button:hover,
+  .social-link:hover {
+    transform: none;
+    box-shadow: none;
+  }
+  .more-info-btn:hover {
+    gap: var(--spacing-xs);
+  }
 }
