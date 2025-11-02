@@ -449,10 +449,6 @@ h6 {
   transition: transform var(--transition-base);
 }
 
-.more-info-btn.active .btn-icon {
-  transform: rotate(180deg);  /* Rimosso per evitare la rotazione dell'icona */
-}
-
 .more-info-content {
   max-height: 0;
   overflow: hidden;
@@ -888,3 +884,4 @@ h6 {
     gap: var(--spacing-xs);
   }
 }
+

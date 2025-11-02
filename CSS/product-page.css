@@ -35,12 +35,12 @@
   display: block;
 }
 
+/* Frecce slider - versione corretta senza movimento al click */
 .prev,
 .next {
   cursor: pointer;
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
+  position: absolute !important;
+  top: 50% !important;
   width: 44px;
   height: 44px;
   display: flex;
@@ -49,10 +49,20 @@
   color: var(--white);
   font-weight: bold;
   font-size: 20px;
-  transition: all var(--transition-base);
   border-radius: 50%;
   background-color: rgba(139, 115, 85, 0.7);
   z-index: 10;
+  /* Mantiene sempre il transform per la centratura verticale */
+  transform: translateY(-50%) !important;
+  /* Transizione solo su background-color */
+  transition: background-color var(--transition-base) !important;
+  /* Previene comportamenti indesiderati */
+  text-decoration: none;
+  -webkit-tap-highlight-color: transparent;
+  outline: none;
+  border: none;
+  margin: 0;
+  padding: 0;
 }
 
 .next {
@@ -66,6 +76,24 @@
 .prev:hover,
 .next:hover {
   background-color: var(--primary);
+  transform: translateY(-50%) !important;
+}
+
+/* Previene qualsiasi movimento durante il click */
+.prev:active,
+.next:active {
+  transform: translateY(-50%) !important;
+  position: absolute !important;
+  top: 50% !important;
+}
+
+/* Previene il focus outline che può causare spostamenti */
+.prev:focus,
+.next:focus {
+  outline: none !important;
+  transform: translateY(-50%) !important;
+  position: absolute !important;
+  top: 50% !important;
 }
 
 /* Stili per i pallini di navigazione */
@@ -166,7 +194,7 @@
   display: inline-flex;
   align-items: center;
   gap: var(--spacing-sm);
-  padding: 12px 30px; /* Allineato con .cta-button */
+  padding: 12px 30px;
   background-color: var(--accent-warm);
   color: var(--white);
   font-weight: 600;
@@ -221,8 +249,7 @@
   }
 }
 
-
-.back-button{
+.back-button {
   background-color: #8b5a2b;
 }
 
@@ -232,7 +259,43 @@
   .next:hover,
   .dot:hover,
   .back-button:hover {
-    transform: none;
+    transform: none !important;
     box-shadow: none;
   }
+  
+  /* Mantiene la centratura verticale anche su touch */
+  .prev,
+  .next {
+    transform: translateY(-50%) !important;
+    position: absolute !important;
+    top: 50% !important;
+  }
+  
+  .prev:active,
+  .next:active,
+  .prev:focus,
+  .next:focus {
+    transform: translateY(-50%) !important;
+    position: absolute !important;
+    top: 50% !important;
+  }
+}
+
+/* Sovrascrive qualsiasi altro stile da altri CSS */
+.slider-container .prev,
+.slider-container .next {
+  transform: translateY(-50%) !important;
+  position: absolute !important;
+  top: 50% !important;
+}
+
+.slider-container .prev:hover,
+.slider-container .next:hover,
+.slider-container .prev:active,
+.slider-container .next:active,
+.slider-container .prev:focus,
+.slider-container .next:focus {
+  transform: translateY(-50%) !important;
+  position: absolute !important;
+  top: 50% !important;
 }
