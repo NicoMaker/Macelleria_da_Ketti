@@ -815,3 +815,30 @@ footer {
     box-shadow: none;
   }
 }
+
+/* Disabilita gli effetti hover su dispositivi touch */
+@media (hover: none) and (pointer: coarse) {
+  header nav ul li a:hover {
+    color: #edf2f7;
+  }
+
+  header nav ul li a:hover::after {
+    width: 0;
+  }
+
+  .contact-list li:hover,
+  .social-list li:hover {
+    transform: none;
+  }
+
+  .contact-list a:hover,
+  .social-list a:hover {
+    background-color: rgba(0, 0, 0, 0.2);
+  }
+
+  .map-link:hover,
+  .filter-button:hover,
+  .cta-button:hover {
+    background-color: #8b5a2b;
+  }
+}

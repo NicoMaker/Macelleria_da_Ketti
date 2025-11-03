@@ -870,18 +870,26 @@ h6 {
 /* Disabilita gli effetti hover su dispositivi touch */
 @media (hover: none) and (pointer: coarse) {
   .logo:hover,
-  .nav-link:hover,
-  .mobile-nav-link:hover,
   .cta-button:hover,
-  .more-info-btn:hover,
   .Progetti-card:hover,
   .filter-button:hover,
   .social-link:hover {
     transform: none;
     box-shadow: none;
   }
+
+  .nav-link:hover::after {
+    width: 0;
+  }
+
+  .mobile-nav-link:hover {
+    background-color: transparent;
+    padding-left: var(--spacing-md);
+  }
+
   .more-info-btn:hover {
     gap: var(--spacing-xs);
+    color: var(--primary);
   }
 }
 

@@ -256,11 +256,18 @@
 /* Disabilita gli effetti hover su dispositivi touch */
 @media (hover: none) and (pointer: coarse) {
   .prev:hover,
-  .next:hover,
-  .dot:hover,
+  .next:hover {
+    background-color: rgba(139, 115, 85, 0.7);
+  }
+
+  .dot:hover {
+    background-color: var(--gray-medium);
+  }
+
   .back-button:hover {
     transform: none !important;
     box-shadow: none;
+    background-color: var(--accent-warm);
   }
   
   /* Mantiene la centratura verticale anche su touch */
