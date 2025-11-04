@@ -130,7 +130,6 @@ header nav ul li a::after {
 
 header nav ul li a:hover {
   color: #ffcc80;
-  transform: translateY(-2px);
 }
 
 header nav ul li a:hover::after,
@@ -455,7 +454,8 @@ footer {
   transition: all 0.3s ease;
   font-weight: 500;
   font-size: 1.1em;
-  text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+  text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000,
+    1px 1px 0 #000;
 }
 
 .filter-button:hover {
@@ -676,7 +676,6 @@ footer {
   margin-bottom: 20px;
   border: none;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
 }
 
 .opening-soon-banner .material-icons {
@@ -689,7 +688,9 @@ footer {
 .opening-soon-banner.cta-button:hover {
   transform: none;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  background-color: var(--accent-warm); /* Mantiene il colore di sfondo originale */
+  background-color: var(
+    --accent-warm
+  ); /* Mantiene il colore di sfondo originale */
 }
 
 /* Responsive styles */

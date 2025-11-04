@@ -201,7 +201,6 @@
   border-radius: var(--radius-button);
   transition: all var(--transition-base);
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
 }
 
 .back-button:hover {
@@ -269,7 +268,7 @@
     box-shadow: none;
     background-color: var(--accent-warm);
   }
-  
+
   /* Mantiene la centratura verticale anche su touch */
   .prev,
   .next {
@@ -277,7 +276,7 @@
     position: absolute !important;
     top: 50% !important;
   }
-  
+
   .prev:active,
   .next:active,
   .prev:focus,
