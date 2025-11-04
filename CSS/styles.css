@@ -586,9 +586,10 @@ h6 {
 .progetti-container,
 .novita-container {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: var(--spacing-lg);
-  align-items: start; /* Allinea gli elementi all'inizio */
+  align-items: stretch; /* Allinea gli elementi per riempire l'altezza della cella */
+  justify-items: center;
   grid-auto-rows: 1fr; /* Rende tutte le righe della griglia della stessa altezza */
 }
 
@@ -602,6 +603,7 @@ h6 {
   /* Added flex layout for better content organization */
   display: flex;
   flex-direction: column;
+  width: 100%;
 }
 
 .Progetti-card:hover {
@@ -646,8 +648,8 @@ h6 {
 .descrizione {
   /* Removed padding and improved text display */
   padding: 0;
-  color: var(--text-muted);
-  font-size: 0.95rem;
+  color: var(--text-secondary);
+  font-size: 1rem;
   line-height: 1.6;
   margin-bottom: var(
     --spacing-sm
@@ -683,8 +685,7 @@ h6 {
 
 /* Novita Card Specific Styles */
 .novita-card {
-  background-color: #8b5a2b;
-  background-color: var(--accent-cream);
+  background-color: var(--surface);
   border-color: transparent;
 }
 

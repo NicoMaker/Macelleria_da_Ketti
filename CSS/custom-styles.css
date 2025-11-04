@@ -164,45 +164,19 @@ header nav ul li a.active::after {
   border-radius: 3px;
 }
 
-/* Grid container centralizzato per novità e prodotti */
-.novita-container,
-.progetti-container,
-.pc-view {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 30px;
-  justify-items: center;
-  align-items: start;
-  margin: 30px auto;
-  max-width: 1200px;
-  padding: 0 20px;
-  width: 100%;
-}
-
-.Progetti-card {
-  background-color: #fff;
-  border-radius: 15px;
-  overflow: hidden;
-  transition: all 0.3s ease;
-  width: 100%;
-  max-width: 350px;
-  cursor: pointer;
-  opacity: 0;
-  transform: translateY(20px);
-  animation: fadeInUp 0.5s forwards;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-
-.Progetti-card:hover {
-  transform: translateY(-10px);
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
-}
-
 @keyframes fadeInUp {
   to {
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+/* Stile base per le card, ereditato da styles.css ma con animazione specifica */
+.Progetti-card {
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeInUp 0.5s forwards;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .container-immagine {
@@ -219,24 +193,6 @@ header nav ul li a.active::after {
   object-fit: cover;
   object-position: center;
   transition: transform 0.5s ease;
-}
-
-.Progetti-card:hover .container-immagine img {
-  transform: scale(1.05);
-}
-
-.Progetti-card h3 {
-  padding: 15px 20px 5px;
-  color: #333;
-  font-size: 1.3em;
-  font-weight: 600;
-}
-
-.Progetti-card p {
-  padding: 0 20px 20px;
-  color: #555;
-  font-size: 1em;
-  line-height: 1.6;
 }
 
 /* Footer */
@@ -455,7 +411,8 @@ footer {
   transition: all 0.3s ease;
   font-weight: 500;
   font-size: 1.1em;
-  text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+  text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000,
+    1px 1px 0 #000;
 }
 
 .filter-button:hover {
@@ -676,7 +633,8 @@ footer {
   margin-bottom: 20px;
   border: none;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+  text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000,
+    1px 1px 0 #000;
 }
 
 .opening-soon-banner .material-icons {
@@ -689,7 +647,9 @@ footer {
 .opening-soon-banner.cta-button:hover {
   transform: none;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  background-color: var(--accent-warm); /* Mantiene il colore di sfondo originale */
+  background-color: var(
+    --accent-warm
+  ); /* Mantiene il colore di sfondo originale */
 }
 
 /* Responsive styles */
