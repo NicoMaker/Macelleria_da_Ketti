@@ -125,13 +125,11 @@ document.addEventListener("DOMContentLoaded", () => {
     // Assicurati che item.categorie sia un array, altrimenti usa un array vuoto
     const categories = item.categorie || [];
     let categoriaHtml = "";
-
+    
     // Mostra la categoria solo se il filtro è "Tutti" e il prodotto ha effettivamente delle categorie
-    if (currentFilter === "Tutti" &&
-      Array.isArray(categories) &&
-      categories.length > 0) {
+    if (currentFilter === "Tutti" && Array.isArray(categories) && categories.length > 0) {
       const prefix = categories.length > 1 ? "Categorie" : "Categoria";
-      categoriaHtml = `<p class="categoria">${prefix}: ${categories.join(", ")}</p>`;
+      categoriaHtml = `<p class="descrizione categoria">${prefix}: ${categories.join(", ")}</p>`;
     }
 
     card.innerHTML = `
@@ -196,7 +194,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Aggiungi un listener per l'evento 'pageshow' per gestire il ripristino dello stato
   // quando si torna indietro nella cronologia del browser.
-  window.addEventListener('pageshow', function (event) {
+  window.addEventListener('pageshow', function(event) {
     // 'persisted' è true se la pagina è stata caricata dalla cache del browser (bfcache)
     if (event.persisted) {
       loadStateFromStorage();

@@ -1,141 +1,154 @@
 <!DOCTYPE html>
 <html lang="it">
-
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Cotoletta di Suino - Macelleria da Ketti</title>
-  <link rel="stylesheet" href="../CSS/styles.css" />
-  <link rel="stylesheet" href="../CSS/custom-styles.css" />
-  <link rel="stylesheet" href="../CSS/product-page.css" />
-  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link
-    href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap"
-    rel="stylesheet" />
-</head>
-
-<body>
-  <header class="site-header">
-    <div class="header-container">
-      <div class="logo-container">
-        <a href="../index.html" class="logo-link">
-          <img src="https://placehold.co/180x60/8B7355/ffffff?text=Macelleria+da+Ketti&font=playfair-display"
-            alt="Macelleria da Ketti" class="logo" />
-        </a>
-      </div>
-
-      <nav class="main-nav">
-        <ul class="nav-list">
-          <li><a href="../index.html#Home" class="nav-link">Home</a></li>
-          <li><a href="../index.html#storia" class="nav-link">Storia</a></li>
-          <li><a href="../index.html#novita" class="nav-link">Novità</a></li>
-          <li>
-            <a href="../index.html#Prodotti" class="nav-link">Prodotti</a>
-          </li>
-          <li><a href="#Contatti" class="nav-link">Contatti</a></li>
-        </ul>
-      </nav>
-
-      <button class="mobile-menu-toggle" aria-label="Menu">
-        <span class="hamburger-line"></span>
-        <span class="hamburger-line"></span>
-        <span class="hamburger-line"></span>
-      </button>
-    </div>
-
-    <!-- Mobile Menu -->
-    <div class="mobile-menu">
-      <ul class="mobile-nav-list">
-        <li><a href="../index.html#Home" class="mobile-nav-link">Home</a></li>
-        <li>
-          <a href="../index.html#storia" class="mobile-nav-link">Storia</a>
-        </li>
-        <li>
-          <a href="../index.html#novita" class="mobile-nav-link">Novità</a>
-        </li>
-        <li>
-          <a href="../index.html#Prodotti" class="mobile-nav-link">Prodotti</a>
-        </li>
-        <li>
-          <a href="#Contatti" class="mobile-nav-link">Contatti</a>
-        </li>
-      </ul>
-    </div>
-  </header>
-
-  <main class="product-detail-container">
-    <!-- Intestazione della pagina del prodotto -->
-    <div class="container section-header" style="text-align: center; margin-bottom: 2rem;">
-      <h1 class="section-title">Cotoletta di Suino</h1>
-    </div>
-
-    <div class="product-detail-card">
-      <div class="product-image-gallery">
-        <div class="slider-container">
-          <div class="slide">
-            <img src="https://images.unsplash.com/photo-1432139555190-58524dae6a55?w=600&h=450&fit=crop"
-              alt="Cotoletta di Suino - Vista 1" class="main-product-image" />
-          </div>
-          <div class="slide" style="display: none">
-            <img src="https://images.unsplash.com/photo-1529692236671-f1f6cf9683ba?w=600&h=450&fit=crop"
-              alt="Cotoletta di Suino - Vista 2" class="main-product-image" />
-          </div>
-          <div class="slide" style="display: none">
-            <img src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=600&h=450&fit=crop"
-              alt="Cotoletta di Suino - Vista 3" class="main-product-image" />
-          </div>
-          <a class="prev" onclick="plusSlides(-1)">&#10094;</a>
-          <a class="next" onclick="plusSlides(1)">&#10095;</a>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cotoletta di Suino - Macelleria da Ketti</title>
+    <link rel="stylesheet" href="../CSS/styles.css" />
+    <link rel="stylesheet" href="../CSS/custom-styles.css" />
+    <link rel="stylesheet" href="../CSS/product-page.css" />
+    <link
+      href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="header-container">
+        <div class="logo-container">
+          <a href="../index.html" class="logo-link">
+            <img
+              src="https://placehold.co/180x60/8B7355/ffffff?text=Macelleria+da+Ketti&font=playfair-display"
+              alt="Macelleria da Ketti"
+              class="logo"
+            />
+          </a>
         </div>
-        <!-- Contenitore per i pallini di navigazione -->
-        <div class="dots-container" style="text-align: center">
-          <!-- I pallini verranno generati da slider.js -->
-        </div>
-      </div>
-      <div class="product-info">
-        <!-- Il titolo è stato spostato sopra la card -->
-        <p class="product-category">Categoria: Suino</p>
 
-        <div class="product-description">
-          <h2>Descrizione del Prodotto</h2>
-          <p>
-            Le nostre cotolette di suino sono tagliate da lonza di maiale di
-            prima scelta, garantendo una carne tenera e magra. Sono perfette
-            per una panatura croccante e una frittura dorata, come vuole la
-            tradizione. Un piatto classico amato da grandi e piccini, ideale
-            per una cena veloce ma ricca di gusto.
-          </p>
-          <h3>Consigli di Cottura:</h3>
-          <ul>
+        <nav class="main-nav">
+          <ul class="nav-list">
+            <li><a href="../index.html#Home" class="nav-link">Home</a></li>
+            <li><a href="../index.html#storia" class="nav-link">Storia</a></li>
+            <li><a href="../index.html#novita" class="nav-link">Novità</a></li>
             <li>
-              <strong>In padella:</strong> Passare nell'uovo e nel
-              pangrattato, poi friggere in olio caldo o burro chiarificato
-              fino a doratura.
+              <a href="../index.html#Prodotti" class="nav-link">Prodotti</a>
             </li>
-            <li>
-              <strong>Al forno:</strong> Per una versione più leggera, cuocere
-              in forno a 200°C per circa 15-20 minuti.
-            </li>
+            <li><a href="#Contatti" class="nav-link">Contatti</a></li>
           </ul>
-        </div>
+        </nav>
 
-        <a href="../index.html#Prodotti" class="back-button">
-          <span class="material-icons">arrow_back</span>
-          Torna a tutti i prodotti
-        </a>
+        <button class="mobile-menu-toggle" aria-label="Menu">
+          <span class="hamburger-line"></span>
+          <span class="hamburger-line"></span>
+          <span class="hamburger-line"></span>
+        </button>
       </div>
-    </div>
-  </main>
 
-  <footer id="Contatti" class="site-footer">
-    <!-- Il contenuto del footer verrà generato dinamicamente da footer.js -->
-  </footer>
+      <!-- Mobile Menu -->
+      <div class="mobile-menu">
+        <ul class="mobile-nav-list">
+          <li><a href="../index.html#Home" class="mobile-nav-link">Home</a></li>
+          <li>
+            <a href="../index.html#storia" class="mobile-nav-link">Storia</a>
+          </li>
+          <li>
+            <a href="../index.html#novita" class="mobile-nav-link">Novità</a>
+          </li>
+          <li>
+            <a href="../index.html#Prodotti" class="mobile-nav-link"
+              >Prodotti</a
+            >
+          </li>
+          <li>
+            <a href="#Contatti" class="mobile-nav-link">Contatti</a>
+          </li>
+        </ul>
+      </div>
+    </header>
 
-  <script src="../JS/slider.js"></script>
-  <script src="../JS/mobile-menu.js"></script>
-  <script src="../JS/footer.js"></script>
-</body>
+    <main class="product-detail-container">
+      <div class="product-detail-card">
+        <div class="product-image-gallery">
+          <div class="slider-container">
+            <div class="slide">
+              <img
+                src="https://images.unsplash.com/photo-1432139555190-58524dae6a55?w=600&h=450&fit=crop"
+                alt="Cotoletta di Suino - Vista 1"
+                class="main-product-image"
+              />
+            </div>
+            <div class="slide" style="display: none">
+              <img
+                src="https://images.unsplash.com/photo-1529692236671-f1f6cf9683ba?w=600&h=450&fit=crop"
+                alt="Cotoletta di Suino - Vista 2"
+                class="main-product-image"
+              />
+            </div>
+            <div class="slide" style="display: none">
+              <img
+                src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=600&h=450&fit=crop"
+                alt="Cotoletta di Suino - Vista 3"
+                class="main-product-image"
+              />
+            </div>
+            <a class="prev" onclick="plusSlides(-1)">&#10094;</a>
+            <a class="next" onclick="plusSlides(1)">&#10095;</a>
+          </div>
+          <!-- Contenitore per i pallini di navigazione -->
+          <div class="dots-container" style="text-align: center">
+            <!-- I pallini verranno generati da slider.js -->
+          </div>
+        </div>
+        <div class="product-info">
+          <h1 class="product-title">Cotoletta di Suino</h1>
+          <p class="product-category">Categoria: Suino</p>
 
+          <div class="product-description">
+            <h2>Descrizione del Prodotto</h2>
+            <p>
+              Le nostre cotolette di suino sono tagliate da lonza di maiale di
+              prima scelta, garantendo una carne tenera e magra. Sono perfette
+              per una panatura croccante e una frittura dorata, come vuole la
+              tradizione. Un piatto classico amato da grandi e piccini, ideale
+              per una cena veloce ma ricca di gusto.
+            </p>
+            <h3>Consigli di Cottura:</h3>
+            <ul>
+              <li>
+                <strong>In padella:</strong> Passare nell'uovo e nel
+                pangrattato, poi friggere in olio caldo o burro chiarificato
+                fino a doratura.
+              </li>
+              <li>
+                <strong>Al forno:</strong> Per una versione più leggera, cuocere
+                in forno a 200°C per circa 15-20 minuti.
+              </li>
+            </ul>
+          </div>
+
+          <a
+            href="../index.html#Prodotti" class="back-button"
+            
+          >
+            <span class="material-icons">arrow_back</span>
+            Torna a tutti i prodotti
+          </a>
+        </div>
+      </div>
+    </main>
+
+    <footer id="Contatti" class="site-footer">
+      <!-- Il contenuto del footer verrà generato dinamicamente da footer.js -->
+    </footer>
+
+    <script src="../JS/slider.js"></script>
+    <script src="../JS/mobile-menu.js"></script>
+    <script src="../JS/footer.js"></script>
+  </body>
 </html>
