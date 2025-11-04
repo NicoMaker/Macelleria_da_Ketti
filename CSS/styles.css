@@ -140,11 +140,13 @@ h6 {
 
 /* ===== Header ===== */
 .site-header {
-  position: sticky;
+  position: fixed; /* Modificato da sticky a fixed */
   top: 0;
+  left: 0; /* Aggiunto per corretto posizionamento */
+  right: 0; /* Aggiunto per corretto posizionamento */
   z-index: 1000;
   background-color: var(--surface);
-  box-shadow: var(--shadow-sm);
+  box-shadow: var(--shadow-md); /* Aggiunta un'ombra più definita */
   transition: box-shadow var(--transition-base);
 }
 
@@ -303,7 +305,11 @@ h6 {
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  background: linear-gradient(135deg, var(--ash-light) 0%, var(--ash-medium) 100%);
+  background: linear-gradient(
+    135deg,
+    var(--ash-light) 0%,
+    var(--ash-medium) 100%
+  );
 }
 
 .hero-image {
@@ -328,7 +334,12 @@ h6 {
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.3); /* Overlay più leggero per migliorare la leggibilità del testo */
+  background: rgba(
+    0,
+    0,
+    0,
+    0.3
+  ); /* Overlay più leggero per migliorare la leggibilità del testo */
   z-index: 1;
 }
 
@@ -414,6 +425,7 @@ h6 {
 .about-content {
   display: flex;
   flex-direction: column;
+  align-items: center; /* Centra il contenuto del testo */
   justify-content: flex-start; /* Allinea il contenuto all'inizio (in alto) */
 }
 
@@ -698,7 +710,11 @@ h6 {
 
 /* ===== Footer ===== */
 .site-footer {
-  background: linear-gradient(135deg, var(--ash-darkest) 0%, var(--primary) 100%);
+  background: linear-gradient(
+    135deg,
+    var(--ash-darkest) 0%,
+    var(--primary) 100%
+  );
   color: var(--white);
   padding: var(--spacing-2xl) 0 0;
 }
@@ -810,7 +826,11 @@ h6 {
     grid-template-columns: 0.8fr 1.2fr; /* Immagine più piccola, testo più grande */
     /* Rimuove il max-width per consentire al grid di gestire la larghezza */
     max-width: none;
+    align-items: center; /* Allinea verticalmente immagine e testo */
     gap: var(--spacing-2xl);
+  }
+  .about-content {
+    align-items: flex-start; /* Ri-allinea a sinistra per il layout a 2 colonne */
   }
 
   .features-grid {
@@ -862,8 +882,7 @@ h6 {
   }
 }
 
-
-.nome{
+.nome {
   color: #8b7355 !important;
 }
 
@@ -893,8 +912,6 @@ h6 {
   }
 }
 
-
-
-.color_opening{
+.color_opening {
   background-color: #8b5a2b !important;
 }
