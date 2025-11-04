@@ -600,6 +600,7 @@ h6 {
   /* Added flex layout for better content organization */
   display: flex;
   flex-direction: column;
+  min-height: 520px; /* Imposta un'altezza minima per uniformare le card */
 }
 
 .Progetti-card:hover {
