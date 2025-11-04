@@ -588,6 +588,7 @@ h6 {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: var(--spacing-lg);
+  align-items: stretch; /* Assicura che tutte le card abbiano la stessa altezza */
 }
 
 .Progetti-card {
@@ -599,6 +600,7 @@ h6 {
   border: 2px solid transparent;
   /* Added flex layout for better content organization */
   display: flex;
+  min-height: 500px; /* Imposta un'altezza minima per uniformare le card */
   flex-direction: column;
 }
 
