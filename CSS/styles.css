@@ -600,7 +600,7 @@ h6 {
   border: 2px solid transparent;
   /* Added flex layout for better content organization */
   display: flex;
-  min-height: 500px; /* Imposta un'altezza minima per uniformare le card */
+  height: 600px; /* Imposta un'altezza fissa per uniformare le card */
   flex-direction: column;
 }
 
