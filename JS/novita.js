@@ -43,10 +43,13 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     // Mostra la categoria se disponibile
-    const categoriaHtml =
-      item.categorie && item.categorie.length > 0
-        ? `<p class="categoria">${item.categorie.length > 1 ? "Categorie" : "Categoria"}: ${item.categorie.join(", ")}</p>`
-        : "";
+    let categoriaHtml = "";
+    if (item.categorie &&
+      Array.isArray(item.categorie) &&
+      item.categorie.length > 0) {
+      const prefix = item.categorie.length > 1 ? "Categorie" : "Categoria";
+      categoriaHtml = `<p class="categoria">${prefix}: ${item.categorie.join(", ")}</p>`;
+    }
 
     card.innerHTML = `  
       <div class="container-immagine">

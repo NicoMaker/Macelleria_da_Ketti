@@ -600,7 +600,6 @@ h6 {
   border: 2px solid transparent;
   /* Added flex layout for better content organization */
   display: flex;
-  height: 600px; /* Imposta un'altezza fissa per uniformare le card */
   flex-direction: column;
 }
 
@@ -649,9 +648,9 @@ h6 {
   color: var(--text-muted);
   font-size: 0.95rem;
   line-height: 1.6;
-  margin-bottom: auto; /* Pushes price and category to the bottom */
-  padding-bottom: var(--spacing-sm); /* Adds some space before price */
-  flex-grow: 1;
+  margin-bottom: var(
+    --spacing-sm
+  ); /* Aggiunto margine inferiore per separare dalla categoria */
 }
 
 .prezzo {
