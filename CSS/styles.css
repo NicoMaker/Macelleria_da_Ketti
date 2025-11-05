@@ -143,7 +143,7 @@ h6 {
   position: sticky;
   top: 0;
   z-index: 1000;
-  background-color:white;
+  background-color: white;
   box-shadow: var(--shadow-sm);
   transition: box-shadow var(--transition-base);
 }
@@ -346,7 +346,7 @@ h6 {
   z-index: 2;
   text-align: center;
   color: var(--white);
-  padding: var(--spacing-xl);
+  padding: var(--spacing-sm) var(--spacing-xl); /* Ridotto il padding verticale */
   max-width: 800px;
 }
 
@@ -909,4 +909,103 @@ h6 {
 
 .color_opening {
   background-color: #8b5a2b !important;
+}
+
+
+/* Migliora scroll-padding per header + sticky controls */
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 250px; /* Aumentato per dare più spazio */
+}
+
+/* Assicura che la sezione prodotti abbia spazio sufficiente */
+#Prodotti {
+  scroll-margin-top: 200px; /* Aumentato */
+  padding-top: var(--spacing-2xl); /* Più spazio in cima */
+}
+
+/* Z-index hierarchy per evitare sovrapposizioni */
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.product-controls-sticky {
+  z-index: 100;
+}
+
+.Progetti-card {
+  z-index: 1;
+  position: relative;
+}
+
+/* Migliora scroll-padding per header + sticky controls */
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 200px; /* Ridotto da 250px */
+  font-size: 16px;
+}
+
+/* Assicura che la sezione prodotti abbia spazio sufficiente */
+#Prodotti {
+  scroll-margin-top: 160px; /* Ridotto da 200px */
+  padding-top: var(--spacing-2xl);
+}
+
+/* Z-index hierarchy per evitare sovrapposizioni */
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background-color: white;
+}
+
+.product-controls-sticky {
+  z-index: 100;
+  position: sticky;
+}
+
+.Progetti-card {
+  z-index: 1;
+  position: relative;
+}
+
+/* Search container */
+.search-container {
+  margin-bottom: 20px;
+  width: 100%;
+  max-width: 500px;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+}
+
+.search-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.search-input {
+  width: 100%;
+  padding: 12px 15px;
+  border: 2px solid #8b5a2b;
+  border-radius: 30px;
+  font-size: 1.1em;
+  background-color: white; /* Sfondo bianco */
+  color: #333;
+  transition: all 0.3s ease;
+  /* Rimosso: max-width */
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: #5a3a1a;
+  /* Rimosso: transform, box-shadow */
+}
+
+.search-input::placeholder {
+  color: #999;
 }

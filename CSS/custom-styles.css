@@ -21,7 +21,7 @@ header {
 }
 
 .logo-container {
-  background-color:white;
+  background-color: white;
   border-radius: 8px;
   padding: 4px;
   transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
@@ -448,14 +448,14 @@ footer {
   padding: 12px 25px;
   border: none;
   cursor: pointer;
-  background-color: #8b5a2b;
-  color: white;
+  background-color: #8b5a2b; /* Ripristinato colore originale */
+  color: white; /* Ripristinato colore originale */
   border-radius: 30px;
   transition: all 0.3s ease;
   font-weight: 500;
   font-size: 1.1em;
   text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000,
-    1px 1px 0 #000;
+    1px 1px 0 #000; /* Ripristinato stile originale */
 }
 
 .filter-button:hover {
@@ -464,8 +464,7 @@ footer {
 }
 
 .filter-button.active {
-  background-color: #5a3a1a;
-  transform: translateY(0);
+  background-color: #5a3a1a; /* Ripristinato colore originale */
 }
 
 /* Animazioni */
@@ -526,7 +525,6 @@ footer {
   background-color: white;
   color: #333;
   transition: all 0.3s ease;
-  max-width: 400px;
 }
 
 .search-input:focus {
@@ -843,3 +841,315 @@ footer {
     background-color: #8b5a2b;
   }
 }
+
+/* ===== STICKY SEARCH AND FILTERS - VERSIONE MIGLIORATA ===== */
+
+/* Container per i controlli sticky */
+.product-controls-sticky {
+  position: sticky;
+  top: var(--header-height, 80px); /* Altezza header, con fallback */
+  z-index: 100;
+  background: rgba(245, 241, 232, 0.95); /* Sfondo semi-trasparente */
+  backdrop-filter: blur(10px); /* Effetto vetro smerigliato */
+  padding: 20px 0;
+  margin-bottom: 30px;
+  transition: all 0.3s ease;
+  border-radius: 0 0 12px 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+/* Aggiusta la search container per sticky */
+.product-controls-sticky .search-container {
+  padding: 0 20px;
+  margin-bottom: 20px; /* Aggiunge spazio sotto la ricerca */
+}
+
+/* Migliora visibilità input di ricerca */
+.product-controls-sticky .search-input {
+  background-color: var(--ash-lightest);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  border: 2px solid #8b5a2b;
+}
+
+/* Aggiusta il filter container per sticky */
+.product-controls-sticky .filter-container {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 0;
+  padding: 0 20px;
+}
+
+/* Migliora visibilità pulsanti filtro */
+.product-controls-sticky .filter-button {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Spazio extra tra controlli sticky e prodotti */
+.progetti-container {
+  margin-top: 20px !important;
+  padding-top: 20px;
+}
+
+/* Assicura che le card non vengano coperte */
+.products-section {
+  padding-top: var(--spacing-xl);
+}
+
+/* Responsive adjustments */
+@media (max-width: 1024px) {
+  .product-controls-sticky {
+    top: 70px;
+    margin-bottom: 35px;
+  }
+
+  .progetti-container {
+    margin-top: 15px !important;
+    padding-top: 15px;
+  }
+}
+
+@media (max-width: 768px) {
+  .product-controls-sticky {
+    top: 60px;
+    padding: 15px 0;
+    margin-bottom: 30px;
+  }
+
+  /* Su mobile, impila la ricerca sopra i filtri */
+  .product-controls-sticky .search-container {
+    margin-bottom: 15px;
+    padding: 0 15px;
+  }
+
+  .product-controls-sticky .search-container {
+    max-width: 100%;
+  }
+
+  .product-controls-sticky .filter-container {
+    padding: 0 15px;
+    gap: 10px;
+  }
+
+  .product-controls-sticky .filter-button {
+    font-size: 0.95em;
+    padding: 10px 18px;
+  }
+
+  .progetti-container {
+    margin-top: 10px !important;
+    padding-top: 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .product-controls-sticky {
+    top: 60px;
+    padding: 12px 0;
+    margin-bottom: 25px;
+  }
+
+  .product-controls-sticky .filter-button {
+    font-size: 0.85em;
+    padding: 8px 15px;
+  }
+
+  .progetti-container {
+    margin-top: 8px !important;
+    padding-top: 8px;
+  }
+}
+
+
+/* ===== STICKY SEARCH AND FILTERS - VERSIONE OTTIMIZZATA ===== */
+
+/* Container per i controlli sticky */
+.product-controls-sticky {
+  position: sticky;
+  top: 70px; /* Posizione sotto l'header */
+  z-index: 100;
+  background-color: #f5f1e8; /* Sfondo solido senza trasparenza */
+  padding: 20px 0 25px 0;
+  margin-bottom: 40px;
+  transition: padding 0.3s ease;
+  /* Rimosso: border-radius, box-shadow, backdrop-filter */
+}
+
+/* Aggiusta la search container per sticky */
+.product-controls-sticky .search-container {
+  padding: 0 20px;
+  margin-bottom: 20px;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Input di ricerca con sfondo bianco */
+.product-controls-sticky .search-input {
+  background-color: #ffffff; /* Sfondo bianco */
+  border: 2px solid #8b5a2b;
+  /* Rimosso: box-shadow */
+}
+
+.product-controls-sticky .search-input:focus {
+  border-color: #5a3a1a;
+  /* Rimosso: box-shadow, transform */
+}
+
+/* Aggiusta il filter container per sticky */
+.product-controls-sticky .filter-container {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 0;
+  padding: 0 20px;
+}
+
+/* Pulsanti filtro senza ombra */
+.product-controls-sticky .filter-button {
+  /* Rimosso: box-shadow */
+}
+
+/* Spazio extra tra controlli sticky e prodotti */
+.progetti-container {
+  margin-top: 30px !important;
+  padding-top: 0;
+}
+
+/* Assicura che le card non vengano coperte */
+.products-section {
+  padding-top: var(--spacing-xl);
+}
+
+/* === RESPONSIVE: TABLET === */
+@media (max-width: 1024px) {
+  .product-controls-sticky {
+    top: 65px; /* Ridotto per tablet */
+    padding: 18px 0 22px 0;
+    margin-bottom: 35px;
+  }
+
+  .product-controls-sticky .search-container {
+    padding: 0 18px;
+    margin-bottom: 18px;
+  }
+
+  .product-controls-sticky .filter-container {
+    padding: 0 18px;
+    gap: 10px;
+  }
+
+  .progetti-container {
+    margin-top: 25px !important;
+  }
+}
+
+/* === RESPONSIVE: MOBILE === */
+@media (max-width: 768px) {
+  .product-controls-sticky {
+    top: 60px; /* Posizione ottimale per mobile */
+    padding: 15px 0 20px 0;
+    margin-bottom: 30px;
+  }
+
+  .product-controls-sticky .search-container {
+    padding: 0 15px;
+    margin-bottom: 15px;
+    max-width: 100%;
+  }
+
+  .product-controls-sticky .search-input {
+    font-size: 1em;
+    padding: 10px 15px;
+  }
+
+  .product-controls-sticky .filter-container {
+    padding: 0 15px;
+    gap: 8px;
+  }
+
+  .product-controls-sticky .filter-button {
+    font-size: 0.95em;
+    padding: 10px 18px;
+  }
+
+  .progetti-container {
+    margin-top: 20px !important;
+  }
+}
+
+/* === RESPONSIVE: MOBILE PICCOLO === */
+@media (max-width: 480px) {
+  .product-controls-sticky {
+    top: 55px; /* Ancora più vicino per schermi piccoli */
+    padding: 12px 0 18px 0;
+    margin-bottom: 25px;
+  }
+
+  .product-controls-sticky .search-container {
+    padding: 0 10px;
+    margin-bottom: 12px;
+  }
+
+  .product-controls-sticky .search-input {
+    font-size: 0.9em;
+    padding: 8px 12px;
+  }
+
+  .product-controls-sticky .filter-container {
+    padding: 0 10px;
+    gap: 6px;
+  }
+
+  .product-controls-sticky .filter-button {
+    font-size: 0.85em;
+    padding: 8px 15px;
+  }
+
+  .progetti-container {
+    margin-top: 15px !important;
+  }
+}
+
+/* Disabilita effetti hover su touch devices */
+@media (hover: none) and (pointer: coarse) {
+  .product-controls-sticky .search-input:focus {
+    transform: none;
+  }
+}
+
+/* Filter Buttons */
+.filter-container {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin-bottom: 30px;
+  flex-wrap: wrap;
+}
+
+.filter-button {
+  padding: 12px 25px;
+  border: none;
+  cursor: pointer;
+  background-color: #8b5a2b;
+  color: white;
+  border-radius: 30px;
+  transition: all 0.3s ease;
+  font-weight: 500;
+  font-size: 1.1em;
+  /* Rimosso: text-shadow, box-shadow */
+}
+
+.filter-button:hover {
+  background-color: #a0522d;
+  transform: translateY(-3px);
+  /* Rimosso: box-shadow */
+}
+
+.filter-button.active {
+  background-color: #5a3a1a;
+  transform: translateY(0);
+}
+

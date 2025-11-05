@@ -117,6 +117,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const card = document.createElement("div");
     card.className = "Progetti-card";
     card.addEventListener("click", () => {
+      // IMPORTANTE: Salva lo stato prima di navigare
+      saveStateToLocalStorage();
       if (item.link && item.link !== "#") {
         window.location.href = item.link;
       }
@@ -148,8 +150,9 @@ document.addEventListener("DOMContentLoaded", () => {
   // Funzione per salvare il filtro corrente e il termine di ricerca in localStorage
   function saveStateToLocalStorage() {
     try {
-      localStorage.setItem("selectedCategory", currentFilter);
-      localStorage.setItem("searchTerm", currentSearchTerm);
+      localStorage.setItem("macelleriaSelectedCategory", currentFilter);
+      localStorage.setItem("macelleriaSearchTerm", currentSearchTerm);
+      console.log("Stato salvato:", { filtro: currentFilter, ricerca: currentSearchTerm });
     } catch (e) {
       console.error("Impossibile salvare lo stato nel localStorage:", e);
     }
@@ -158,22 +161,23 @@ document.addEventListener("DOMContentLoaded", () => {
   // Funzione per caricare il filtro e il termine di ricerca da localStorage
   function loadStateFromStorage() {
     try {
-      const storedCategory = localStorage.getItem("selectedCategory");
-      const storedSearchTerm = localStorage.getItem("searchTerm");
+      const storedCategory = localStorage.getItem("macelleriaSelectedCategory");
+      const storedSearchTerm = localStorage.getItem("macelleriaSearchTerm");
 
-      // Ottieni le categorie disponibili dai pulsanti di filtro
-      const availableCategories = Array.from(
-        document.querySelectorAll(".filter-button")
-      ).map((btn) => btn.dataset.category);
+      console.log("Stato caricato dal localStorage:", { 
+        filtro: storedCategory, 
+        ricerca: storedSearchTerm 
+      });
 
-      if (storedCategory) {
-        // Controlla se la categoria salvata esiste ancora.
-        // Se non esiste, imposta il filtro a "Tutti".
-        currentFilter = availableCategories.includes(storedCategory) ? storedCategory : "Tutti";
+      if (storedCategory && storedCategory !== "null") {
+        currentFilter = storedCategory;
       }
-      if (storedSearchTerm) {
+      
+      if (storedSearchTerm && storedSearchTerm !== "null") {
         currentSearchTerm = storedSearchTerm;
-        searchInput.value = storedSearchTerm; // Imposta il valore dell'input di ricerca
+        if (searchInput) {
+          searchInput.value = storedSearchTerm; // Imposta il valore dell'input di ricerca
+        }
       }
     } catch (e) {
       console.error("Impossibile caricare lo stato dal localStorage:", e);
@@ -195,11 +199,23 @@ document.addEventListener("DOMContentLoaded", () => {
   // Aggiungi un listener per l'evento 'pageshow' per gestire il ripristino dello stato
   // quando si torna indietro nella cronologia del browser.
   window.addEventListener('pageshow', function(event) {
+    console.log("Evento pageshow rilevato, persisted:", event.persisted);
     // 'persisted' è true se la pagina è stata caricata dalla cache del browser (bfcache)
     if (event.persisted) {
       loadStateFromStorage();
       applyFiltersAndSearch();
-      updateFilterButtons(); // Aggiunto per aggiornare lo stato visivo dei pulsanti
+      updateFilterButtons();
     }
+  });
+
+  // Listener aggiuntivo per gestire il ritorno dalla pagina prodotto
+  window.addEventListener('focus', function() {
+    console.log("Finestra tornata in focus");
+    loadStateFromStorage();
+    if (searchInput) {
+      searchInput.value = currentSearchTerm;
+    }
+    applyFiltersAndSearch();
+    updateFilterButtons();
   });
 });
