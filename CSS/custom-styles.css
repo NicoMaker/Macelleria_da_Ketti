@@ -241,6 +241,7 @@ header nav ul li a.active::after {
 /* Footer */
 footer {
   padding: 20px 5%;
+  background-color: #8b5a2b; /* Colore di sfondo marrone per il footer */
 }
 
 .footer-container {
@@ -961,7 +962,6 @@ footer {
   }
 }
 
-
 /* ===== STICKY SEARCH AND FILTERS - VERSIONE OTTIMIZZATA ===== */
 
 /* Container per i controlli sticky */
@@ -1152,4 +1152,3 @@ footer {
   background-color: #5a3a1a;
   transform: translateY(0);
 }
-

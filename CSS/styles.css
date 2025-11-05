@@ -517,7 +517,7 @@ h6 {
 
 /* ===== Products Section ===== */
 .products-section {
-  padding: var(--spacing-lg) 0;
+  padding: var(--spacing-lg) var(--spacing-md);
   background-color: var(--background);
 }
 
@@ -714,7 +714,6 @@ h6 {
     var(--primary) 100%
   );
   color: var(--white);
-  padding: var(--spacing-2xl) 0 0;
 }
 
 .footer-content {
@@ -910,7 +909,6 @@ h6 {
 .color_opening {
   background-color: #8b5a2b !important;
 }
-
 
 /* Migliora scroll-padding per header + sticky controls */
 html {
