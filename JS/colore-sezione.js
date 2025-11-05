@@ -4,7 +4,7 @@
 document.addEventListener("DOMContentLoaded", () => {
   const sections = document.querySelectorAll("section[id], footer#Contatti");
   const navLinks = document.querySelectorAll(".nav-link, .mobile-nav-link");
-  
+
   let isManualNavigation = false;
   let scrollTimeout;
   let preventHashUpdate = false;
@@ -74,8 +74,19 @@ document.addEventListener("DOMContentLoaded", () => {
       updateActiveLink(targetId);
       history.replaceState(null, null, `#${targetId}`);
 
-      // Scroll immediato senza animazione
-      targetElement.scrollIntoView({ behavior: "auto" });
+      // Se la destinazione è la sezione Prodotti, gestisci lo scroll
+      // per tenere conto dell'header e della barra dei filtri sticky.
+      const header = document.querySelector('.site-header');
+      const headerHeight = header ? header.offsetHeight : 80; // Fallback height
+
+      if (targetId === 'Prodotti') {
+        // Scroll to the top of the section, minus the header height.
+        const offsetPosition = targetElement.offsetTop - headerHeight;
+        window.scrollTo({ top: offsetPosition, behavior: "auto" });
+      } else {
+        // Scroll immediato senza animazione per le altre sezioni
+        targetElement.scrollIntoView({ behavior: "auto" });
+      }
 
       // Sblocca dopo un momento
       setTimeout(() => {
@@ -88,7 +99,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // Scroll listener
   window.addEventListener("scroll", () => {
     if (isManualNavigation) return;
-    
+
     clearTimeout(scrollTimeout);
     scrollTimeout = setTimeout(highlightNavigation, 100);
   });
@@ -96,14 +107,23 @@ document.addEventListener("DOMContentLoaded", () => {
   // Inizializzazione
   function initializePage() {
     const hash = window.location.hash.substring(1);
-    
+
     // Funzione helper per eseguire lo scroll e l'evidenziazione
     const scrollToHash = (targetId) => {
       const targetElement = document.getElementById(targetId);
       if (targetElement) {
         updateActiveLink(targetId);
-        targetElement.scrollIntoView({ behavior: "auto" });
-        
+
+        // Applica lo stesso offset di scroll per #Prodotti anche al caricamento della pagina
+        if (targetId === 'Prodotti') {
+          const header = document.querySelector('.site-header');
+          const headerHeight = header ? header.offsetHeight : 80;
+          const offsetPosition = targetElement.offsetTop - headerHeight;
+          window.scrollTo({ top: offsetPosition, behavior: "auto" });
+        } else {
+          targetElement.scrollIntoView({ behavior: "auto" });
+        }
+
         preventHashUpdate = true;
         setTimeout(() => {
           preventHashUpdate = false;
@@ -121,7 +141,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if (hash === 'Contatti') {
         // Disabilita temporaneamente il listener dello scroll per evitare che
         // highlightNavigation() venga eseguito prima che lo scroll a #Contatti sia completato.
-        isManualNavigation = true; 
+        isManualNavigation = true;
         document.addEventListener('footerLoaded', () => {
           scrollToHash(hash);
           // Riattiva il listener dello scroll dopo che lo scroll è avvenuto.

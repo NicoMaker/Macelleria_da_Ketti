@@ -969,7 +969,7 @@ footer {
   background-color: #f5f1e8; /* Sfondo solido senza trasparenza */
   padding: 20px 0 25px 0;
   margin-bottom: 40px;
-  transition: padding 0.3s ease;
+  transition: padding 0.2s ease;
   /* Rimosso: border-radius, box-shadow, backdrop-filter */
 }
 
@@ -1015,16 +1015,11 @@ footer {
   padding-top: 0;
 }
 
-/* Assicura che le card non vengano coperte */
-.products-section {
-  padding-top: var(--spacing-xl);
-}
-
 /* === RESPONSIVE: TABLET === */
 @media (max-width: 1024px) {
   .product-controls-sticky {
     top: 65px; /* Ridotto per tablet */
-    padding: 18px 0 22px 0;
+    padding: 15px 0 20px 0;
     margin-bottom: 35px;
   }
 
@@ -1047,7 +1042,7 @@ footer {
 @media (max-width: 768px) {
   .product-controls-sticky {
     top: 60px; /* Posizione ottimale per mobile */
-    padding: 15px 0 20px 0;
+    padding: 12px 0 18px 0;
     margin-bottom: 30px;
   }
 
@@ -1081,7 +1076,7 @@ footer {
 @media (max-width: 480px) {
   .product-controls-sticky {
     top: 55px; /* Ancora più vicino per schermi piccoli */
-    padding: 12px 0 18px 0;
+    padding: 10px 0 15px 0;
     margin-bottom: 25px;
   }
 
