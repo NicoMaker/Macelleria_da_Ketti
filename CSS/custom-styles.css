@@ -856,7 +856,6 @@ footer {
   margin-bottom: 30px;
   transition: all 0.3s ease;
   border-radius: 0 0 12px 12px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
 }
 
 /* Aggiusta la search container per sticky */
@@ -868,7 +867,6 @@ footer {
 /* Migliora visibilità input di ricerca */
 .product-controls-sticky .search-input {
   background-color: var(--ash-lightest);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   border: 2px solid #8b5a2b;
 }
 
@@ -884,7 +882,7 @@ footer {
 
 /* Migliora visibilità pulsanti filtro */
 .product-controls-sticky .filter-button {
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  /* Rimosso: box-shadow */
 }
 
 /* Spazio extra tra controlli sticky e prodotti */
