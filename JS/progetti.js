@@ -53,6 +53,7 @@ document.addEventListener("DOMContentLoaded", () => {
         saveStateToLocalStorage(); // Salva il filtro in localStorage
         applyFiltersAndSearch();
         updateFilterButtons(); // Aggiorna lo stato attivo dei pulsanti
+        scrollToProductGrid(); // Scrolla all'inizio della griglia dei prodotti
       });
       filterContainer.appendChild(button);
     });
@@ -67,6 +68,27 @@ document.addEventListener("DOMContentLoaded", () => {
         button.classList.remove("active");
       }
     });
+  }
+
+  // Funzione per scorrere all'inizio della griglia dei prodotti
+  function scrollToProductGrid() {
+    const grid = document.querySelector(".progetti-container");
+    if (grid) {
+      // Calcoliamo l'offset necessario per tenere conto dell'header e dei controlli sticky.
+      const header = document.querySelector('.site-header');
+      const controls = document.getElementById('product-controls-sticky');
+
+      const headerHeight = header ? header.offsetHeight : 0;
+      const controlsHeight = controls ? controls.offsetHeight : 0;
+
+      // L'offset totale è la somma delle altezze, con un piccolo margine extra.
+      const totalOffset = headerHeight + controlsHeight + 20; // 20px di margine
+
+      const elementPosition = grid.getBoundingClientRect().top + window.pageYOffset;
+      const offsetPosition = elementPosition - totalOffset;
+
+      window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
+    }
   }
 
   // Funzione per applicare filtri e ricerca
@@ -94,6 +116,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     displayProducts(filteredProducts);
+    updateFilterButtons(); // Assicura che i bottoni siano sempre aggiornati
   }
 
   // Funzione per visualizzare i prodotti
@@ -127,7 +150,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // Assicurati che item.categorie sia un array, altrimenti usa un array vuoto
     const categories = item.categorie || [];
     let categoriaHtml = "";
-    
+
     // Mostra la categoria solo se il filtro è "Tutti" e il prodotto ha effettivamente delle categorie
     if (currentFilter === "Tutti" && Array.isArray(categories) && categories.length > 0) {
       const prefix = categories.length > 1 ? "Categorie" : "Categoria";
@@ -164,15 +187,15 @@ document.addEventListener("DOMContentLoaded", () => {
       const storedCategory = localStorage.getItem("macelleriaSelectedCategory");
       const storedSearchTerm = localStorage.getItem("macelleriaSearchTerm");
 
-      console.log("Stato caricato dal localStorage:", { 
-        filtro: storedCategory, 
-        ricerca: storedSearchTerm 
+      console.log("Stato caricato dal localStorage:", {
+        filtro: storedCategory,
+        ricerca: storedSearchTerm
       });
 
       if (storedCategory && storedCategory !== "null") {
         currentFilter = storedCategory;
       }
-      
+
       if (storedSearchTerm && storedSearchTerm !== "null") {
         currentSearchTerm = storedSearchTerm;
         if (searchInput) {
@@ -190,6 +213,7 @@ document.addEventListener("DOMContentLoaded", () => {
       currentSearchTerm = searchInput.value;
       saveStateToLocalStorage(); // Salva il termine di ricerca in localStorage
       applyFiltersAndSearch();
+      scrollToProductGrid(); // Scrolla all'inizio della griglia dei prodotti
     });
   }
 
@@ -198,18 +222,19 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Aggiungi un listener per l'evento 'pageshow' per gestire il ripristino dello stato
   // quando si torna indietro nella cronologia del browser.
-  window.addEventListener('pageshow', function(event) {
+  window.addEventListener('pageshow', function (event) {
     console.log("Evento pageshow rilevato, persisted:", event.persisted);
     // 'persisted' è true se la pagina è stata caricata dalla cache del browser (bfcache)
     if (event.persisted) {
       loadStateFromStorage();
       applyFiltersAndSearch();
       updateFilterButtons();
+      // Non è necessario lo scroll qui perché il browser gestisce la posizione
     }
   });
 
   // Listener aggiuntivo per gestire il ritorno dalla pagina prodotto
-  window.addEventListener('focus', function() {
+  window.addEventListener('focus', function () {
     console.log("Finestra tornata in focus");
     loadStateFromStorage();
     if (searchInput) {
@@ -217,5 +242,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     applyFiltersAndSearch();
     updateFilterButtons();
+    // Non è necessario lo scroll qui per non essere troppo aggressivo
   });
 });
