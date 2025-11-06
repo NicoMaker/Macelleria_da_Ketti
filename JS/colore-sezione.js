@@ -74,19 +74,17 @@ document.addEventListener("DOMContentLoaded", () => {
       updateActiveLink(targetId);
       history.replaceState(null, null, `#${targetId}`);
 
-      // Se la destinazione è la sezione Prodotti, gestisci lo scroll
-      // per tenere conto dell'header e della barra dei filtri sticky.
+      // Calcola dinamicamente l'offset per lo scroll per tenere conto dell'header fisso
+      // e della barra dei filtri/ricerca quando è visibile.
       const header = document.querySelector('.site-header');
-      const headerHeight = header ? header.offsetHeight : 80; // Fallback height
+      let totalOffset = header ? header.offsetHeight : 80; // Altezza dell'header
 
-      if (targetId === 'Prodotti') {
-        // Scroll to the top of the section, minus the header height.
-        const offsetPosition = targetElement.offsetTop - headerHeight;
-        window.scrollTo({ top: offsetPosition, behavior: "auto" });
-      } else {
-        // Scroll immediato senza animazione per le altre sezioni
-        targetElement.scrollIntoView({ behavior: "auto" });
-      }
+      // Quando si naviga verso la sezione "Prodotti", l'offset deve tenere conto solo dell'header,
+      // perché la barra dei filtri/ricerca fa parte della sezione stessa e non deve essere saltata.
+      // Per le altre sezioni, l'offset dell'header è sufficiente.
+
+      const offsetPosition = targetElement.offsetTop - totalOffset;
+      window.scrollTo({ top: offsetPosition, behavior: "smooth" });
 
       // Sblocca dopo un momento
       setTimeout(() => {

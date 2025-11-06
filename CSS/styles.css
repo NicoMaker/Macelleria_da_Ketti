@@ -910,18 +910,6 @@ h6 {
   background-color: #8b5a2b !important;
 }
 
-/* Migliora scroll-padding per header + sticky controls */
-html {
-  scroll-behavior: smooth;
-  scroll-padding-top: 250px; /* Aumentato per dare più spazio */
-}
-
-/* Assicura che la sezione prodotti abbia spazio sufficiente */
-#Prodotti {
-  scroll-margin-top: 200px; /* Aumentato */
-  padding-top: var(--spacing-2xl); /* Più spazio in cima */
-}
-
 /* Z-index hierarchy per evitare sovrapposizioni */
 .site-header {
   position: sticky;
@@ -936,19 +924,6 @@ html {
 .Progetti-card {
   z-index: 1;
   position: relative;
-}
-
-/* Migliora scroll-padding per header + sticky controls */
-html {
-  scroll-behavior: smooth;
-  scroll-padding-top: 200px; /* Ridotto da 250px */
-  font-size: 16px;
-}
-
-/* Assicura che la sezione prodotti abbia spazio sufficiente */
-#Prodotti {
-  scroll-margin-top: 160px; /* Ridotto da 200px */
-  padding-top: var(--spacing-2xl);
 }
 
 /* Z-index hierarchy per evitare sovrapposizioni */
