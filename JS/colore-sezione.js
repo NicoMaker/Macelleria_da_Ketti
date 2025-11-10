@@ -138,15 +138,16 @@ document.addEventListener("DOMContentLoaded", () => {
       // Dobbiamo attendere un evento personalizzato che segnali il caricamento del footer.
       if (hash === 'Contatti') {
         // Disabilita temporaneamente il listener dello scroll per evitare che
-        // highlightNavigation() venga eseguito prima che lo scroll a #Contatti sia completato.
-        isManualNavigation = true;
+        // highlightNavigation() venga eseguito prima che lo scroll a #Contatti sia completato
+        // e per dare priorità allo scroll gestito dall'evento.
+        preventHashUpdate = true;
         document.addEventListener('footerLoaded', () => {
           scrollToHash(hash);
           // Riattiva il listener dello scroll dopo che lo scroll è avvenuto.
           setTimeout(() => {
-            isManualNavigation = false;
-          }, 500); // Un piccolo ritardo per sicurezza
-        }, { once: true }); // L'evento viene ascoltato solo una volta
+            preventHashUpdate = false;
+          }, 1000); // Ritardo per garantire che lo scroll sia completato
+        }, { once: true });
       } else {
         // Per tutte le altre sezioni, esegui subito lo scroll
         // perché sono già presenti nel DOM.
