@@ -8,15 +8,16 @@ document.addEventListener("DOMContentLoaded", () => {
   let isManualNavigation = false;
   let scrollTimeout;
   let preventHashUpdate = false;
+  let isInitialLoad = true; // Flag per il caricamento iniziale
 
   function highlightNavigation() {
+    // Durante il caricamento iniziale, NON calcolare automaticamente la sezione
+    if (isInitialLoad) return;
+
     const scrollY = window.pageYOffset;
     let currentSectionId = "";
 
     // PRIMA controlla se siamo alla fine della pagina (Contatti)
-    // Aggiunto controllo per assicurarsi che l'elemento #Contatti esista.
-    // Questo previene che la sezione "Contatti" venga impostata erroneamente
-    // durante il caricamento iniziale prima che il footer sia renderizzato.
     const contattiSection = document.getElementById('Contatti');
     if (contattiSection && (window.innerHeight + scrollY) >= document.body.offsetHeight - 50) {
       currentSectionId = "Contatti";
@@ -59,44 +60,52 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // Click su link — SENZA scroll fluido per evitare problemi
+  // Click su link
   navLinks.forEach((link) => {
     link.addEventListener("click", (event) => {
       event.preventDefault();
       const targetId = link.getAttribute("href").substring(1);
-      const targetElement = document.getElementById(targetId);
-
-      if (!targetElement) return;
-
-      isManualNavigation = true;
-      preventHashUpdate = true;
-
-      updateActiveLink(targetId);
-      history.replaceState(null, null, `#${targetId}`);
-
-      // Calcola dinamicamente l'offset per lo scroll per tenere conto dell'header fisso
-      // e della barra dei filtri/ricerca quando è visibile.
-      const header = document.querySelector('.site-header');
-      let totalOffset = header ? header.offsetHeight : 80; // Altezza dell'header
-
-      // Quando si naviga verso la sezione "Prodotti", l'offset deve tenere conto solo dell'header,
-      // perché la barra dei filtri/ricerca fa parte della sezione stessa e non deve essere saltata.
-      // Per le altre sezioni, l'offset dell'header è sufficiente.
-
-      const offsetPosition = targetElement.offsetTop - totalOffset;
-      window.scrollTo({ top: offsetPosition, behavior: "smooth" });
-
-      // Sblocca dopo un momento
-      setTimeout(() => {
-        preventHashUpdate = false;
-        isManualNavigation = false;
-      }, 500);
+      
+      // Se clicchiamo su Contatti e non è ancora caricato
+      if (targetId === 'Contatti' && !document.getElementById('Contatti')) {
+        // Aspetta che il footer sia caricato
+        document.addEventListener('footerLoaded', () => {
+          scrollToSection(targetId);
+        }, { once: true });
+        return;
+      }
+      
+      scrollToSection(targetId);
     });
   });
 
+  function scrollToSection(targetId) {
+    const targetElement = document.getElementById(targetId);
+    if (!targetElement) return;
+
+    isManualNavigation = true;
+    preventHashUpdate = true;
+
+    updateActiveLink(targetId);
+    history.replaceState(null, null, `#${targetId}`);
+
+    // Calcola dinamicamente l'offset per lo scroll
+    const header = document.querySelector('.site-header');
+    let totalOffset = header ? header.offsetHeight : 80;
+
+    const offsetPosition = targetElement.offsetTop - totalOffset;
+    window.scrollTo({ top: offsetPosition, behavior: "smooth" });
+
+    // Sblocca dopo un momento
+    setTimeout(() => {
+      preventHashUpdate = false;
+      isManualNavigation = false;
+    }, 500);
+  }
+
   // Scroll listener
   window.addEventListener("scroll", () => {
-    if (isManualNavigation) return;
+    if (isManualNavigation || isInitialLoad) return;
 
     clearTimeout(scrollTimeout);
     scrollTimeout = setTimeout(highlightNavigation, 100);
@@ -112,51 +121,80 @@ document.addEventListener("DOMContentLoaded", () => {
       if (targetElement) {
         updateActiveLink(targetId);
 
-        // Applica lo stesso offset di scroll per #Prodotti anche al caricamento della pagina
+        // Applica lo stesso offset di scroll
+        const header = document.querySelector('.site-header');
+        const headerHeight = header ? header.offsetHeight : 80;
+        
         if (targetId === 'Prodotti') {
-          const header = document.querySelector('.site-header');
-          const headerHeight = header ? header.offsetHeight : 80;
           const offsetPosition = targetElement.offsetTop - headerHeight;
           window.scrollTo({ top: offsetPosition, behavior: "auto" });
+        } else if (targetId === 'Contatti') {
+          // Per Contatti, scroll alla fine della pagina
+          console.log("⬇️ Scrolling verso Contatti (fine pagina)");
+          setTimeout(() => {
+            window.scrollTo({ 
+              top: document.body.scrollHeight, 
+              behavior: "auto" 
+            });
+          }, 100);
         } else {
-          targetElement.scrollIntoView({ behavior: "auto" });
+          const offsetPosition = targetElement.offsetTop - headerHeight;
+          window.scrollTo({ top: offsetPosition, behavior: "auto" });
         }
 
         preventHashUpdate = true;
+        
+        // Sblocca il sistema dopo che lo scroll è completato
         setTimeout(() => {
           preventHashUpdate = false;
-        }, 2000);
+          isInitialLoad = false; // Disabilita il flag di caricamento iniziale
+          console.log("✅ Inizializzazione completata, sistema sbloccato");
+        }, 1500);
       } else {
         // Hash non valido o elemento non trovato
         preventHashUpdate = false;
+        isInitialLoad = false;
         highlightNavigation();
       }
     };
 
     if (hash) {
-      // Se l'hash è "Contatti", il footer viene caricato dinamicamente.
-      // Dobbiamo attendere un evento personalizzato che segnali il caricamento del footer.
+      console.log(`🎯 Hash rilevato al caricamento: #${hash}`);
+      
+      // Se l'hash è "Contatti", aspetta che il footer sia caricato
       if (hash === 'Contatti') {
-        // Disabilita temporaneamente il listener dello scroll per evitare che
-        // highlightNavigation() venga eseguito prima che lo scroll a #Contatti sia completato
-        // e per dare priorità allo scroll gestito dall'evento.
         preventHashUpdate = true;
+        console.log("🔄 In attesa del caricamento del footer per sezione Contatti...");
+        
         document.addEventListener('footerLoaded', () => {
+          console.log("✅ Footer caricato, scroll verso Contatti");
           scrollToHash(hash);
-          // Riattiva il listener dello scroll dopo che lo scroll è avvenuto.
-          setTimeout(() => {
-            preventHashUpdate = false;
-          }, 1000); // Ritardo per garantire che lo scroll sia completato
         }, { once: true });
+        
+        // Timeout di sicurezza se il footer non si carica
+        setTimeout(() => {
+          if (!document.getElementById('Contatti')) {
+            console.warn("⚠️ Timeout: Footer non caricato entro 5 secondi");
+            preventHashUpdate = false;
+            isInitialLoad = false;
+            highlightNavigation();
+          }
+        }, 5000);
       } else {
         // Per tutte le altre sezioni, esegui subito lo scroll
-        // perché sono già presenti nel DOM.
         scrollToHash(hash);
       }
     } else {
-      // Nessun hash: calcola e imposta l'hash
-      preventHashUpdate = false;
-      highlightNavigation();
+      // Nessun hash: imposta Home come predefinito
+      console.log("🏠 Nessun hash, imposto Home");
+      updateActiveLink("Home");
+      history.replaceState(null, null, '#Home');
+      
+      // Sblocca il sistema
+      setTimeout(() => {
+        preventHashUpdate = false;
+        isInitialLoad = false;
+      }, 500);
     }
   }
 
