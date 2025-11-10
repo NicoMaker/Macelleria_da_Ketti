@@ -79,6 +79,8 @@ body {
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  /* Impedisce l'effetto "bounce" allo scroll quando si è all'inizio o alla fine della pagina */
+  overscroll-behavior-y: contain;
 }
 
 img {
