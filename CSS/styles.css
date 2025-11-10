@@ -878,6 +878,14 @@ h6 {
   }
 }
 
+/* Disabilita globalmente gli effetti hover su dispositivi touch */
+@media (hover: none) and (pointer: coarse) {
+  *:hover {
+    /* Rimuove qualsiasi effetto hover definito altrove */
+    all: revert !important;
+  }
+}
+
 .nome {
   color: #8b7355 !important;
 }
