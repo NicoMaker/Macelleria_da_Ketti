@@ -969,7 +969,7 @@ footer {
   background-color: #f5f1e8; /* Sfondo solido senza trasparenza */
   padding: 20px 0 25px 0;
   background-color: #f5f1e8; /* Sfondo solido per coerenza */
-  padding: 5px 0 25px 0; /* Ridotto ulteriormente il padding superiore */
+  padding: 5px 0 25px 0;
   margin-bottom: 40px;
   transition: padding 0.2s ease;
   /* Rimosso: border-radius, box-shadow, backdrop-filter */
@@ -988,7 +988,6 @@ footer {
 .product-controls-sticky .search-input {
   background-color: #ffffff; /* Sfondo bianco */
   border: 2px solid #8b5a2b;
-  /* Rimosso: box-shadow */
 }
 
 .product-controls-sticky .search-input:focus {
@@ -1007,9 +1006,7 @@ footer {
 }
 
 /* Pulsanti filtro senza ombra */
-.product-controls-sticky .filter-button {
-  /* Rimosso: box-shadow */
-}
+.product-controls-sticky .filter-button { }
 
 /* Spazio extra tra controlli sticky e prodotti */
 .progetti-container {
@@ -1022,7 +1019,7 @@ footer {
   .product-controls-sticky {
     top: 65px; /* Ridotto per tablet */
     padding: 15px 0 20px 0;
-    top: 65px;
+    top: 65px; /* Ridotto per tablet */
     padding: 8px 0 20px 0; /* Ridotto ulteriormente il padding superiore */
     margin-bottom: 35px;
   }
@@ -1138,12 +1135,12 @@ footer {
   font-weight: 500;
   font-size: 1.1em;
   /* Rimosso: text-shadow, box-shadow */
+  box-shadow: none;
 }
 
 .filter-button:hover {
   background-color: #a0522d;
   transform: translateY(-3px);
-  /* Rimosso: box-shadow */
 }
 
 .filter-button.active {
