@@ -1169,3 +1169,8 @@ footer {
   border-radius: 6px;
   transition: transform 0.5s ease;
 }
+
+/* Header e Layout */
+header {
+  padding: 8px 20px; /* Ridotto da 12px a 8px */
+}

@@ -1005,3 +1005,12 @@ h6 {
   width: auto;
   transition: transform var(--transition-base);
 }
+
+.header-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: var(--spacing-sm) var(--spacing-md); /* Cambiato da var(--spacing-md) */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
