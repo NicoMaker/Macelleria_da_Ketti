@@ -1,3 +1,4 @@
+
 /* Stili personalizzati per migliorare l'UX design */
 
 /* Header e Layout */
@@ -1146,4 +1147,25 @@ footer {
 .filter-button.active {
   background-color: #5a3a1a;
   transform: translateY(0);
+}
+
+/* Logo */
+.logo-link {
+  display: block;
+  transition: transform 0.3s ease;
+}
+
+.logo-container {
+  background-color: white;
+  border-radius: 8px;
+  padding: 4px;
+  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  overflow: hidden;
+}
+
+.logo {
+  width: 120px;  /* Ridotto da 150px a 120px */
+  height: auto;
+  border-radius: 6px;
+  transition: transform 0.5s ease;
 }

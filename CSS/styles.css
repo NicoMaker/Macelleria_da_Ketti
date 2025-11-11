@@ -999,3 +999,9 @@ h6 {
 .search-input::placeholder {
   color: #999;
 }
+
+.logo {
+  height: 40px;  /* Ridotto da 50px a 40px */
+  width: auto;
+  transition: transform var(--transition-base);
+}
