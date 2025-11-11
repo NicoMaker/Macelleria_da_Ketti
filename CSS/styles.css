@@ -893,12 +893,21 @@ h6 {
 /* Disabilita gli effetti hover su dispositivi touch */
 @media (hover: none) and (pointer: coarse) {
   .logo:hover,
-  .cta-button:hover,
-  .Progetti-card:hover,
-  .filter-button:hover,
   .social-link:hover {
     transform: none;
     box-shadow: none;
+  }
+
+  .cta-button:hover,
+  .filter-button:hover {
+    transform: none;
+    box-shadow: none;
+    background-color: var(--accent-warm); /* Ripristina colore originale */
+  }
+
+  .Progetti-card:hover {
+    transform: none;
+    border-color: transparent;
   }
 
   .nav-link:hover::after {
@@ -906,8 +915,6 @@ h6 {
   }
 
   .mobile-nav-link:hover {
-    background-color: transparent;
-    padding-left: var(--spacing-md);
   }
 
   .more-info-btn:hover {

@@ -266,7 +266,7 @@
   .back-button:hover {
     transform: none !important;
     box-shadow: none;
-    background-color: var(--accent-warm);
+    background-color: #8b5a2b; /* Ripristina colore originale */
   }
 
   /* Mantiene la centratura verticale anche su touch */
