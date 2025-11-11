@@ -126,8 +126,11 @@ document.addEventListener("DOMContentLoaded", () => {
         const headerHeight = header ? header.offsetHeight : 80;
         
         if (targetId === 'Prodotti') {
-          const offsetPosition = targetElement.offsetTop - headerHeight;
-          window.scrollTo({ top: offsetPosition, behavior: "auto" });
+          // Scroll solo se non siamo già in cima
+          if (window.pageYOffset > 0) {
+            const offsetPosition = targetElement.offsetTop - headerHeight;
+            window.scrollTo({ top: offsetPosition, behavior: "auto" });
+          }
         } else if (targetId === 'Contatti') {
           // Per Contatti, scroll alla fine della pagina
           console.log("⬇️ Scrolling verso Contatti (fine pagina)");
@@ -137,9 +140,12 @@ document.addEventListener("DOMContentLoaded", () => {
               behavior: "auto" 
             });
           }, 100);
+        } else if (targetId === 'Home') {
+          // Per Home, non fare nulla, evita lo scroll all'avvio
+          console.log("🏠 Sezione Home, scroll non necessario.");
         } else {
           const offsetPosition = targetElement.offsetTop - headerHeight;
-          window.scrollTo({ top: offsetPosition, behavior: "auto" });
+          window.scrollTo({ top: offsetPosition, behavior: "auto" }); // Scroll per le altre sezioni
         }
 
         preventHashUpdate = true;
@@ -188,7 +194,7 @@ document.addEventListener("DOMContentLoaded", () => {
       // Nessun hash: imposta Home come predefinito
       console.log("🏠 Nessun hash, imposto Home");
       updateActiveLink("Home");
-      history.replaceState(null, null, '#Home');
+      // history.replaceState(null, null, '#Home'); // Rimosso per evitare di aggiungere #Home all'URL all'avvio
       
       // Sblocca il sistema
       setTimeout(() => {

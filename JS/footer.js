@@ -15,13 +15,16 @@ document.addEventListener("DOMContentLoaded", () => {
     .then((data) => {
       footer.innerHTML = createFooterHTML(data);
 
-      // Initialize map using coordinates from footer.json
-      if (data.mappa && data.mappa.latitudine && data.mappa.longitudine) {
-        initMap(data.mappa.latitudine, data.mappa.longitudine);
-      }
-
-      // Notifica gli altri script che il footer è stato caricato
-      document.dispatchEvent(new CustomEvent('footerLoaded'));
+      // Usa setTimeout per assicurarsi che il DOM sia completamente aggiornato
+      // prima di inizializzare la mappa e notificare gli altri script.
+      setTimeout(() => {
+        // Initialize map using coordinates from footer.json
+        if (data.mappa && data.mappa.latitudine && data.mappa.longitudine) {
+          initMap(data.mappa.latitudine, data.mappa.longitudine);
+        }
+        // Notifica gli altri script che il footer è stato caricato
+        document.dispatchEvent(new CustomEvent('footerLoaded'));
+      }, 100); // Un piccolo ritardo è sufficiente
     })
     .catch((error) => {
       console.error("Errore nel caricamento dei dati del footer:", error);
