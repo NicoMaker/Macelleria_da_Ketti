@@ -4,11 +4,10 @@ document.addEventListener("DOMContentLoaded", () => {
   if (!footer) return;
 
   // Determine the correct path to footer.json based on the current URL
-  let jsonPath = "JSON/footer.json";
-  if (window.location.pathname.includes("/Projects/")) {
-    jsonPath = "../JSON/footer.json";
-  }
-
+  const jsonPath = window.location.pathname.includes("/Projects/")
+    ? "../JSON/footer.json"
+    : "JSON/footer.json";
+    
   // Load footer data
   fetch(jsonPath)
     .then((response) => response.json())
