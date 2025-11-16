@@ -7,7 +7,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const jsonPath = window.location.pathname.includes("/Projects/")
     ? "../JSON/footer.json"
     : "JSON/footer.json";
-    
+
   // Load footer data
   fetch(jsonPath)
     .then((response) => response.json())
@@ -40,7 +40,61 @@ function createFooterHTML(data) {
   const mapsQuery = contatti.indirizzo ? encodeURIComponent(contatti.indirizzo) : '';
   const googleMapsUrl = `https://www.google.com/maps/search/?api=1&query=${mapsQuery}`;
 
-  const orariHtml = orari.map(line => `<li class="footer-item">${line}</li>`).join('');
+  // --- LOGICA ORARI ---
+  const oggi = new Date();
+  const giornoSettimana = oggi.getDay(); // 0=Dom, 1=Lun, ..., 6=Sab
+  const oraCorrente = oggi.getHours() * 100 + oggi.getMinutes();
+
+  let indiceGiornoCorrente = -1;
+  if (giornoSettimana >= 1 && giornoSettimana <= 5) { // Lun-Ven
+    indiceGiornoCorrente = 0;
+  } else if (giornoSettimana === 6) { // Sabato
+    indiceGiornoCorrente = 1;
+  } else { // Domenica
+    indiceGiornoCorrente = 2;
+  }
+
+  /**
+   * Controlla se il negozio è aperto in base alla stringa degli orari.
+   * @param {string} orariString La stringa degli orari per il giorno corrente (es. "8:00 - 13:00 / 16:00 - 19:30").
+   * @returns {boolean} True se il negozio è aperto, altrimenti false.
+   */
+  function checkApertura(orariString) {
+    if (!orariString || orariString.toLowerCase().includes('chiuso')) {
+      return false;
+    }
+
+    // Estrae solo gli orari (es. "8:00 - 13:00 / 16:00 - 19:30")
+    const orariMatch = orariString.match(/(\d{1,2}:\d{2}\s*-\s*\d{1,2}:\d{2})/g);
+    if (!orariMatch) {
+      return false;
+    }
+
+    // Funzione per convertire "HH:MM" in un numero (es. "8:00" -> 800)
+    const parseTime = (timeStr) => {
+      const [ore, minuti] = timeStr.split(':');
+      return parseInt(ore, 10) * 100 + parseInt(minuti, 10);
+    };
+
+    // Controlla ogni intervallo di tempo
+    return orariMatch.some(intervallo => {
+      const [inizio, fine] = intervallo.split('-').map(t => t.trim());
+      return oraCorrente >= parseTime(inizio) && oraCorrente < parseTime(fine);
+    });
+  }
+
+  const statoApertura = checkApertura(orari[indiceGiornoCorrente]);
+
+  const orariHtml = orari.map((line, index) => {
+    let stile = '';
+    if (index === indiceGiornoCorrente) {
+      // Applica lo stile direttamente: verde se aperto, rosso se chiuso.
+      const colore = statoApertura ? '#00FF7F' : '#FF4B4B'; // Rosso più vibrante per massimo contrasto
+      stile = `style="color: ${colore}; font-weight: bold;"`;
+    }
+    // Aggiunge l'attributo 'style' solo se necessario.
+    return `<li class="footer-item" ${stile}>${line}</li>`;
+  }).join('');
 
   return `
     <div class="footer-content">
@@ -73,7 +127,7 @@ function createFooterHTML(data) {
 
             <div class="footer-section">
                 <h4 class="footer-subtitle">Orari</h4>
-                <ul class="footer-list">
+                <ul id="orari-footer" class="footer-list">
                     ${orariHtml}
                 </ul>
             </div>
