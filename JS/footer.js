@@ -45,13 +45,16 @@ function createFooterHTML(data) {
   const giornoSettimana = oggi.getDay(); // 0=Dom, 1=Lun, ..., 6=Sab
   const oraCorrente = oggi.getHours() * 100 + oggi.getMinutes();
 
-  let indiceGiornoCorrente = -1;
-  if (giornoSettimana >= 1 && giornoSettimana <= 5) { // Lun-Ven
-    indiceGiornoCorrente = 0;
-  } else if (giornoSettimana === 6) { // Sabato
-    indiceGiornoCorrente = 1;
-  } else { // Domenica
-    indiceGiornoCorrente = 2;
+  // Mappa il giorno della settimana all'indice corretto dell'array 'orari' (7 giorni)
+  // Domenica (0) -> indice 6
+  // Lunedì (1) -> indice 0
+  // ...
+  // Sabato (6) -> indice 5
+  let indiceGiornoCorrente;
+  if (giornoSettimana === 0) {
+    indiceGiornoCorrente = 6; // Domenica è l'ultimo elemento
+  } else {
+    indiceGiornoCorrente = giornoSettimana - 1; // Lun(1) -> 0, Mar(2) -> 1, etc.
   }
 
   /**
