@@ -92,7 +92,7 @@ function createFooterHTML(data) {
     let stile = '';
     if (index === indiceGiornoCorrente) {
       // Applica lo stile direttamente: verde se aperto, rosso se chiuso.
-      const colore = statoApertura ? '#00FF7F' : '#FF0033'; // Rosso neon per massima visibilità
+      const colore = statoApertura ? '#00FF7F' : 'orange';
       stile = `style="color: ${colore}; font-weight: bold;"`;
     }
     // Aggiunge l'attributo 'style' solo se necessario.
