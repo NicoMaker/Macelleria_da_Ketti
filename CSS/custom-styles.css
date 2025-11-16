@@ -1,9 +1,8 @@
-
 /* Stili personalizzati per migliorare l'UX design */
 
 /* Header e Layout */
 header {
-  padding: 12px 20px;
+  padding: 8px 20px;
 }
 
 .header-content {
@@ -30,7 +29,7 @@ header {
 }
 
 .logo {
-  width: 150px;
+  width: 120px;
   height: auto;
   border-radius: 6px;
   transition: transform 0.5s ease;
@@ -242,7 +241,7 @@ header nav ul li a.active::after {
 /* Footer */
 footer {
   padding: 20px 5%;
-  background-color: #8b5a2b; /* Colore di sfondo marrone per il footer */
+  background-color: #8b5a2b;
 }
 
 .footer-container {
@@ -272,12 +271,6 @@ footer {
 .contact-list li,
 .social-list li {
   margin-bottom: 15px;
-  transition: transform 0.3s ease;
-}
-
-.contact-list li:hover,
-.social-list li:hover {
-  transform: translateX(10px);
 }
 
 .contact-list button,
@@ -450,13 +443,13 @@ footer {
   padding: 12px 25px;
   border: none;
   cursor: pointer;
-  background-color: #8b5a2b; /* Ripristinato colore originale */
-  color: white; /* Ripristinato colore originale */
+  background-color: #8b5a2b;
+  color: white;
   border-radius: 30px;
   transition: all 0.3s ease;
   font-weight: 500;
   font-size: 1.1em;
-  /* text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000; Ripristinato stile originale */
+  box-shadow: none;
 }
 
 .filter-button:hover {
@@ -465,7 +458,8 @@ footer {
 }
 
 .filter-button.active {
-  background-color: #5a3a1a; /* Ripristinato colore originale */
+  background-color: #5a3a1a;
+  transform: translateY(0);
 }
 
 /* Animazioni */
@@ -683,13 +677,10 @@ footer {
   color: inherit;
 }
 
-/* Rimuove l'effetto hover dal banner di prossima apertura senza modificare gli altri .cta-button */
 .opening-soon-banner.cta-button:hover {
   transform: none;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  background-color: var(
-    --accent-warm
-  ); /* Mantiene il colore di sfondo originale */
+  background-color: var(--accent-warm);
 }
 
 /* Responsive styles */
@@ -702,7 +693,6 @@ footer {
     font-size: 1rem;
   }
 
-  /* Maintain centering on tablet */
   .novita-container,
   .progetti-container,
   .pc-view {
@@ -722,12 +712,9 @@ footer {
     font-size: 16px;
   }
 
-  /* ... existing code for header and menu ... */
-
   .novita-container,
   .progetti-container,
   .pc-view {
-    /* Ensure centering on iPad mini and tablets */
     grid-template-columns: 1fr;
     padding: 0 15px;
     margin: 30px auto;
@@ -779,7 +766,6 @@ footer {
     font-size: 0.9em;
   }
 
-  /* Mobile grid centering */
   .novita-container,
   .progetti-container,
   .pc-view {
@@ -814,21 +800,13 @@ footer {
     transform: none;
     box-shadow: none;
   }
-}
 
-/* Disabilita gli effetti hover su dispositivi touch */
-@media (hover: none) and (pointer: coarse) {
   header nav ul li a:hover {
     color: #edf2f7;
   }
 
   header nav ul li a:hover::after {
     width: 0;
-  }
-
-  .contact-list li:hover,
-  .social-list li:hover {
-    transform: none;
   }
 
   .contact-list a:hover,
@@ -843,140 +821,17 @@ footer {
   }
 }
 
-/* ===== STICKY SEARCH AND FILTERS - VERSIONE MIGLIORATA ===== */
-
-/* Container per i controlli sticky */
+/* STICKY SEARCH AND FILTERS */
 .product-controls-sticky {
   position: sticky;
-  top: var(--header-height, 80px); /* Altezza header, con fallback */
+  top: 70px;
   z-index: 100;
-  background: rgba(245, 241, 232, 0.95); /* Sfondo semi-trasparente */
-  backdrop-filter: blur(10px); /* Effetto vetro smerigliato */
-  padding: 20px 0;
-  margin-bottom: 30px;
-  transition: all 0.3s ease;
-  border-radius: 0 0 12px 12px;
-}
-
-/* Aggiusta la search container per sticky */
-.product-controls-sticky .search-container {
-  padding: 0 20px;
-  margin-bottom: 20px; /* Aggiunge spazio sotto la ricerca */
-}
-
-/* Migliora visibilità input di ricerca */
-.product-controls-sticky .search-input {
-  background-color: var(--ash-lightest);
-  border: 2px solid #8b5a2b;
-}
-
-/* Aggiusta il filter container per sticky */
-.product-controls-sticky .filter-container {
-  display: flex;
-  justify-content: center;
-  gap: 12px;
-  flex-wrap: wrap;
-  margin-bottom: 0;
-  padding: 0 20px;
-}
-
-/* Migliora visibilità pulsanti filtro */
-.product-controls-sticky .filter-button {
-  /* Rimosso: box-shadow */
-}
-
-/* Spazio extra tra controlli sticky e prodotti */
-.progetti-container {
-  margin-top: 20px !important;
-  padding-top: 20px;
-}
-
-/* Assicura che le card non vengano coperte */
-.products-section {
-  padding-top: var(--spacing-xl);
-}
-
-/* Responsive adjustments */
-@media (max-width: 1024px) {
-  .product-controls-sticky {
-    top: 70px;
-    margin-bottom: 35px;
-  }
-
-  .progetti-container {
-    margin-top: 15px !important;
-    padding-top: 15px;
-  }
-}
-
-@media (max-width: 768px) {
-  .product-controls-sticky {
-    top: 60px;
-    padding: 15px 0;
-    margin-bottom: 30px;
-  }
-
-  /* Su mobile, impila la ricerca sopra i filtri */
-  .product-controls-sticky .search-container {
-    margin-bottom: 15px;
-    padding: 0 15px;
-  }
-
-  .product-controls-sticky .search-container {
-    max-width: 100%;
-  }
-
-  .product-controls-sticky .filter-container {
-    padding: 0 15px;
-    gap: 10px;
-  }
-
-  .product-controls-sticky .filter-button {
-    font-size: 0.95em;
-    padding: 10px 18px;
-  }
-
-  .progetti-container {
-    margin-top: 10px !important;
-    padding-top: 10px;
-  }
-}
-
-@media (max-width: 480px) {
-  .product-controls-sticky {
-    top: 60px;
-    padding: 12px 0;
-    margin-bottom: 25px;
-  }
-
-  .product-controls-sticky .filter-button {
-    font-size: 0.85em;
-    padding: 8px 15px;
-  }
-
-  .progetti-container {
-    margin-top: 8px !important;
-    padding-top: 8px;
-  }
-}
-
-/* ===== STICKY SEARCH AND FILTERS - VERSIONE OTTIMIZZATA ===== */
-
-/* Container per i controlli sticky */
-.product-controls-sticky {
-  position: sticky;
-  top: 70px; /* Posizione sotto l'header */
-  z-index: 100;
-  background-color: #f5f1e8; /* Sfondo solido senza trasparenza */
-  padding: 20px 0 25px 0;
-  background-color: #f5f1e8; /* Sfondo solido per coerenza */
+  background-color: #f5f1e8;
   padding: 5px 0 25px 0;
   margin-bottom: 40px;
   transition: padding 0.2s ease;
-  /* Rimosso: border-radius, box-shadow, backdrop-filter */
 }
 
-/* Aggiusta la search container per sticky */
 .product-controls-sticky .search-container {
   padding: 0 20px;
   margin-bottom: 20px;
@@ -985,18 +840,15 @@ footer {
   margin-right: auto;
 }
 
-/* Input di ricerca con sfondo bianco */
 .product-controls-sticky .search-input {
-  background-color: #ffffff; /* Sfondo bianco */
+  background-color: #ffffff;
   border: 2px solid #8b5a2b;
 }
 
 .product-controls-sticky .search-input:focus {
   border-color: #5a3a1a;
-  /* Rimosso: box-shadow, transform */
 }
 
-/* Aggiusta il filter container per sticky */
 .product-controls-sticky .filter-container {
   display: flex;
   justify-content: center;
@@ -1006,22 +858,16 @@ footer {
   padding: 0 20px;
 }
 
-/* Pulsanti filtro senza ombra */
-.product-controls-sticky .filter-button { }
-
-/* Spazio extra tra controlli sticky e prodotti */
 .progetti-container {
   margin-top: 30px !important;
   padding-top: 0;
 }
 
-/* === RESPONSIVE: TABLET === */
+/* RESPONSIVE: TABLET */
 @media (max-width: 1024px) {
   .product-controls-sticky {
-    top: 65px; /* Ridotto per tablet */
-    padding: 15px 0 20px 0;
-    top: 65px; /* Ridotto per tablet */
-    padding: 8px 0 20px 0; /* Ridotto ulteriormente il padding superiore */
+    top: 65px;
+    padding: 8px 0 20px 0;
     margin-bottom: 35px;
   }
 
@@ -1040,12 +886,11 @@ footer {
   }
 }
 
-/* === RESPONSIVE: MOBILE === */
+/* RESPONSIVE: MOBILE */
 @media (max-width: 768px) {
   .product-controls-sticky {
-    top: 60px; /* Posizione ottimale per mobile */
-    padding: 12px 0 18px 0;
-    padding: 5px 0 18px 0; /* Ridotto ulteriormente il padding superiore */
+    top: 60px;
+    padding: 5px 0 18px 0;
     margin-bottom: 30px;
   }
 
@@ -1075,12 +920,11 @@ footer {
   }
 }
 
-/* === RESPONSIVE: MOBILE PICCOLO === */
+/* RESPONSIVE: MOBILE PICCOLO */
 @media (max-width: 480px) {
   .product-controls-sticky {
-    top: 55px; /* Ancora più vicino per schermi piccoli */
-    padding: 10px 0 15px 0;
-    padding: 3px 0 15px 0; /* Ridotto ulteriormente il padding superiore */
+    top: 55px;
+    padding: 3px 0 15px 0;
     margin-bottom: 25px;
   }
 
@@ -1114,63 +958,4 @@ footer {
   .product-controls-sticky .search-input:focus {
     transform: none;
   }
-}
-
-/* Filter Buttons */
-.filter-container {
-  display: flex;
-  justify-content: center;
-  gap: 15px;
-  margin-bottom: 30px;
-  flex-wrap: wrap;
-}
-
-.filter-button {
-  padding: 12px 25px;
-  border: none;
-  cursor: pointer;
-  background-color: #8b5a2b;
-  color: white;
-  border-radius: 30px;
-  transition: all 0.3s ease;
-  font-weight: 500;
-  font-size: 1.1em;
-  /* Rimosso: text-shadow, box-shadow */
-  box-shadow: none;
-}
-
-.filter-button:hover {
-  background-color: #a0522d;
-  transform: translateY(-3px);
-}
-
-.filter-button.active {
-  background-color: #5a3a1a;
-  transform: translateY(0);
-}
-
-/* Logo */
-.logo-link {
-  display: block;
-  transition: transform 0.3s ease;
-}
-
-.logo-container {
-  background-color: white;
-  border-radius: 8px;
-  padding: 4px;
-  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  overflow: hidden;
-}
-
-.logo {
-  width: 120px;  /* Ridotto da 150px a 120px */
-  height: auto;
-  border-radius: 6px;
-  transition: transform 0.5s ease;
-}
-
-/* Header e Layout */
-header {
-  padding: 8px 20px; /* Ridotto da 12px a 8px */
 }

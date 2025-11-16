@@ -50,7 +50,6 @@
   --radius-md: 8px;
   --radius-lg: 12px;
   --radius-xl: 16px;
-  /* Added consistent button radius */
   --radius-button: 50px;
 
   /* Transitions */
@@ -69,7 +68,7 @@
 html {
   scroll-behavior: smooth;
   font-size: 16px;
-  scroll-padding-top: 120px; /* Offset for sticky header, increased for better visibility */
+  scroll-padding-top: 120px;
 }
 
 body {
@@ -79,7 +78,6 @@ body {
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  /* Impedisce l'effetto "bounce" allo scroll quando si è all'inizio o alla fine della pagina */
   overscroll-behavior-y: contain;
 }
 
@@ -153,7 +151,7 @@ h6 {
 .header-container {
   max-width: 1400px;
   margin: 0 auto;
-  padding: var(--spacing-md);
+  padding: var(--spacing-sm) var(--spacing-md);
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -166,7 +164,7 @@ h6 {
 }
 
 .logo {
-  height: 50px;
+  height: 40px;
   width: auto;
   transition: transform var(--transition-base);
 }
@@ -282,7 +280,7 @@ h6 {
 }
 
 .mobile-nav-link.active {
-  color: var(--primary); /* Mantiene il colore del testo per il link attivo */
+  color: var(--primary);
 }
 
 .mobile-nav-link.active::before {
@@ -305,11 +303,7 @@ h6 {
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  background: linear-gradient(
-    135deg,
-    var(--ash-light) 0%,
-    var(--ash-medium) 100%
-  );
+  background: linear-gradient(135deg, var(--ash-light) 0%, var(--ash-medium) 100%);
 }
 
 .hero-image {
@@ -325,7 +319,7 @@ h6 {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  opacity: 0.5; /* Aumentata l'opacità per rendere l'immagine più visibile */
+  opacity: 0.5;
 }
 
 .hero-overlay {
@@ -334,12 +328,7 @@ h6 {
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(
-    0,
-    0,
-    0,
-    0.3
-  ); /* Overlay più leggero per migliorare la leggibilità del testo */
+  background: rgba(0, 0, 0, 0.3);
   z-index: 1;
 }
 
@@ -348,7 +337,7 @@ h6 {
   z-index: 2;
   text-align: center;
   color: var(--white);
-  padding: 0.25rem var(--spacing-xl); /* Ridotto ulteriormente il padding verticale del contenitore */
+  padding: 0.25rem var(--spacing-xl);
   max-width: 800px;
 }
 
@@ -359,7 +348,7 @@ h6 {
 
 .hero-subtitle {
   font-size: clamp(1.125rem, 3vw, 1.5rem);
-  margin-bottom: var(--spacing-sm); /* Ridotto ulteriormente il margine inferiore */
+  margin-bottom: var(--spacing-sm);
   opacity: 0.95;
 }
 
@@ -373,7 +362,6 @@ h6 {
   border-radius: var(--radius-button);
   transition: all var(--transition-base);
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  /* text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000; */ /* Contorno nero al testo rimosso */
 }
 
 .cta-button:hover {
@@ -409,7 +397,6 @@ h6 {
 .about-image {
   border-radius: var(--radius-lg);
   overflow: hidden;
-  /* Rende l'immagine più piccola su mobile e la centra */
   max-width: 80%;
   margin: 0 auto;
 }
@@ -424,8 +411,8 @@ h6 {
 .about-content {
   display: flex;
   flex-direction: column;
-  justify-content: center; /* Allinea il contenuto al centro verticalmente */
-  text-align: center; /* Centra il testo */
+  justify-content: center;
+  text-align: center;
 }
 
 .about-text p {
@@ -433,16 +420,15 @@ h6 {
   line-height: 1.8;
   color: var(--text-secondary);
   margin-bottom: var(--spacing-md);
-  text-align: justify; /* Giustifica il testo per un aspetto più pulito */
+  text-align: justify;
 }
 
-/* Rimuove il margine inferiore dal paragrafo che precede direttamente il pulsante */
 .about-text p + .more-info-btn {
   margin-top: calc(-1 * var(--spacing-md));
 }
 
 .more-info-btn {
-  display: flex; /* Modificato da inline-flex a flex */
+  display: flex;
   align-items: center;
   gap: var(--spacing-xs);
   color: var(--primary);
@@ -450,7 +436,7 @@ h6 {
   padding: var(--spacing-sm) 0;
   transition: all var(--transition-fast);
   cursor: pointer;
-  justify-content: center; /* Centra il pulsante */
+  justify-content: center;
 }
 
 .more-info-btn:hover {
@@ -470,7 +456,6 @@ h6 {
 
 .more-info-content.active {
   max-height: 500px;
-  /* margin-top: var(--spacing-md); */ /* Rimosso il margine superiore */
 }
 
 /* Features Grid */
@@ -568,7 +553,6 @@ h6 {
   font-weight: 600;
   transition: all var(--transition-base);
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  /* text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000; */ /* Contorno nero al testo rimosso */
 }
 
 .filter-button:hover {
@@ -597,10 +581,9 @@ h6 {
   transition: all var(--transition-base);
   cursor: pointer;
   border: 2px solid transparent;
-  /* Added flex layout for better content organization */
   display: flex;
   flex-direction: column;
-  min-height: 520px; /* Imposta un'altezza minima per uniformare le card */
+  min-height: 520px;
 }
 
 .Progetti-card:hover {
@@ -613,7 +596,6 @@ h6 {
   height: 250px;
   overflow: hidden;
   background-color: var(--gray-light);
-  /* Prevent image container from shrinking */
   flex-shrink: 0;
 }
 
@@ -624,37 +606,33 @@ h6 {
   transition: transform var(--transition-slow);
 }
 
-/* Added card content wrapper for better spacing */
 .Progetti-card-content {
   padding: var(--spacing-md);
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-sm); /* Aumentato il gap per più spazio */
+  gap: var(--spacing-sm);
   flex-grow: 1;
   text-align: center;
 }
 
 .Progetti-card h3 {
   font-size: 1.5rem;
-  /* Removed padding, now handled by card-content wrapper */
   padding: 0;
   color: var(--primary);
   margin-bottom: var(--spacing-xs);
 }
 
 .descrizione {
-  /* Removed padding and improved text display */
   padding: 0;
   color: var(--text-muted);
   font-size: 0.95rem;
   line-height: 1.6;
-  margin-bottom: auto; /* Pushes price and category to the bottom */
-  padding-bottom: var(--spacing-sm); /* Adds some space before price */
+  margin-bottom: auto;
+  padding-bottom: var(--spacing-sm);
   flex-grow: 1;
 }
 
 .prezzo {
-  /* Removed padding */
   padding: 0;
   font-size: 1.25rem;
   font-weight: 700;
@@ -663,13 +641,12 @@ h6 {
 }
 
 .categoria {
-  /* Removed padding */
   padding: 0;
   font-size: 0.875rem;
   color: var(--text-muted);
   display: flex;
   align-items: center;
-  justify-content: center; /* Centra il contenuto della categoria */
+  justify-content: center;
   gap: var(--spacing-xs);
 }
 
@@ -682,7 +659,6 @@ h6 {
 
 /* Novita Card Specific Styles */
 .novita-card {
-  background-color: #8b5a2b;
   background-color: var(--accent-cream);
   border-color: transparent;
 }
@@ -695,7 +671,6 @@ h6 {
   position: absolute;
   top: var(--spacing-md);
   left: var(--spacing-md);
-  background-color: var(--accent-warm);
   background-color: #8b5a2b;
   color: var(--white);
   padding: var(--spacing-xs) var(--spacing-sm);
@@ -704,17 +679,12 @@ h6 {
   border-radius: var(--radius-md);
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  z-index: 2; /* Aggiunge un contorno nero al testo per visibilità */
-  /* text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000; */ /* Rimosso */
+  z-index: 2;
 }
 
 /* ===== Footer ===== */
 .site-footer {
-  background: linear-gradient(
-    135deg,
-    var(--ash-darkest) 0%,
-    var(--primary) 100%
-  );
+  background: linear-gradient(135deg, var(--ash-darkest) 0%, var(--primary) 100%);
   color: var(--white);
 }
 
@@ -816,17 +786,15 @@ h6 {
     display: none;
   }
 
-  /* Make hero section full screen on desktop */
   .hero-section {
     min-height: 100vh;
   }
 
   .about-grid {
-    grid-template-columns: 0.8fr 1.2fr; /* Immagine più piccola, testo più grande */
-    /* Rimuove il max-width per consentire al grid di gestire la larghezza */
+    grid-template-columns: 0.8fr 1.2fr;
     max-width: none;
     gap: var(--spacing-2xl);
-    align-items: center; /* Allinea verticalmente immagine e testo */
+    align-items: center;
   }
 
   .features-grid {
@@ -858,7 +826,6 @@ h6 {
     grid-template-columns: 1fr;
   }
 
-  /* Riduci l'altezza della hero section su tablet per una migliore visibilità */
   .hero-section {
     min-height: 60vh;
   }
@@ -881,7 +848,6 @@ h6 {
 /* Disabilita globalmente gli effetti hover su dispositivi touch */
 @media (hover: none) and (pointer: coarse) {
   *:hover {
-    /* Rimuove qualsiasi effetto hover definito altrove */
     all: revert !important;
   }
 }
@@ -902,7 +868,7 @@ h6 {
   .filter-button:hover {
     transform: none;
     box-shadow: none;
-    background-color: var(--accent-warm); /* Ripristina colore originale */
+    background-color: var(--accent-warm);
   }
 
   .Progetti-card:hover {
@@ -912,9 +878,6 @@ h6 {
 
   .nav-link:hover::after {
     width: 0;
-  }
-
-  .mobile-nav-link:hover {
   }
 
   .more-info-btn:hover {
@@ -927,23 +890,7 @@ h6 {
   background-color: #8b5a2b !important;
 }
 
-/* Z-index hierarchy per evitare sovrapposizioni */
-.site-header {
-  position: sticky;
-  top: 0;
-  z-index: 1000;
-}
-
-.product-controls-sticky {
-  z-index: 100;
-}
-
-.Progetti-card {
-  z-index: 1;
-  position: relative;
-}
-
-/* Z-index hierarchy per evitare sovrapposizioni */
+/* Z-index hierarchy */
 .site-header {
   position: sticky;
   top: 0;
@@ -984,33 +931,16 @@ h6 {
   border: 2px solid #8b5a2b;
   border-radius: 30px;
   font-size: 1.1em;
-  background-color: white; /* Sfondo bianco */
+  background-color: white;
   color: #333;
   transition: all 0.3s ease;
-  /* Rimosso: max-width */
 }
 
 .search-input:focus {
   outline: none;
   border-color: #5a3a1a;
-  /* Rimosso: transform, box-shadow */
 }
 
 .search-input::placeholder {
   color: #999;
-}
-
-.logo {
-  height: 40px;  /* Ridotto da 50px a 40px */
-  width: auto;
-  transition: transform var(--transition-base);
-}
-
-.header-container {
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: var(--spacing-sm) var(--spacing-md); /* Cambiato da var(--spacing-md) */
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
 }
