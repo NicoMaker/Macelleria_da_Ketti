@@ -465,14 +465,16 @@ footer {
 }
 
 .filter-button:hover {
-  background-color: #a0522d;
+  background-color: #5c4033; /* Marrone Scuro */
+  color: #ffffff; /* Testo Bianco */
   transform: translateY(-3px);
 }
 
 .filter-button.active,
 .filter-button.active:hover {
-  background-color: var(--ash-darkest) !important;
+  background-color: #5c4033 !important; /* Marrone Scuro */
   transform: none;
+  color: #ffffff !important; /* Testo Bianco */
 }
 
 /* Animazioni */
