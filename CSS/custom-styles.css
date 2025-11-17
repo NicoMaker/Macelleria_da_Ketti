@@ -469,9 +469,10 @@ footer {
   transform: translateY(-3px);
 }
 
-.filter-button.active {
-  background-color: #5a3a1a;
-  transform: translateY(0);
+.filter-button.active,
+.filter-button.active:hover {
+  background-color: var(--ash-darkest) !important;
+  transform: none;
 }
 
 /* Animazioni */
@@ -710,7 +711,8 @@ footer {
 /* Transizioni fluide per opacity */
 .more-info-btn,
 .filter-button {
-  transition: opacity 0.15s ease, background-color 0.3s ease, transform 0.3s ease;
+  transition: opacity 0.15s ease, background-color 0.3s ease,
+    transform 0.3s ease;
 }
 
 /* Stato attivo visibile */

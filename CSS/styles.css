@@ -303,7 +303,11 @@ h6 {
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  background: linear-gradient(135deg, var(--ash-light) 0%, var(--ash-medium) 100%);
+  background: linear-gradient(
+    135deg,
+    var(--ash-light) 0%,
+    var(--ash-medium) 100%
+  );
 }
 
 .hero-image {
@@ -576,9 +580,11 @@ h6 {
   background-color: var(--accent-rust);
 }
 
-.filter-button.active {
-  background-color: var(--primary);
+.filter-button.active,
+.filter-button.active:hover {
+  background-color: var(--ash-darkest) !important;
   color: var(--white);
+  transform: none;
 }
 
 /* Products Grid */
@@ -699,7 +705,11 @@ h6 {
 
 /* ===== Footer ===== */
 .site-footer {
-  background: linear-gradient(135deg, var(--ash-darkest) 0%, var(--primary) 100%);
+  background: linear-gradient(
+    135deg,
+    var(--ash-darkest) 0%,
+    var(--primary) 100%
+  );
   color: var(--white);
 }
 

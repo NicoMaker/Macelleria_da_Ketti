@@ -52,11 +52,8 @@
   border-radius: 50%;
   background-color: rgba(139, 115, 85, 0.7);
   z-index: 10;
-  /* Mantiene sempre il transform per la centratura verticale */
   transform: translateY(-50%) !important;
-  /* Transizione solo su background-color */
   transition: background-color var(--transition-base) !important;
-  /* Previene comportamenti indesiderati */
   text-decoration: none;
   -webkit-tap-highlight-color: transparent;
   outline: none;
@@ -79,7 +76,6 @@
   transform: translateY(-50%) !important;
 }
 
-/* Previene qualsiasi movimento durante il click */
 .prev:active,
 .next:active {
   transform: translateY(-50%) !important;
@@ -87,7 +83,6 @@
   top: 50% !important;
 }
 
-/* Previene il focus outline che può causare spostamenti */
 .prev:focus,
 .next:focus {
   outline: none !important;
@@ -189,13 +184,13 @@
   line-height: 1.6;
 }
 
-/* Updated back button to match CTA button styling with same color and curved design */
+/* Back button */
 .back-button {
   display: inline-flex;
   align-items: center;
   gap: var(--spacing-sm);
   padding: 12px 30px;
-  background-color: var(--accent-warm);
+  background-color: #8b5a2b;
   color: var(--white);
   font-weight: 600;
   border-radius: var(--radius-button);
@@ -248,28 +243,28 @@
   }
 }
 
-.back-button {
-  background-color: #8b5a2b;
-}
-
 /* Disabilita gli effetti hover su dispositivi touch */
 @media (hover: none) and (pointer: coarse) {
   .prev:hover,
   .next:hover {
-    background-color: rgba(139, 115, 85, 0.7);
+    background-color: rgba(139, 115, 85, 0.7) !important;
+    transform: translateY(-50%) !important;
   }
 
   .dot:hover {
-    background-color: var(--gray-medium);
+    background-color: var(--gray-medium) !important;
   }
 
   .back-button:hover {
     transform: none !important;
-    box-shadow: none;
-    background-color: var(--accent-warm);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1) !important;
+    background-color: #8b5a2b !important;
   }
 
-  /* Mantiene la centratura verticale anche su touch */
+  .back-button:hover .material-icons {
+    transform: none !important;
+  }
+
   .prev,
   .next {
     transform: translateY(-50%) !important;
