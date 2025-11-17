@@ -14,16 +14,24 @@ document.addEventListener("DOMContentLoaded", () => {
     .then((data) => {
       footer.innerHTML = createFooterHTML(data);
 
-      // Usa setTimeout per assicurarsi che il DOM sia completamente aggiornato
-      // prima di inizializzare la mappa e notificare gli altri script.
+      // Initialize map after DOM update
       setTimeout(() => {
-        // Initialize map using coordinates from footer.json
         if (data.mappa && data.mappa.latitudine && data.mappa.longitudine) {
           initMap(data.mappa.latitudine, data.mappa.longitudine);
         }
-        // Notifica gli altri script che il footer è stato caricato
+
+        // Notifica altri script
         document.dispatchEvent(new CustomEvent('footerLoaded'));
-      }, 100); // Un piccolo ritardo è sufficiente
+
+        // Avvia aggiornamento automatico dei colori ogni minuto
+        setInterval(() => {
+          aggiornaColoreOrari(data.orari);
+        }, 60000);
+
+        // Esegui subito una prima sincronizzazione dei colori
+        aggiornaColoreOrari(data.orari);
+
+      }, 100);
     })
     .catch((error) => {
       console.error("Errore nel caricamento dei dati del footer:", error);
@@ -45,86 +53,79 @@ function createFooterHTML(data) {
   const giornoSettimana = oggi.getDay(); // 0=Dom, 1=Lun, ..., 6=Sab
   const oraCorrente = oggi.getHours() * 100 + oggi.getMinutes();
 
-  // Mappa il giorno della settimana all'indice corretto dell'array 'orari' (7 giorni)
-  // Domenica (0) -> indice 6
-  // Lunedì (1) -> indice 0
-  // ...
-  // Sabato (6) -> indice 5
-  let indiceGiornoCorrente;
-  if (giornoSettimana === 0) {
-    indiceGiornoCorrente = 6; // Domenica è l'ultimo elemento
-  } else {
-    indiceGiornoCorrente = giornoSettimana - 1; // Lun(1) -> 0, Mar(2) -> 1, etc.
-  }
+  // Mappa il giorno della settimana all'indice corretto dell'array 'orari'
+  let indiceGiornoCorrente = giornoSettimana === 0 ? 6 : giornoSettimana - 1;
 
-  /**
-   * Controlla se il negozio è aperto in base alla stringa degli orari.
-   * @param {string} orariString La stringa degli orari per il giorno corrente (es. "8:00 - 13:00 / 16:00 - 19:30").
-   * @returns {boolean} True se il negozio è aperto, altrimenti false.
-   */
   function checkApertura(orariString) {
     if (!orariString || orariString.toLowerCase().includes('chiuso')) {
       return false;
     }
 
-    // Estrae solo gli orari (es. "8:00 - 13:00 / 16:00 - 19:30")
     const orariMatch = orariString.match(/(\d{1,2}:\d{2}\s*-\s*\d{1,2}:\d{2})/g);
-    if (!orariMatch) {
-      return false;
-    }
+    if (!orariMatch) return false;
 
-    // Funzione per convertire "HH:MM" in un numero (es. "8:00" -> 800)
     const parseTime = (timeStr) => {
       const [ore, minuti] = timeStr.split(':');
       return parseInt(ore, 10) * 100 + parseInt(minuti, 10);
     };
 
-    // Controlla ogni intervallo di tempo
     return orariMatch.some(intervallo => {
-      const [inizio, fine] = intervallo.split('-').map(t => t.trim());
+      const [inizio, fine] = intervallo.split('-').map((t) => t.trim());
       return oraCorrente >= parseTime(inizio) && oraCorrente < parseTime(fine);
     });
   }
 
   const statoApertura = checkApertura(orari[indiceGiornoCorrente]);
 
-  const orariHtml = orari.map((line, index) => {
-    let stile = '';
-    if (index === indiceGiornoCorrente) {
-      // Applica lo stile direttamente: verde se aperto, rosso se chiuso.
-      const colore = statoApertura ? '#00FF7F' : 'orange';
-      stile = `style="color: ${colore}; font-weight: bold;"`;
-    }
-    // Aggiunge l'attributo 'style' solo se necessario.
-    return `<li class="footer-item" ${stile}>${line}</li>`;
-  }).join('');
+  const orariHtml = orari
+    .map((line, index) => {
+      let stile = "";
+      if (index === indiceGiornoCorrente) {
+        const colore = statoApertura ? "#00FF7F" : "orange";
+        stile = `style="color: ${colore}; font-weight: bold;"`;
+      }
+      return `<li class="footer-item" ${stile}>${line}</li>`;
+    })
+    .join("");
 
   return `
     <div class="footer-content">
         <div class="footer-grid">
             <div class="footer-section">
-                <h3 class="footer-title">${info.titolo || ''}</h3>
-                <p class="footer-text">${info.testo || ''}</p>
+                <h3 class="footer-title">${info.titolo || ""}</h3>
+                <p class="footer-text">${info.testo || ""}</p>
             </div>
             
             <div class="footer-section">
                 <h4 class="footer-subtitle">Contatti</h4>
                 <ul class="footer-list">
-                    ${contatti.telefono ? `
+                    ${
+                      contatti.telefono
+                        ? `
                     <li class="footer-item">
                         <span class="material-icons">phone</span>
                         <a href="tel:${contatti.telefono}">${contatti.telefono}</a>
-                    </li>` : ''}
-                    ${contatti.email ? `
+                    </li>`
+                        : ""
+                    }
+                    ${
+                      contatti.email
+                        ? `
                     <li class="footer-item">
                         <span class="material-icons">email</span>
                         <a href="mailto:${contatti.email}">${contatti.email}</a>
-                    </li>` : ''}
-                    ${contatti.indirizzo ? `
+                    </li>`
+                        : ""
+                    }
+                    ${
+                      contatti.indirizzo
+                        ? `
                     <li class="footer-item">
                         <span class="material-icons">location_on</span>
                         <a href="${googleMapsUrl}" target="_blank" rel="noopener noreferrer">${contatti.indirizzo}</a>
-                    </li>` : ''}
+                    </li>`
+                        : ""
+                    }
                 </ul>
             </div>
 
@@ -138,18 +139,30 @@ function createFooterHTML(data) {
             <div class="footer-section">
                 <h4 class="footer-subtitle">Seguici</h4>
                 <div class="social-links">
-                    ${social.facebook ? `
+                    ${
+                      social.facebook
+                        ? `
                     <a href="${social.facebook}" class="social-link" aria-label="Facebook" target="_blank" rel="noopener noreferrer">
                         <img src="https://img.icons8.com/ios-filled/50/ffffff/facebook-new.png" alt="Facebook" style="width: 24px; height: 24px;"/>
-                    </a>` : ''}
-                    ${social.instagram ? `
+                    </a>`
+                        : ""
+                    }
+                    ${
+                      social.instagram
+                        ? `
                     <a href="${social.instagram}" class="social-link" aria-label="Instagram" target="_blank" rel="noopener noreferrer">
                         <img src="https://img.icons8.com/ios-filled/50/ffffff/instagram-new.png" alt="Instagram" style="width: 24px; height: 24px;"/>
-                    </a>` : ''}
-                    ${social.whatsapp ? `
+                    </a>`
+                        : ""
+                    }
+                    ${
+                      social.whatsapp
+                        ? `
                     <a href="${social.whatsapp}" class="social-link" aria-label="WhatsApp" target="_blank" rel="noopener noreferrer">
                         <img src="https://img.icons8.com/ios-filled/50/ffffff/whatsapp.png" alt="WhatsApp" style="width: 24px; height: 24px;"/>
-                    </a>` : ''}
+                    </a>`
+                        : ""
+                    }
                 </div>
             </div>
         </div>
@@ -161,23 +174,65 @@ function createFooterHTML(data) {
 
     <div class="footer-bottom">
         <p>&copy; ${new Date().getFullYear()} Macelleria da Ketti. Tutti i diritti riservati.
-        ${info.p_iva ? ` - P.IVA: ${info.p_iva}` : ''}
+        ${info.p_iva ? ` - P.IVA: ${info.p_iva}` : ""}
         </p>
     </div>
   `;
 }
 
+// 🔄 FUNZIONE DI AUTO-AGGIORNAMENTO COLORI ORARI
+function aggiornaColoreOrari(orari) {
+  const oggi = new Date();
+  const giornoSettimana = oggi.getDay(); 
+  const oraCorrente = oggi.getHours() * 100 + oggi.getMinutes();
+
+  let indiceGiornoCorrente = giornoSettimana === 0 ? 6 : giornoSettimana - 1;
+
+  function checkApertura(orariString) {
+    if (!orariString || orariString.toLowerCase().includes("chiuso")) {
+      return false;
+    }
+
+    const orariMatch = orariString.match(/(\d{1,2}:\d{2}\s*-\s*\d{1,2}:\d{2})/g);
+    if (!orariMatch) return false;
+
+    const parseTime = (t) => {
+      const [ore, minuti] = t.split(":");
+      return parseInt(ore) * 100 + parseInt(minuti);
+    };
+
+    return orariMatch.some((range) => {
+      const [inizio, fine] = range.split("-").map((s) => s.trim());
+      return oraCorrente >= parseTime(inizio) && oraCorrente < parseTime(fine);
+    });
+  }
+
+  const statoApertura = checkApertura(orari[indiceGiornoCorrente]);
+  const lista = document.querySelectorAll("#orari-footer .footer-item");
+
+  lista.forEach((li, index) => {
+    li.style.color = "";
+    li.style.fontWeight = "";
+
+    if (index === indiceGiornoCorrente) {
+      li.style.color = statoApertura ? "#00FF7F" : "orange";
+      li.style.fontWeight = "bold";
+    }
+  });
+}
+
+// MAPPA
 function initMap(lat, lon) {
   const mapContainer = document.getElementById("map");
   if (!mapContainer) return;
 
-  // Create iframe for OpenStreetMap
   const iframe = document.createElement("iframe");
   iframe.width = "100%";
   iframe.height = "100%";
   iframe.frameBorder = "0";
   iframe.style.border = "none";
-  const zoomLevel = 0.0005; // Valore ancora più piccolo per uno zoom massimo
+
+  const zoomLevel = 0.0005;
   iframe.src = `https://www.openstreetmap.org/export/embed.html?bbox=${lon - zoomLevel},${lat - zoomLevel},${lon + zoomLevel},${lat + zoomLevel}&layer=mapnik&marker=${lat},${lon}`;
   iframe.loading = "lazy";
 
