@@ -176,6 +176,13 @@ header nav ul li a.active::after {
   max-width: 1200px;
   padding: 0 20px;
   width: 100%;
+  min-height: 400px; /* Previene il collasso durante il re-render */
+  position: relative;
+}
+
+.progetti-container.updating {
+  opacity: 0.6;
+  pointer-events: none;
 }
 
 .Progetti-card {
@@ -190,6 +197,7 @@ header nav ul li a.active::after {
   transform: translateY(20px);
   animation: fadeInUp 0.5s forwards;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  contain: layout; /* Previene il reflow fuori dalla card */
 }
 
 .Progetti-card:hover {
@@ -210,6 +218,7 @@ header nav ul li a.active::after {
   overflow: hidden;
   position: relative;
   margin: 0 auto;
+  contain: layout style paint; /* Isola il rendering */
 }
 
 .container-immagine img {
@@ -437,6 +446,7 @@ footer {
   gap: 15px;
   margin-bottom: 30px;
   flex-wrap: wrap;
+  contain: layout; /* Isola i bottoni filtro */
 }
 
 .filter-button {
@@ -450,6 +460,8 @@ footer {
   font-weight: 500;
   font-size: 1.1em;
   box-shadow: none;
+  backface-visibility: hidden;
+  transform: translateZ(0);
 }
 
 .filter-button:hover {
@@ -683,6 +695,60 @@ footer {
   background-color: var(--accent-warm);
 }
 
+/* Touch feedback improvements */
+.more-info-btn,
+.filter-button,
+.cta-button {
+  -webkit-tap-highlight-color: rgba(139, 90, 43, 0.2);
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  touch-action: manipulation;
+}
+
+/* Transizioni fluide per opacity */
+.more-info-btn,
+.filter-button {
+  transition: opacity 0.15s ease, background-color 0.3s ease, transform 0.3s ease;
+}
+
+/* Stato attivo visibile */
+.filter-button.active {
+  background-color: #5a3a1a !important;
+  opacity: 1 !important;
+}
+
+/* Prevenzione layout shift */
+.more-info-btn {
+  backface-visibility: hidden;
+  transform: translateZ(0);
+}
+
+/* Prevenzione sformattamenti */
+.about-section {
+  contain: layout; /* Isola il layout della sezione */
+}
+
+.more-info-content {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.5s ease-in-out;
+  will-change: max-height;
+}
+
+.more-info-content.active {
+  max-height: 1000px; /* Aumentato per contenuti più lunghi */
+  overflow: visible; /* Permette al contenuto di essere visibile */
+}
+
+.more-info-content p {
+  margin-bottom: var(--spacing-md);
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
 /* Responsive styles */
 @media (max-width: 1024px) {
   .section h2 {
@@ -779,45 +845,6 @@ footer {
 
   .Progetti-card {
     max-width: 100%;
-  }
-}
-
-/* Disabilita gli effetti hover su dispositivi touch */
-@media (hover: none) and (pointer: coarse) {
-  .logo-link:hover,
-  .logo-container:hover,
-  header nav ul li a:hover,
-  .Progetti-card:hover,
-  .contact-list li:hover,
-  .social-list li:hover,
-  .contact-list a:hover,
-  .social-list a:hover,
-  .map-link:hover,
-  .filter-button:hover,
-  .search-input:focus,
-  .cta-button:hover,
-  .scroll-down-arrow:hover {
-    transform: none;
-    box-shadow: none;
-  }
-
-  header nav ul li a:hover {
-    color: #edf2f7;
-  }
-
-  header nav ul li a:hover::after {
-    width: 0;
-  }
-
-  .contact-list a:hover,
-  .social-list a:hover {
-    background-color: rgba(0, 0, 0, 0.2);
-  }
-
-  .map-link:hover,
-  .filter-button:hover,
-  .cta-button:hover {
-    background-color: #8b5a2b;
   }
 }
 
@@ -953,9 +980,112 @@ footer {
   }
 }
 
-/* Disabilita effetti hover su touch devices */
+/* Disabilita gli effetti hover su dispositivi touch */
 @media (hover: none) and (pointer: coarse) {
+  /* Logo */
+  .logo-link:hover,
+  .logo-container:hover {
+    transform: none !important;
+  }
+
+  /* Navigation links */
+  header nav ul li a:hover {
+    color: #edf2f7 !important;
+    transform: none !important;
+  }
+
+  header nav ul li a:hover::after {
+    width: 0 !important;
+  }
+
+  /* Cards */
+  .Progetti-card:hover {
+    transform: none !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+    border-color: transparent !important;
+  }
+
+  .Progetti-card:hover .container-immagine img {
+    transform: none !important;
+  }
+
+  /* Contact and Social links */
+  .contact-list a:hover,
+  .social-list a:hover {
+    background-color: rgba(0, 0, 0, 0.2) !important;
+    transform: none !important;
+  }
+
+  /* Map link */
+  .map-link:hover {
+    background-color: rgba(139, 90, 43, 0.8) !important;
+    color: #fff !important;
+    transform: none !important;
+  }
+
+  /* Filter buttons */
+  .filter-button:hover {
+    background-color: #8b5a2b !important;
+    transform: none !important;
+  }
+
+  .filter-button:active {
+    transform: none !important;
+  }
+
+  /* Search input */
+  .search-input:focus {
+    transform: none !important;
+  }
+
+  /* CTA Buttons */
+  .cta-button:hover {
+    background-color: #8b5a2b !important;
+    transform: none !important;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1) !important;
+  }
+
+  .cta-button:active {
+    transform: none !important;
+  }
+
+  .cta-button-secondary:hover {
+    background-color: transparent !important;
+    color: white !important;
+    transform: none !important;
+  }
+
+  /* Scroll down arrow */
+  .scroll-down-arrow:hover {
+    background-color: transparent !important;
+    transform: none !important;
+  }
+
+  /* More info button */
+  .more-info-btn:hover {
+    gap: var(--spacing-xs) !important;
+    color: var(--primary) !important;
+  }
+
+  .more-info-btn:hover .btn-icon {
+    transform: none !important;
+  }
+
+  /* Opening soon banner */
+  .opening-soon-banner:hover,
+  .opening-soon-banner.cta-button:hover {
+    transform: none !important;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1) !important;
+    background-color: var(--accent-warm) !important;
+  }
+
+  /* Product controls sticky */
   .product-controls-sticky .search-input:focus {
-    transform: none;
+    transform: none !important;
+  }
+
+  .product-controls-sticky .filter-button:hover {
+    background-color: #8b5a2b !important;
+    transform: none !important;
   }
 }

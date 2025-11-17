@@ -52,8 +52,11 @@
   border-radius: 50%;
   background-color: rgba(139, 115, 85, 0.7);
   z-index: 10;
+  /* Mantiene sempre il transform per la centratura verticale */
   transform: translateY(-50%) !important;
+  /* Transizione solo su background-color */
   transition: background-color var(--transition-base) !important;
+  /* Previene comportamenti indesiderati */
   text-decoration: none;
   -webkit-tap-highlight-color: transparent;
   outline: none;
@@ -76,6 +79,7 @@
   transform: translateY(-50%) !important;
 }
 
+/* Previene qualsiasi movimento durante il click */
 .prev:active,
 .next:active {
   transform: translateY(-50%) !important;
@@ -83,6 +87,7 @@
   top: 50% !important;
 }
 
+/* Previene il focus outline che può causare spostamenti */
 .prev:focus,
 .next:focus {
   outline: none !important;
@@ -184,13 +189,13 @@
   line-height: 1.6;
 }
 
-/* Back button */
+/* Updated back button to match CTA button styling with same color and curved design */
 .back-button {
   display: inline-flex;
   align-items: center;
   gap: var(--spacing-sm);
   padding: 12px 30px;
-  background-color: #8b5a2b;
+  background-color: var(--accent-warm);
   color: var(--white);
   font-weight: 600;
   border-radius: var(--radius-button);
@@ -243,6 +248,10 @@
   }
 }
 
+.back-button {
+  background-color: #8b5a2b;
+}
+
 /* Disabilita gli effetti hover su dispositivi touch */
 @media (hover: none) and (pointer: coarse) {
   .prev:hover,
@@ -257,9 +266,10 @@
   .back-button:hover {
     transform: none !important;
     box-shadow: none;
-    background-color: #8b5a2b;
+    background-color: var(--accent-warm);
   }
 
+  /* Mantiene la centratura verticale anche su touch */
   .prev,
   .next {
     transform: translateY(-50%) !important;
