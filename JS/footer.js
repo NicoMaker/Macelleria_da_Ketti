@@ -23,12 +23,16 @@ document.addEventListener("DOMContentLoaded", () => {
         // Notifica altri script
         document.dispatchEvent(new CustomEvent('footerLoaded'));
 
-        // Avvia aggiornamento automatico dei colori ogni minuto
-        setInterval(() => {
-          aggiornaColoreOrari(data.orari);
-        }, 60000);
+        // --- Aggiorna i colori al minuto esatto ---
+        const now = new Date();
+        const secondsToNextMinute = 60 - now.getSeconds();
 
-        // Esegui subito una prima sincronizzazione dei colori
+        setTimeout(() => {
+          aggiornaColoreOrari(data.orari); 
+          setInterval(() => aggiornaColoreOrari(data.orari), 60000);
+        }, secondsToNextMinute * 1000);
+
+        // Primo aggiornamento immediato
         aggiornaColoreOrari(data.orari);
 
       }, 100);
@@ -51,9 +55,9 @@ function createFooterHTML(data) {
   // --- LOGICA ORARI ---
   const oggi = new Date();
   const giornoSettimana = oggi.getDay(); // 0=Dom, 1=Lun, ..., 6=Sab
+
   const oraCorrente = oggi.getHours() * 100 + oggi.getMinutes();
 
-  // Mappa il giorno della settimana all'indice corretto dell'array 'orari'
   let indiceGiornoCorrente = giornoSettimana === 0 ? 6 : giornoSettimana - 1;
 
   function checkApertura(orariString) {
@@ -79,12 +83,15 @@ function createFooterHTML(data) {
 
   const orariHtml = orari
     .map((line, index) => {
-      let stile = "";
+      let colore = "";
+      let peso = "";
+
       if (index === indiceGiornoCorrente) {
-        const colore = statoApertura ? "#00FF7F" : "orange";
-        stile = `style="color: ${colore}; font-weight: bold;"`;
+        colore = statoApertura ? "#00FF7F" : "orange";
+        peso = "font-weight:bold;";
       }
-      return `<li class="footer-item" ${stile}>${line}</li>`;
+
+      return `<li class="footer-item" style="color:${colore};${peso}">${line}</li>`;
     })
     .join("");
 
@@ -208,17 +215,24 @@ function aggiornaColoreOrari(orari) {
   }
 
   const statoApertura = checkApertura(orari[indiceGiornoCorrente]);
-  const lista = document.querySelectorAll("#orari-footer .footer-item");
 
-  lista.forEach((li, index) => {
-    li.style.color = "";
-    li.style.fontWeight = "";
+  // --- RISCRIVE L’ELENCO ORARI (aggiornamento reale) ---
+  const lista = document.querySelector("#orari-footer");
+  if (!lista) return;
 
-    if (index === indiceGiornoCorrente) {
-      li.style.color = statoApertura ? "#00FF7F" : "orange";
-      li.style.fontWeight = "bold";
-    }
-  });
+  lista.innerHTML = orari
+    .map((line, index) => {
+      let colore = "";
+      let peso = "";
+
+      if (index === indiceGiornoCorrente) {
+        colore = statoApertura ? "#00FF7F" : "orange";
+        peso = "font-weight:bold;";
+      }
+
+      return `<li class="footer-item" style="color:${colore};${peso}">${line}</li>`;
+    })
+    .join("");
 }
 
 // MAPPA
