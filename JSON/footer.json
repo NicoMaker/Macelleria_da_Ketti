@@ -62,7 +62,11 @@
     }
   ],
   "giorniChiusuraExtra": {
-    "morivi-extra": ["", ""],
-    "ferie": ["", ""]
+    "morivi-extra": [
+      ""
+    ],
+    "ferie": [
+      ""
+    ]
   }
 }

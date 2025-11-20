@@ -42,89 +42,115 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 });
 
-// 🎄 NUOVA FUNZIONE per verificare chiusure di un singolo giorno (Festività e Giorni Extra)
-function getSingleDayClosureReason(checkDate, data) {
+// Helper per formattare la data in DD/MM
+const formatDateDM = (date) => {
+    const giorno = String(date.getDate()).padStart(2, "0");
+    const mese = String(date.getMonth() + 1).padStart(2, "0");
+    return `${giorno}/${mese}`;
+}
+
+// 🌐 HELPER: Compila TUTTE le date di chiusura per "ferie" (singole e a periodo) in un unico Set di DD/MM strings
+function getUnifiedFerieDates(data, year) {
+    const unifiedDates = new Set();
+    const giorniExtraFerie = data.giorniChiusuraExtra && data.giorniChiusuraExtra.ferie || [];
+    
+    // 1. Aggiungi i giorni singoli extra ferie
+    giorniExtraFerie.forEach(date => unifiedDates.add(date));
+
+    // Helper per creare oggetti Date da stringhe DD/MM
+    const parseDate = (dateStr, y) => {
+        const [day, month] = dateStr.split("/").map(Number);
+        return new Date(y, month - 1, day, 0, 0, 0, 0);
+    };
+
+    // 2. Aggiungi i periodi lunghi di ferie
+    const feriePeriods = data.ferie || [];
+    for (const period of feriePeriods) {
+        if (!period.inizio || !period.fine) continue;
+        
+        let dataInizio = parseDate(period.inizio, year);
+        let dataFine = parseDate(period.fine, year);
+
+        // Gestione ferie a cavallo d'anno
+        if (dataInizio.getTime() > dataFine.getTime()) {
+            dataFine = parseDate(period.fine, year + 1);
+        }
+
+        let currentDate = new Date(dataInizio);
+        // Itera includendo la data di fine
+        while (currentDate.getTime() <= dataFine.getTime()) { 
+            unifiedDates.add(formatDateDM(currentDate));
+            currentDate.setDate(currentDate.getDate() + 1);
+        }
+    }
+    
+    return unifiedDates;
+}
+
+// 📅 HELPER: Trova l'ultimo giorno consecutivo chiuso per "ferie" partendo da una data, usando il set unificato
+function findConsecutiveClosureEnd(startDate, unifiedFerieDates) {
+    const startDateDM = formatDateDM(startDate);
+    
+    if (!unifiedFerieDates.has(startDateDM)) {
+        return startDateDM;
+    }
+
+    let currentDate = new Date(startDate);
+    let endDate = new Date(startDate); 
+    
+    // Loop per trovare l'ultimo giorno consecutivo nel set unificato
+    while (true) {
+        currentDate.setDate(currentDate.getDate() + 1); 
+        const nextDateDM = formatDateDM(currentDate);
+
+        // Se il giorno successivo NON è chiuso per ferie (né singole né lunghe), ci fermiamo.
+        if (!unifiedFerieDates.has(nextDateDM)) {
+            // La data di fine è l'ultima data chiusa trovata
+            return formatDateDM(endDate); 
+        }
+        
+        // Se è chiuso, aggiorniamo la data di fine e continuiamo
+        endDate = new Date(currentDate); 
+    }
+}
+
+// 🚨 FUNZIONE: Verifica lo stato di chiusura di un singolo giorno (Festività, Ferie Unificate, Motivi Extra)
+function getSingleDayClosureReason(checkDate, data, unifiedFerieDates) {
     const festivita = data.festivita || [];
     const giorniExtra = data.giorniChiusuraExtra || {};
     
     const dateToCheck = new Date(checkDate);
-    const giorno = String(dateToCheck.getDate()).padStart(2, "0");
-    const mese = String(dateToCheck.getMonth() + 1).padStart(2, "0");
-    const dataFormattata = `${giorno}/${mese}`;
+    const dataFormattata = formatDateDM(dateToCheck);
 
     // 1. Check Festivita (Priority 1)
     if (festivita.includes(dataFormattata)) {
-        return "festivita";
+        return { reason: "festivita", dataChiusura: dataFormattata };
     }
 
-    // 2. Check Giorni Chiusura Extra (Priority 2)
+    // 2. Check Ferie (Unificate) (Priority 2) - Copre periodi lunghi e giorni singoli
+    if (unifiedFerieDates.has(dataFormattata)) {
+        // Calcola la data di fine del blocco consecutivo unificato
+        const fineChiusura = findConsecutiveClosureEnd(dateToCheck, unifiedFerieDates);
+        return {
+            reason: "ferie",
+            dataChiusura: fineChiusura
+        };
+    }
+    
+    // 3. Check Motivi Extra (altri giorni singoli) (Priority 3)
     for (const reason in giorniExtra) {
-        if (Array.isArray(giorniExtra[reason]) && giorniExtra[reason].includes(dataFormattata)) {
-            // Restituisce il nome della categoria ("morivi-extra" o "ferie")
-            return reason; 
+        // Ignora la ragione "ferie" perché è già coperta dal check unificato (Punto 2)
+        if (reason !== "ferie" && Array.isArray(giorniExtra[reason]) && giorniExtra[reason].includes(dataFormattata)) {
+            return {
+                reason: reason,
+                dataChiusura: dataFormattata 
+            }; 
         }
     }
 
-    return null; // Nessuna chiusura specifica di singolo giorno trovata
+    return null; 
 }
 
-// 🏖️ FUNZIONE GENERICA PER VERIFICARE SE UNA DATA È IN PERIODO DI FERIE MULTIPLE
-function isDateInFeriePeriod(originalCheckDate, feriePeriods) {
-  if (!feriePeriods || !Array.isArray(feriePeriods)) return { isClosed: false, fineFerie: "" };
-
-  // Clona e normalizza la data da controllare all'inizio del giorno
-  const checkDate = new Date(originalCheckDate);
-  checkDate.setHours(0, 0, 0, 0);
-
-  const parseDate = (dateStr, year) => {
-    const [day, month] = dateStr.split("/").map(Number);
-    // Imposta l'ora a 00:00:00 per confronti precisi
-    return new Date(year, month - 1, day, 0, 0, 0, 0);
-  };
-
-  const currentYear = checkDate.getFullYear();
-
-  for (const ferie of feriePeriods) {
-    if (!ferie.inizio || !ferie.fine) continue;
-
-    let dataInizio = parseDate(ferie.inizio, currentYear);
-    let dataFine = parseDate(ferie.fine, currentYear);
-
-    // Gestione ferie a cavallo d'anno (es. 20/12 - 05/01)
-    if (dataFine.getTime() < dataInizio.getTime()) {
-      
-      const meseInizio = dataInizio.getMonth(); 
-      const meseFine = dataFine.getMonth();     
-      
-      let isInFerie = false;
-      
-      // Controllo se la data è compresa nell'intervallo di fine anno (es. 20/12 al 31/12)
-      if (checkDate.getMonth() >= meseInizio) {
-          isInFerie = checkDate.getTime() >= dataInizio.getTime();
-      } 
-      // Controllo se la data è compresa nell'intervallo di inizio anno (es. 01/01 al 05/01)
-      else if (checkDate.getMonth() <= meseFine) {
-          isInFerie = checkDate.getTime() <= dataFine.getTime();
-      }
-      
-      if (isInFerie) {
-          return { isClosed: true, fineFerie: ferie.fine };
-      }
-
-    } else {
-      // Ferie normali nello stesso anno (Inclusa la data di fine)
-      if (
-        checkDate.getTime() >= dataInizio.getTime() &&
-        checkDate.getTime() <= dataFine.getTime()
-      ) {
-        const fineFerie = ferie.fine; // Mostra la data di fine definita nel JSON
-        return { isClosed: true, fineFerie: fineFerie };
-      }
-    }
-  }
-
-  return { isClosed: false, fineFerie: "" };
-}
 
 // --- Funzione Principale di Generazione HTML ---
 function createFooterHTML(data) {
@@ -133,7 +159,6 @@ function createFooterHTML(data) {
   const orari = data.orari || [];
   const social = data.social || {};
   const legenda = data.legendaOrari || { colori: {}, testo: {} };
-  const feriePeriods = data.ferie || []; // Array per periodi multipli
 
   const mapsQuery = contatti.indirizzo
     ? encodeURIComponent(contatti.indirizzo)
@@ -149,18 +174,18 @@ function createFooterHTML(data) {
   const oraCorrente = oggiReal.getHours() * 100 + oggiReal.getMinutes();
 
   let indiceGiornoCorrente = giornoSettimana === 0 ? 6 : giornoSettimana - 1; // 0=Lun, ..., 6=Dom (Indice array orari di oggi)
+  
+  // Calcola il set unificato di date di ferie all'inizio
+  const unifiedFerieDates = getUnifiedFerieDates(data, oggi.getFullYear());
 
   // Calcolo stati di chiusura OGGI
-  const singleDayReason = getSingleDayClosureReason(oggiReal, data);
-  const isFestivita = singleDayReason === "festivita";
-  const isFerieStaccate = singleDayReason === "ferie";
-  const isMotivoExtra = singleDayReason === "morivi-extra"; // Usiamo la chiave esatta del JSON
-
-  const ferieOggiCheck = isDateInFeriePeriod(oggiReal, feriePeriods);
-  const eFeriePeriodoOggi = ferieOggiCheck.isClosed;
+  const singleDayClosure = getSingleDayClosureReason(oggiReal, data, unifiedFerieDates);
+  const isFestivita = singleDayClosure && singleDayClosure.reason === "festivita";
+  const eFerieOggi = singleDayClosure && singleDayClosure.reason === "ferie";
+  const isMotivoExtra = singleDayClosure && singleDayClosure.reason === "morivi-extra";
 
   // Se almeno una condizione di chiusura è vera
-  const eChiusoOggi = isFestivita || eFeriePeriodoOggi || isMotivoExtra || isFerieStaccate; 
+  const eChiusoOggi = isFestivita || eFerieOggi || isMotivoExtra; 
 
   function checkApertura(orariString) {
     if (eChiusoOggi) return false;
@@ -197,7 +222,6 @@ function createFooterHTML(data) {
 
   const orariHtml = giorniDaVisualizzare
     .map((dataDelGiorno, i) => {
-      // i è l'offset dal giorno corrente (0=Oggi, 1=Domani, ...)
       let colore = "";
       let peso = "";
 
@@ -210,34 +234,23 @@ function createFooterHTML(data) {
       const nomeGiorno = line.split(":")[0]; // e.g., "Lunedì"
 
       // Ricalcolo stati di chiusura per il giorno in analisi
-      const singleDayReasonCheck = getSingleDayClosureReason(dataDelGiorno, data);
-      const isGiornoFestivita = singleDayReasonCheck === "festivita";
-      const isGiornoFerieStaccate = singleDayReasonCheck === "ferie";
-      const isGiornoMotivoExtra = singleDayReasonCheck === "morivi-extra";
-      
-      const ferieCheck = isDateInFeriePeriod(dataDelGiorno, feriePeriods);
-      const giornoIsFeriePeriodo = ferieCheck.isClosed;
+      const closureCheck = getSingleDayClosureReason(dataDelGiorno, data, unifiedFerieDates);
 
       // 1. PRIORITÀ: Festività (Singolo Giorno)
-      if (isGiornoFestivita) {
+      if (closureCheck && closureCheck.reason === "festivita") {
         testoOrario = `${nomeGiorno}: Chiuso (Festività)`;
       } 
-      // 2. PRIORITÀ: Ferie a Lungo Periodo
-      else if (giornoIsFeriePeriodo) {
-        testoOrario = `${nomeGiorno}: Chiuso (Ferie fino al ${ferieCheck.fineFerie})`;
+      // 2. PRIORITÀ: Ferie (Singoli/Multipli e unificati)
+      else if (closureCheck && closureCheck.reason === "ferie") {
+        testoOrario = `${nomeGiorno}: Chiuso (Ferie fino al ${closureCheck.dataChiusura})`;
       }
-      // 3. PRIORITÀ: Ferie (Singoli Giorni Staccati)
-      else if (isGiornoFerieStaccate) {
-        testoOrario = `${nomeGiorno}: Chiuso (Ferie)`;
-      }
-      // 4. PRIORITÀ: Motivi Extra (Singoli Giorni Staccati)
-      else if (isGiornoMotivoExtra) {
+      // 3. PRIORITÀ: Motivi Extra
+      else if (closureCheck && closureCheck.reason === "morivi-extra") {
         testoOrario = `${nomeGiorno}: Chiuso (Motivi Extra)`;
       }
-      // 5. Altrimenti, mostra l'orario normale (testoOrario = line)
+      // 4. Altrimenti, mostra l'orario normale (testoOrario = line)
 
-
-      // 6. STYLE CHECK: Applicazione dello stile SOLO al giorno corrente (i === 0).
+      // 5. STYLE CHECK: Applicazione dello stile SOLO al giorno corrente (i === 0).
       if (i === 0) {
         peso = "font-weight:bold;";
 
@@ -368,7 +381,7 @@ function createFooterHTML(data) {
 function aggiornaColoreOrari(data) {
   const orari = data.orari || [];
   const legenda = data.legendaOrari || { colori: {}, testo: {} };
-  const feriePeriods = data.ferie || []; 
+  
   if (!orari.length) return;
 
   const oggiReal = new Date();
@@ -379,16 +392,16 @@ function aggiornaColoreOrari(data) {
 
   let indiceGiornoCorrente = giornoSettimana === 0 ? 6 : giornoSettimana - 1;
 
+  // Calcola il set unificato di date di ferie all'inizio
+  const unifiedFerieDates = getUnifiedFerieDates(data, oggi.getFullYear());
+
   // Verifica stato OGGI
-  const singleDayReason = getSingleDayClosureReason(oggiReal, data);
-  const isFestivita = singleDayReason === "festivita";
-  const isFerieStaccate = singleDayReason === "ferie";
-  const isMotivoExtra = singleDayReason === "morivi-extra";
+  const singleDayClosure = getSingleDayClosureReason(oggiReal, data, unifiedFerieDates);
+  const isFestivita = singleDayClosure && singleDayClosure.reason === "festivita";
+  const eFerieOggi = singleDayClosure && singleDayClosure.reason === "ferie";
+  const isMotivoExtra = singleDayClosure && singleDayClosure.reason === "morivi-extra";
 
-  const ferieOggiCheck = isDateInFeriePeriod(oggiReal, feriePeriods);
-  const eFeriePeriodoOggi = ferieOggiCheck.isClosed;
-
-  const eChiusoOggi = isFestivita || eFeriePeriodoOggi || isMotivoExtra || isFerieStaccate; // Se almeno una è vera, è chiuso.
+  const eChiusoOggi = isFestivita || eFerieOggi || isMotivoExtra;
 
   function checkApertura(orariString) {
     if (eChiusoOggi) return false;
@@ -441,32 +454,22 @@ function aggiornaColoreOrari(data) {
       const nomeGiorno = line.split(":")[0];
 
       // Ricalcolo stati di chiusura per il giorno in analisi
-      const singleDayReasonCheck = getSingleDayClosureReason(dataDelGiorno, data);
-      const isGiornoFestivita = singleDayReasonCheck === "festivita";
-      const isGiornoFerieStaccate = singleDayReasonCheck === "ferie";
-      const isGiornoMotivoExtra = singleDayReasonCheck === "morivi-extra";
-      
-      const ferieCheck = isDateInFeriePeriod(dataDelGiorno, feriePeriods);
-      const giornoIsFeriePeriodo = ferieCheck.isClosed;
+      const closureCheck = getSingleDayClosureReason(dataDelGiorno, data, unifiedFerieDates);
 
       // 1. PRIORITÀ: Festività (Singolo Giorno)
-      if (isGiornoFestivita) {
+      if (closureCheck && closureCheck.reason === "festivita") {
         testoOrario = `${nomeGiorno}: Chiuso (Festività)`;
       } 
-      // 2. PRIORITÀ: Ferie a Lungo Periodo
-      else if (giornoIsFeriePeriodo) {
-        testoOrario = `${nomeGiorno}: Chiuso (Ferie fino al ${ferieCheck.fineFerie})`;
+      // 2. PRIORITÀ: Ferie (Singoli/Multipli e unificati)
+      else if (closureCheck && closureCheck.reason === "ferie") {
+        testoOrario = `${nomeGiorno}: Chiuso (Ferie fino al ${closureCheck.dataChiusura})`;
       }
-      // 3. PRIORITÀ: Ferie (Singoli Giorni Staccati)
-      else if (isGiornoFerieStaccate) {
-        testoOrario = `${nomeGiorno}: Chiuso (Ferie)`;
-      }
-      // 4. PRIORITÀ: Motivi Extra (Singoli Giorni Staccati)
-      else if (isGiornoMotivoExtra) {
+      // 3. PRIORITÀ: Motivi Extra
+      else if (closureCheck && closureCheck.reason === "morivi-extra") {
         testoOrario = `${nomeGiorno}: Chiuso (Motivi Extra)`;
       }
 
-      // 5. STYLE CHECK: Applicazione dello stile SOLO al giorno corrente (i === 0).
+      // 4. STYLE CHECK: Applicazione dello stile SOLO al giorno corrente (i === 0).
       if (i === 0) {
         peso = "font-weight:bold;";
 
