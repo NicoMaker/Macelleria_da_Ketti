@@ -51,8 +51,18 @@
     "26/12",
     "31/12"
   ],
-  "ferie": {
-    "inizio": "",
-    "fine": ""
+  "ferie": [
+    {
+      "inizio": "",
+      "fine": ""
+    },
+    {
+      "inizio": "",
+      "fine": ""
+    }
+  ],
+  "giorniChiusuraExtra": {
+    "morivi-extra": ["", ""],
+    "ferie": ["", ""]
   }
 }
