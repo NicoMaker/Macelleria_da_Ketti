@@ -173,7 +173,7 @@ function createFooterHTML(data) {
       }
       // 2. Altrimenti, se è in Ferie, mostra "Chiuso per ferie..."
       else if (giornoIsFerie) {
-        testoOrario = `${nomeGiorno}: Chiuso per ferie fino al ${ferie.fine}`;
+        testoOrario = `${nomeGiorno}: (Chiuso per ferie fino al ${ferie.fine})`;
       }
       // 3. Altrimenti, mostra l'orario normale (testoOrario = line)
 
