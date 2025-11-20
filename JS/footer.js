@@ -262,37 +262,23 @@ function createFooterHTML(data) {
         }
       }
 
-      // MODIFICA 1: Usa Flexbox per allineare giorno e orari/stato su lati opposti
-      const [giorno, ...orarioParte] = testoOrario.split(":");
-      const orarioHtmlParte = orarioParte.join(":"); // Mantiene l'orario o lo stato di chiusura
-
-      return `
-        <li class="footer-item" style="display: flex; justify-content: space-between; color:${colore}; ${peso}">
-            <span style="flex-shrink: 0; padding-right: 10px;">${giorno}:</span>
-            <span style="text-align: right; flex-grow: 1;">${orarioHtmlParte}</span>
-        </li>`;
+      return `<li class="footer-item" style="color:${colore};${peso}">${testoOrario}</li>`;
     })
     .join("");
 
-  // MODIFICA 2: Struttura della legenda per allineare le etichette con la colonna degli orari
   const legendaHtml = `
     <div class="legenda-orari" style="font-size: 0.8em; margin-top: 10px;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
-            <span style="flex-shrink: 0; padding-right: 10px; font-weight: bold;">Legenda:</span>
-            <div style="display: flex; align-items: center; justify-content: flex-end; flex-grow: 1; text-align: right;">
-                <span style="height: 10px; width: 10px; background-color: ${
-                  legenda.colori.aperto || "#00FF7F"
-                }; margin-right: 8px; border-radius: 50%;"></span>
-                <span>${legenda.testo.aperto || "Aperto"}</span>
-            </div>
+        <div style="display: flex; align-items: center; margin-bottom: 5px;">
+            <span style="height: 10px; width: 10px; background-color: ${
+              legenda.colori.aperto || "#00FF7F"
+            }; margin-right: 8px; border-radius: 50%;"></span>
+            <span>${legenda.testo.aperto || "Aperto"}</span>
         </div>
-        <div style="display: flex; justify-content: space-between; align-items: center;">
-            <span style="flex-shrink: 0; padding-right: 10px; font-weight: bold;"></span> <div style="display: flex; align-items: center; justify-content: flex-end; flex-grow: 1; text-align: right;">
-                <span style="height: 10px; width: 10px; background-color: ${
-                  legenda.colori.chiuso || "orange"
-                }; margin-right: 8px; border-radius: 50%;"></span>
-                <span>${legenda.testo.chiuso || "In chiusura / Chiuso"}</span>
-            </div>
+        <div style="display: flex; align-items: center;">
+            <span style="height: 10px; width: 10px; background-color: ${
+              legenda.colori.chiuso || "orange"
+            }; margin-right: 8px; border-radius: 50%;"></span>
+            <span>${legenda.testo.chiuso || "In chiusura / Chiuso"}</span>
         </div>
     </div>
   `;
@@ -494,15 +480,7 @@ function aggiornaColoreOrari(data) {
         }
       }
 
-      // MODIFICA 1: Usa Flexbox per allineare giorno e orari/stato su lati opposti
-      const [giorno, ...orarioParte] = testoOrario.split(":");
-      const orarioHtmlParte = orarioParte.join(":");
-
-      return `
-        <li class="footer-item" style="display: flex; justify-content: space-between; color:${colore}; ${peso}">
-            <span style="flex-shrink: 0; padding-right: 10px;">${giorno}:</span>
-            <span style="text-align: right; flex-grow: 1;">${orarioHtmlParte}</span>
-        </li>`;
+      return `<li class="footer-item" style="color:${colore};${peso}">${testoOrario}</li>`;
     })
     .join("");
 }
