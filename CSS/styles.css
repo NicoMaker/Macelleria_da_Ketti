@@ -1017,3 +1017,7 @@ h6 {
     transform: none !important;
   }
 }
+
+.white-text {
+  color: white!important;
+}
