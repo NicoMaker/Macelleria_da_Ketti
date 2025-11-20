@@ -78,7 +78,6 @@ body {
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  overscroll-behavior-y: contain;
 }
 
 img {
@@ -239,6 +238,7 @@ h6 {
 .mobile-menu {
   display: none;
   background-color: var(--surface);
+  z-index: 1002; /* Assicurati che sia sopra l'header e gli altri contenuti */
   border-top: 1px solid var(--gray-medium);
   box-shadow: var(--shadow-md);
 }
