@@ -103,7 +103,7 @@ function createFooterHTML(data) {
   const ferie = data.ferie || null;
 
   const mapsQuery = contatti.indirizzo ? encodeURIComponent(contatti.indirizzo) : '';
-  const googleMapsUrl = `http://googleusercontent.com/maps.google.com/7{mapsQuery}`;
+  const googleMapsUrl = `http://googleusercontent.com/maps.google.com/8{mapsQuery}`;
 
   // --- LOGICA ORARI ---
   const oggiReal = new Date();
@@ -118,7 +118,7 @@ function createFooterHTML(data) {
   // Verifica stato OGGI
   const eFestivitaOggi = isDateFestivita(oggiReal, festivita);
   const eFerieOggi = isDateInFeriePeriod(oggiReal, ferie); 
-  const eChiusoOggi = eFestivitaOggi || eFerieOggi;
+  const eChiusoOggi = eFestivitaOggi || eFerieOggi; // Se almeno una è vera, è chiuso.
 
   function checkApertura(orariString) {
     if (eChiusoOggi) return false;
@@ -166,23 +166,23 @@ function createFooterHTML(data) {
       const giornoIsFerie = ferie && isDateInFeriePeriod(dataDelGiorno, ferie);
       const giornoIsFestivita = isDateFestivita(dataDelGiorno, festivita);
 
-
-      // 1. CONTENT CHECK: La data di questo specifico giorno è in Ferie?
-      if (giornoIsFerie) {
-        testoOrario = `${nomeGiorno}: Chiuso per ferie fino al ${ferie.fine}`;
-      }
-      // 2. CONTENT CHECK: Altrimenti, è Festività?
-      else if (giornoIsFestivita) {
+      
+      // 1. PRIORITÀ: Se è Festività, mostra "Chiuso (Festività)"
+      if (giornoIsFestivita) {
          testoOrario = `${nomeGiorno}: Chiuso (Festività)`;
       }
-      // 3. CONTENT CHECK: Altrimenti, mostra l'orario normale (testoOrario = line)
+      // 2. Altrimenti, se è in Ferie, mostra "Chiuso per ferie..."
+      else if (giornoIsFerie) {
+        testoOrario = `${nomeGiorno}: Chiuso per ferie fino al ${ferie.fine}`;
+      }
+      // 3. Altrimenti, mostra l'orario normale (testoOrario = line)
 
 
       // 4. STYLE CHECK: Applicazione dello stile SOLO al giorno corrente (i === 0).
       if (i === 0) {
         peso = "font-weight:bold;";
         
-        // Colora in base allo stato in tempo reale di OGGI (eChiusoOggi usa oggiReal)
+        // Colora in base allo stato in tempo reale di OGGI 
         if (eChiusoOggi || !statoApertura) { 
             colore = legenda.colori.chiuso || "orange";
         } else {
@@ -313,7 +313,7 @@ function aggiornaColoreOrari(data) {
   // Verifica stato OGGI
   const eFestivitaOggi = isDateFestivita(oggiReal, festivita);
   const eFerieOggi = isDateInFeriePeriod(oggiReal, ferie); 
-  const eChiusoOggi = eFestivitaOggi || eFerieOggi;
+  const eChiusoOggi = eFestivitaOggi || eFerieOggi; // Se almeno una è vera, è chiuso.
 
   function checkApertura(orariString) {
     if (eChiusoOggi) return false;
@@ -365,13 +365,13 @@ function aggiornaColoreOrari(data) {
       const giornoIsFerie = ferie && isDateInFeriePeriod(dataDelGiorno, ferie);
       const giornoIsFestivita = isDateFestivita(dataDelGiorno, festivita);
 
-      // 1. CONTENT CHECK: La data di questo specifico giorno è in Ferie?
-      if (giornoIsFerie) {
-        testoOrario = `${nomeGiorno}: Chiuso per ferie fino al ${ferie.fine}`;
-      }
-      // 2. CONTENT CHECK: Altrimenti, è Festività?
-      else if (giornoIsFestivita) {
+      // 1. PRIORITÀ: Se è Festività, mostra "Chiuso (Festività)"
+      if (giornoIsFestivita) {
          testoOrario = `${nomeGiorno}: Chiuso (Festività)`;
+      }
+      // 2. Altrimenti, se è in Ferie, mostra "Chiuso per ferie..."
+      else if (giornoIsFerie) {
+        testoOrario = `${nomeGiorno}: Chiuso per ferie fino al ${ferie.fine}`;
       }
       
       // 3. STYLE CHECK: Applicazione dello stile SOLO al giorno corrente (i === 0).
