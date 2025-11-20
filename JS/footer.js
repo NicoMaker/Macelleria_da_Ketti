@@ -43,18 +43,56 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 });
 
-// 🎄 FUNZIONE PER VERIFICARE SE OGGI È FESTIVITÀ
-function isFestivita(festivita) {
+// 🎄 FUNZIONE GENERICA PER VERIFICARE SE UNA DATA È FESTIVITÀ
+function isDateFestivita(checkDate, festivita) {
   if (!festivita || !Array.isArray(festivita)) return false;
   
-  const oggi = new Date();
-  const giorno = String(oggi.getDate()).padStart(2, '0');
-  const mese = String(oggi.getMonth() + 1).padStart(2, '0');
-  const dataOggi = `${giorno}/${mese}`;
+  const dateToCheck = new Date(checkDate);
+  const giorno = String(dateToCheck.getDate()).padStart(2, '0');
+  const mese = String(dateToCheck.getMonth() + 1).padStart(2, '0');
+  const dataFormattata = `${giorno}/${mese}`;
   
-  return festivita.includes(dataOggi);
+  return festivita.includes(dataFormattata);
 }
 
+// 🏖️ FUNZIONE GENERICA PER VERIFICARE SE UNA DATA È PERIODO DI FERIE
+function isDateInFeriePeriod(originalCheckDate, ferie) {
+    if (!ferie || !ferie.inizio || !ferie.fine) return false;
+    
+    // Clona e normalizza la data da controllare all'inizio del giorno
+    const checkDate = new Date(originalCheckDate); 
+    checkDate.setHours(0, 0, 0, 0); 
+
+    const parseDate = (dateStr, year) => {
+        const [day, month] = dateStr.split('/').map(Number);
+        // Imposta l'ora a 00:00:00 per confronti precisi
+        return new Date(year, month - 1, day, 0, 0, 0, 0); 
+    };
+    
+    const currentYear = checkDate.getFullYear();
+
+    let dataInizio = parseDate(ferie.inizio, currentYear);
+    let dataFine = parseDate(ferie.fine, currentYear);
+
+    // Gestione ferie a cavallo d'anno (es. 20/12 - 05/01)
+    if (dataFine.getTime() < dataInizio.getTime()) {
+        const dataInizioReal = parseDate(ferie.inizio, currentYear);
+        const dataFineReal = parseDate(ferie.fine, currentYear);
+
+        if (checkDate.getMonth() >= dataInizioReal.getMonth()) {
+            // Data di controllo nella parte finale dell'anno
+            return checkDate.getTime() >= dataInizioReal.getTime();
+        } else {
+             // Data di controllo nella parte iniziale dell'anno
+            return checkDate.getTime() <= dataFineReal.getTime();
+        }
+    }
+    
+    // Ferie normali nello stesso anno (Inclusa la data di fine)
+    return checkDate.getTime() >= dataInizio.getTime() && checkDate.getTime() <= dataFine.getTime();
+}
+
+// --- Funzione Principale di Generazione HTML ---
 function createFooterHTML(data) {
   const info = data.info || {};
   const contatti = data.contatti || {};
@@ -62,31 +100,31 @@ function createFooterHTML(data) {
   const social = data.social || {};
   const legenda = data.legendaOrari || { colori: {}, testo: {} };
   const festivita = data.festivita || [];
+  const ferie = data.ferie || null;
 
   const mapsQuery = contatti.indirizzo ? encodeURIComponent(contatti.indirizzo) : '';
-  const googleMapsUrl = `https://www.google.com/maps/search/?api=1&query=${mapsQuery}`;
+  const googleMapsUrl = `http://googleusercontent.com/maps.google.com/7{mapsQuery}`;
 
   // --- LOGICA ORARI ---
-  const oggi = new Date();
-  const giornoSettimana = oggi.getDay(); // 0=Dom, 1=Lun, ..., 6=Sab
+  const oggiReal = new Date();
+  const oggi = new Date(oggiReal);
+  oggi.setHours(0, 0, 0, 0); // Normalizza oggi per i calcoli della data
 
-  const oraCorrente = oggi.getHours() * 100 + oggi.getMinutes();
+  const giornoSettimana = oggiReal.getDay(); // 0=Dom, 1=Lun, ..., 6=Sab
+  const oraCorrente = oggiReal.getHours() * 100 + oggiReal.getMinutes();
 
-  let indiceGiornoCorrente = giornoSettimana === 0 ? 6 : giornoSettimana - 1;
+  let indiceGiornoCorrente = giornoSettimana === 0 ? 6 : giornoSettimana - 1; // 0=Lun, ..., 6=Dom (Indice array orari di oggi)
 
-  // 🎄 Verifica se oggi è festività
-  const eFestivita = isFestivita(festivita);
+  // Verifica stato OGGI
+  const eFestivitaOggi = isDateFestivita(oggiReal, festivita);
+  const eFerieOggi = isDateInFeriePeriod(oggiReal, ferie); 
+  const eChiusoOggi = eFestivitaOggi || eFerieOggi;
 
   function checkApertura(orariString) {
-    // Se è festività, è sempre chiuso
-    if (eFestivita) {
-      return false;
-    }
+    if (eChiusoOggi) return false;
 
-    if (!orariString || orariString.toLowerCase().includes('chiuso')) {
-      return false;
-    }
-
+    if (!orariString || orariString.toLowerCase().includes('chiuso')) return false;
+    
     const orariMatch = orariString.match(/(\d{1,2}:\d{2}\s*-\s*\d{1,2}:\d{2})/g);
     if (!orariMatch) return false;
 
@@ -103,24 +141,55 @@ function createFooterHTML(data) {
 
   const statoApertura = checkApertura(orari[indiceGiornoCorrente]);
 
-  const orariHtml = orari
-    .map((line, index) => {
+  // --- LOGICA DI CALCOLO DATE ROLLING (7 giorni da oggi) ---
+  const giorniDaVisualizzare = [];
+  for (let i = 0; i < 7; i++) {
+      const dataDelGiorno = new Date(oggi);
+      dataDelGiorno.setDate(oggi.getDate() + i); 
+      dataDelGiorno.setHours(0, 0, 0, 0); 
+      giorniDaVisualizzare.push(dataDelGiorno);
+  }
+
+  const orariHtml = giorniDaVisualizzare
+    .map((dataDelGiorno, i) => { // i è l'offset dal giorno corrente (0=Oggi, 1=Domani, ...)
       let colore = "";
       let peso = "";
+      
+      // Calcola l'indice corretto per l'array 'orari' fisso (0=Lun, 6=Dom)
+      let dayOfWeek = dataDelGiorno.getDay(); // 0=Dom, 1=Lun, ..., 6=Sab
+      let orariIndex = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
+      
+      let line = orari[orariIndex]; // Orario base del giorno della settimana
       let testoOrario = line;
+      const nomeGiorno = line.split(':')[0]; // e.g., "Lunedì"
+      
+      const giornoIsFerie = ferie && isDateInFeriePeriod(dataDelGiorno, ferie);
+      const giornoIsFestivita = isDateFestivita(dataDelGiorno, festivita);
 
-      if (index === indiceGiornoCorrente) {
-        // Se è festività, mostra "Chiuso" invece dell'orario
-        if (eFestivita) {
-          const nomeGiorno = line.split(':')[0];
-          testoOrario = `${nomeGiorno}: Chiuso (Festività)`;
-          colore = legenda.colori.chiuso || "orange";
-        } else {
-          colore = statoApertura ? (legenda.colori.aperto || "#00FF7F") : (legenda.colori.chiuso || "orange");
-        }
-        peso = "font-weight:bold;";
+
+      // 1. CONTENT CHECK: La data di questo specifico giorno è in Ferie?
+      if (giornoIsFerie) {
+        testoOrario = `${nomeGiorno}: Chiuso per ferie fino al ${ferie.fine}`;
       }
+      // 2. CONTENT CHECK: Altrimenti, è Festività?
+      else if (giornoIsFestivita) {
+         testoOrario = `${nomeGiorno}: Chiuso (Festività)`;
+      }
+      // 3. CONTENT CHECK: Altrimenti, mostra l'orario normale (testoOrario = line)
 
+
+      // 4. STYLE CHECK: Applicazione dello stile SOLO al giorno corrente (i === 0).
+      if (i === 0) {
+        peso = "font-weight:bold;";
+        
+        // Colora in base allo stato in tempo reale di OGGI (eChiusoOggi usa oggiReal)
+        if (eChiusoOggi || !statoApertura) { 
+            colore = legenda.colori.chiuso || "orange";
+        } else {
+            colore = legenda.colori.aperto || "#00FF7F";
+        }
+      }
+      
       return `<li class="footer-item" style="color:${colore};${peso}">${testoOrario}</li>`;
     })
     .join("");
@@ -218,7 +287,7 @@ function createFooterHTML(data) {
     </div>
 
     <div class="footer-bottom">
-        <p>&copy; ${new Date().getFullYear()} Macelleria da Ketti. Tutti i diritti riservati.
+        <p>© ${new Date().getFullYear()} Macelleria da Ketti. Tutti i diritti riservati.
         ${info.p_iva ? ` - P.IVA: ${info.p_iva}` : ""}
         </p>
     </div>
@@ -230,27 +299,27 @@ function aggiornaColoreOrari(data) {
   const orari = data.orari || [];
   const legenda = data.legendaOrari || { colori: {}, testo: {} };
   const festivita = data.festivita || [];
+  const ferie = data.ferie || null;
   if (!orari.length) return;
 
-  const oggi = new Date();
-  const giornoSettimana = oggi.getDay();
-  const oraCorrente = oggi.getHours() * 100 + oggi.getMinuti();
+  const oggiReal = new Date();
+  const oggi = new Date(oggiReal);
+  oggi.setHours(0, 0, 0, 0); 
+  const giornoSettimana = oggiReal.getDay();
+  const oraCorrente = oggiReal.getHours() * 100 + oggiReal.getMinutes(); 
 
   let indiceGiornoCorrente = giornoSettimana === 0 ? 6 : giornoSettimana - 1;
 
-  // 🎄 Verifica se oggi è festività
-  const eFestivita = isFestivita(festivita);
+  // Verifica stato OGGI
+  const eFestivitaOggi = isDateFestivita(oggiReal, festivita);
+  const eFerieOggi = isDateInFeriePeriod(oggiReal, ferie); 
+  const eChiusoOggi = eFestivitaOggi || eFerieOggi;
 
   function checkApertura(orariString) {
-    // Se è festività, è sempre chiuso
-    if (eFestivita) {
-      return false;
-    }
+    if (eChiusoOggi) return false;
 
-    if (!orariString || orariString.toLowerCase().includes("chiuso")) {
-      return false;
-    }
-
+    if (!orariString || orariString.toLowerCase().includes("chiuso")) return false;
+    
     const orariMatch = orariString.match(/(\d{1,2}:\d{2}\s*-\s*\d{1,2}:\d{2})/g);
     if (!orariMatch) return false;
 
@@ -267,26 +336,53 @@ function aggiornaColoreOrari(data) {
 
   const statoApertura = checkApertura(orari[indiceGiornoCorrente]);
 
+  // --- LOGICA DI CALCOLO DATE ROLLING (7 giorni da oggi) ---
+  const giorniDaVisualizzare = [];
+  for (let i = 0; i < 7; i++) {
+      const dataDelGiorno = new Date(oggi);
+      dataDelGiorno.setDate(oggi.getDate() + i); 
+      dataDelGiorno.setHours(0, 0, 0, 0); 
+      giorniDaVisualizzare.push(dataDelGiorno);
+  }
+  
   // --- RISCRIVE L'ELENCO ORARI (aggiornamento reale) ---
   const lista = document.querySelector("#orari-footer");
   if (!lista) return;
 
-  lista.innerHTML = orari
-    .map((line, index) => {
+  lista.innerHTML = giorniDaVisualizzare
+    .map((dataDelGiorno, i) => {
       let colore = "";
       let peso = "";
+      
+      // Calcola l'indice corretto per l'array 'orari' fisso (0=Lun, 6=Dom)
+      let dayOfWeek = dataDelGiorno.getDay();
+      let orariIndex = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
+      
+      let line = orari[orariIndex]; 
       let testoOrario = line;
+      const nomeGiorno = line.split(':')[0];
+      
+      const giornoIsFerie = ferie && isDateInFeriePeriod(dataDelGiorno, ferie);
+      const giornoIsFestivita = isDateFestivita(dataDelGiorno, festivita);
 
-      if (index === indiceGiornoCorrente) {
-        // Se è festività, mostra "Chiuso" invece dell'orario
-        if (eFestivita) {
-          const nomeGiorno = line.split(':')[0];
-          testoOrario = `${nomeGiorno}: Chiuso (Festività)`;
-          colore = legenda.colori.chiuso || "orange";
-        } else {
-          colore = statoApertura ? (legenda.colori.aperto || "#00FF7F") : (legenda.colori.chiuso || "orange");
-        }
+      // 1. CONTENT CHECK: La data di questo specifico giorno è in Ferie?
+      if (giornoIsFerie) {
+        testoOrario = `${nomeGiorno}: Chiuso per ferie fino al ${ferie.fine}`;
+      }
+      // 2. CONTENT CHECK: Altrimenti, è Festività?
+      else if (giornoIsFestivita) {
+         testoOrario = `${nomeGiorno}: Chiuso (Festività)`;
+      }
+      
+      // 3. STYLE CHECK: Applicazione dello stile SOLO al giorno corrente (i === 0).
+      if (i === 0) {
         peso = "font-weight:bold;";
+        
+        if (eChiusoOggi || !statoApertura) { 
+            colore = legenda.colori.chiuso || "orange";
+        } else {
+            colore = legenda.colori.aperto || "#00FF7F";
+        }
       }
 
       return `<li class="footer-item" style="color:${colore};${peso}">${testoOrario}</li>`;
