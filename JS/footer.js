@@ -28,12 +28,12 @@ document.addEventListener("DOMContentLoaded", () => {
         const secondsToNextMinute = 60 - now.getSeconds();
 
         setTimeout(() => {
-          aggiornaColoreOrari(data.orari); 
-          setInterval(() => aggiornaColoreOrari(data.orari), 60000);
+          aggiornaColoreOrari(data);
+          setInterval(() => aggiornaColoreOrari(data), 60000);
         }, secondsToNextMinute * 1000);
 
         // Primo aggiornamento immediato
-        aggiornaColoreOrari(data.orari);
+        aggiornaColoreOrari(data);
 
       }, 100);
     })
@@ -48,6 +48,7 @@ function createFooterHTML(data) {
   const contatti = data.contatti || {};
   const orari = data.orari || [];
   const social = data.social || {};
+  const legenda = data.legendaOrari || { colori: {}, testo: {} };
 
   const mapsQuery = contatti.indirizzo ? encodeURIComponent(contatti.indirizzo) : '';
   const googleMapsUrl = `https://www.google.com/maps/search/?api=1&query=${mapsQuery}`;
@@ -87,13 +88,27 @@ function createFooterHTML(data) {
       let peso = "";
 
       if (index === indiceGiornoCorrente) {
-        colore = statoApertura ? "#00FF7F" : "orange";
+        colore = statoApertura ? (legenda.colori.aperto || "#00FF7F") : (legenda.colori.chiuso || "orange");
         peso = "font-weight:bold;";
       }
 
       return `<li class="footer-item" style="color:${colore};${peso}">${line}</li>`;
     })
     .join("");
+
+  const legendaHtml = `
+    <div class="legenda-orari" style="font-size: 0.8em; margin-top: 10px;">
+        <div style="display: flex; align-items: center; margin-bottom: 5px;">
+            <span style="height: 10px; width: 10px; background-color: ${legenda.colori.aperto || '#00FF7F'}; margin-right: 8px; border-radius: 50%;"></span>
+            <span>${legenda.testo.aperto || 'Aperto'}</span>
+        </div>
+        <div style="display: flex; align-items: center;">
+            <span style="height: 10px; width: 10px; background-color: ${legenda.colori.chiuso || 'orange'}; margin-right: 8px; border-radius: 50%;"></span>
+            <span>${legenda.testo.chiuso || 'In chiusura / Chiuso'}</span>
+        </div>
+    </div>
+  `;
+
 
   return `
     <div class="footer-content">
@@ -106,33 +121,30 @@ function createFooterHTML(data) {
             <div class="footer-section">
                 <h4 class="footer-subtitle">Contatti</h4>
                 <ul class="footer-list">
-                    ${
-                      contatti.telefono
-                        ? `
+                    ${contatti.telefono
+      ? `
                     <li class="footer-item">
                         <span class="material-icons">phone</span>
                         <a href="tel:${contatti.telefono}">${contatti.telefono}</a>
                     </li>`
-                        : ""
-                    }
-                    ${
-                      contatti.email
-                        ? `
+      : ""
+    }
+                    ${contatti.email
+      ? `
                     <li class="footer-item">
                         <span class="material-icons">email</span>
                         <a href="mailto:${contatti.email}">${contatti.email}</a>
                     </li>`
-                        : ""
-                    }
-                    ${
-                      contatti.indirizzo
-                        ? `
+      : ""
+    }
+                    ${contatti.indirizzo
+      ? `
                     <li class="footer-item">
                         <span class="material-icons">location_on</span>
                         <a href="${googleMapsUrl}" target="_blank" rel="noopener noreferrer">${contatti.indirizzo}</a>
                     </li>`
-                        : ""
-                    }
+      : ""
+    }
                 </ul>
             </div>
 
@@ -141,35 +153,33 @@ function createFooterHTML(data) {
                 <ul id="orari-footer" class="footer-list">
                     ${orariHtml}
                 </ul>
+                ${legendaHtml}
             </div>
 
             <div class="footer-section">
                 <h4 class="footer-subtitle">Seguici</h4>
                 <div class="social-links">
-                    ${
-                      social.facebook
-                        ? `
+                    ${social.facebook
+      ? `
                     <a href="${social.facebook}" class="social-link" aria-label="Facebook" target="_blank" rel="noopener noreferrer">
                         <img src="https://img.icons8.com/ios-filled/50/ffffff/facebook-new.png" alt="Facebook" style="width: 24px; height: 24px;"/>
                     </a>`
-                        : ""
-                    }
-                    ${
-                      social.instagram
-                        ? `
+      : ""
+    }
+                    ${social.instagram
+      ? `
                     <a href="${social.instagram}" class="social-link" aria-label="Instagram" target="_blank" rel="noopener noreferrer">
                         <img src="https://img.icons8.com/ios-filled/50/ffffff/instagram-new.png" alt="Instagram" style="width: 24px; height: 24px;"/>
                     </a>`
-                        : ""
-                    }
-                    ${
-                      social.whatsapp
-                        ? `
+      : ""
+    }
+                    ${social.whatsapp
+      ? `
                     <a href="${social.whatsapp}" class="social-link" aria-label="WhatsApp" target="_blank" rel="noopener noreferrer">
                         <img src="https://img.icons8.com/ios-filled/50/ffffff/whatsapp.png" alt="WhatsApp" style="width: 24px; height: 24px;"/>
                     </a>`
-                        : ""
-                    }
+      : ""
+    }
                 </div>
             </div>
         </div>
@@ -188,9 +198,13 @@ function createFooterHTML(data) {
 }
 
 // 🔄 FUNZIONE DI AUTO-AGGIORNAMENTO COLORI ORARI
-function aggiornaColoreOrari(orari) {
+function aggiornaColoreOrari(data) {
+  const orari = data.orari || [];
+  const legenda = data.legendaOrari || { colori: {}, testo: {} };
+  if (!orari.length) return;
+
   const oggi = new Date();
-  const giornoSettimana = oggi.getDay(); 
+  const giornoSettimana = oggi.getDay();
   const oraCorrente = oggi.getHours() * 100 + oggi.getMinutes();
 
   let indiceGiornoCorrente = giornoSettimana === 0 ? 6 : giornoSettimana - 1;
@@ -226,7 +240,7 @@ function aggiornaColoreOrari(orari) {
       let peso = "";
 
       if (index === indiceGiornoCorrente) {
-        colore = statoApertura ? "#00FF7F" : "orange";
+        colore = statoApertura ? (legenda.colori.aperto || "#00FF7F") : (legenda.colori.chiuso || "orange");
         peso = "font-weight:bold;";
       }
 
