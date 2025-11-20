@@ -43,12 +43,25 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 });
 
+// 🎄 FUNZIONE PER VERIFICARE SE OGGI È FESTIVITÀ
+function isFestivita(festivita) {
+  if (!festivita || !Array.isArray(festivita)) return false;
+  
+  const oggi = new Date();
+  const giorno = String(oggi.getDate()).padStart(2, '0');
+  const mese = String(oggi.getMonth() + 1).padStart(2, '0');
+  const dataOggi = `${giorno}/${mese}`;
+  
+  return festivita.includes(dataOggi);
+}
+
 function createFooterHTML(data) {
   const info = data.info || {};
   const contatti = data.contatti || {};
   const orari = data.orari || [];
   const social = data.social || {};
   const legenda = data.legendaOrari || { colori: {}, testo: {} };
+  const festivita = data.festivita || [];
 
   const mapsQuery = contatti.indirizzo ? encodeURIComponent(contatti.indirizzo) : '';
   const googleMapsUrl = `https://www.google.com/maps/search/?api=1&query=${mapsQuery}`;
@@ -61,7 +74,15 @@ function createFooterHTML(data) {
 
   let indiceGiornoCorrente = giornoSettimana === 0 ? 6 : giornoSettimana - 1;
 
+  // 🎄 Verifica se oggi è festività
+  const eFestivita = isFestivita(festivita);
+
   function checkApertura(orariString) {
+    // Se è festività, è sempre chiuso
+    if (eFestivita) {
+      return false;
+    }
+
     if (!orariString || orariString.toLowerCase().includes('chiuso')) {
       return false;
     }
@@ -86,13 +107,21 @@ function createFooterHTML(data) {
     .map((line, index) => {
       let colore = "";
       let peso = "";
+      let testoOrario = line;
 
       if (index === indiceGiornoCorrente) {
-        colore = statoApertura ? (legenda.colori.aperto || "#00FF7F") : (legenda.colori.chiuso || "orange");
+        // Se è festività, mostra "Chiuso" invece dell'orario
+        if (eFestivita) {
+          const nomeGiorno = line.split(':')[0];
+          testoOrario = `${nomeGiorno}: Chiuso (Festività)`;
+          colore = legenda.colori.chiuso || "orange";
+        } else {
+          colore = statoApertura ? (legenda.colori.aperto || "#00FF7F") : (legenda.colori.chiuso || "orange");
+        }
         peso = "font-weight:bold;";
       }
 
-      return `<li class="footer-item" style="color:${colore};${peso}">${line}</li>`;
+      return `<li class="footer-item" style="color:${colore};${peso}">${testoOrario}</li>`;
     })
     .join("");
 
@@ -108,7 +137,6 @@ function createFooterHTML(data) {
         </div>
     </div>
   `;
-
 
   return `
     <div class="footer-content">
@@ -201,15 +229,24 @@ function createFooterHTML(data) {
 function aggiornaColoreOrari(data) {
   const orari = data.orari || [];
   const legenda = data.legendaOrari || { colori: {}, testo: {} };
+  const festivita = data.festivita || [];
   if (!orari.length) return;
 
   const oggi = new Date();
   const giornoSettimana = oggi.getDay();
-  const oraCorrente = oggi.getHours() * 100 + oggi.getMinutes();
+  const oraCorrente = oggi.getHours() * 100 + oggi.getMinuti();
 
   let indiceGiornoCorrente = giornoSettimana === 0 ? 6 : giornoSettimana - 1;
 
+  // 🎄 Verifica se oggi è festività
+  const eFestivita = isFestivita(festivita);
+
   function checkApertura(orariString) {
+    // Se è festività, è sempre chiuso
+    if (eFestivita) {
+      return false;
+    }
+
     if (!orariString || orariString.toLowerCase().includes("chiuso")) {
       return false;
     }
@@ -230,7 +267,7 @@ function aggiornaColoreOrari(data) {
 
   const statoApertura = checkApertura(orari[indiceGiornoCorrente]);
 
-  // --- RISCRIVE L’ELENCO ORARI (aggiornamento reale) ---
+  // --- RISCRIVE L'ELENCO ORARI (aggiornamento reale) ---
   const lista = document.querySelector("#orari-footer");
   if (!lista) return;
 
@@ -238,13 +275,21 @@ function aggiornaColoreOrari(data) {
     .map((line, index) => {
       let colore = "";
       let peso = "";
+      let testoOrario = line;
 
       if (index === indiceGiornoCorrente) {
-        colore = statoApertura ? (legenda.colori.aperto || "#00FF7F") : (legenda.colori.chiuso || "orange");
+        // Se è festività, mostra "Chiuso" invece dell'orario
+        if (eFestivita) {
+          const nomeGiorno = line.split(':')[0];
+          testoOrario = `${nomeGiorno}: Chiuso (Festività)`;
+          colore = legenda.colori.chiuso || "orange";
+        } else {
+          colore = statoApertura ? (legenda.colori.aperto || "#00FF7F") : (legenda.colori.chiuso || "orange");
+        }
         peso = "font-weight:bold;";
       }
 
-      return `<li class="footer-item" style="color:${colore};${peso}">${line}</li>`;
+      return `<li class="footer-item" style="color:${colore};${peso}">${testoOrario}</li>`;
     })
     .join("");
 }
