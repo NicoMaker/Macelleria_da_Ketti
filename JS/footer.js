@@ -53,7 +53,7 @@ const formatDateDM = (date) => {
 function getUnifiedFerieDates(data, year) {
     const unifiedDates = new Set();
     const giorniExtraFerie = data.giorniChiusuraExtra && data.giorniChiusuraExtra.ferie || [];
-    
+
     // 1. Aggiungi i giorni singoli extra ferie
     giorniExtraFerie.forEach(date => unifiedDates.add(date));
 
@@ -67,7 +67,7 @@ function getUnifiedFerieDates(data, year) {
     const feriePeriods = data.ferie || [];
     for (const period of feriePeriods) {
         if (!period.inizio || !period.fine) continue;
-        
+
         let dataInizio = parseDate(period.inizio, year);
         let dataFine = parseDate(period.fine, year);
 
@@ -83,21 +83,21 @@ function getUnifiedFerieDates(data, year) {
             currentDate.setDate(currentDate.getDate() + 1);
         }
     }
-    
+
     return unifiedDates;
 }
 
 // 📅 HELPER: Trova l'ultimo giorno consecutivo chiuso per "ferie" partendo da una data, usando il set unificato
 function findConsecutiveClosureEnd(startDate, unifiedFerieDates) {
     const startDateDM = formatDateDM(startDate);
-    
+
     if (!unifiedFerieDates.has(startDateDM)) {
         return startDateDM;
     }
 
     let currentDate = new Date(startDate);
     let endDate = new Date(startDate); 
-    
+
     // Loop per trovare l'ultimo giorno consecutivo nel set unificato
     while (true) {
         currentDate.setDate(currentDate.getDate() + 1); 
@@ -108,7 +108,7 @@ function findConsecutiveClosureEnd(startDate, unifiedFerieDates) {
             // La data di fine è l'ultima data chiusa trovata
             return formatDateDM(endDate); 
         }
-        
+
         // Se è chiuso, aggiorniamo la data di fine e continuiamo
         endDate = new Date(currentDate); 
     }
@@ -118,7 +118,7 @@ function findConsecutiveClosureEnd(startDate, unifiedFerieDates) {
 function getSingleDayClosureReason(checkDate, data, unifiedFerieDates) {
     const festivita = data.festivita || [];
     const giorniExtra = data.giorniChiusuraExtra || {};
-    
+
     const dateToCheck = new Date(checkDate);
     const dataFormattata = formatDateDM(dateToCheck);
 
@@ -136,7 +136,7 @@ function getSingleDayClosureReason(checkDate, data, unifiedFerieDates) {
             dataChiusura: fineChiusura
         };
     }
-    
+
     // 3. Check Motivi Extra (altri giorni singoli) (Priority 3)
     for (const reason in giorniExtra) {
         // Ignora la ragione "ferie" perché è già coperta dal check unificato (Punto 2)
@@ -174,7 +174,7 @@ function createFooterHTML(data) {
   const oraCorrente = oggiReal.getHours() * 100 + oggiReal.getMinutes();
 
   let indiceGiornoCorrente = giornoSettimana === 0 ? 6 : giornoSettimana - 1; // 0=Lun, ..., 6=Dom (Indice array orari di oggi)
-  
+
   // Calcola il set unificato di date di ferie all'inizio
   const unifiedFerieDates = getUnifiedFerieDates(data, oggi.getFullYear());
 
@@ -262,23 +262,37 @@ function createFooterHTML(data) {
         }
       }
 
-      return `<li class="footer-item" style="color:${colore};${peso}">${testoOrario}</li>`;
+      // MODIFICA 1: Usa Flexbox per allineare giorno e orari/stato su lati opposti
+      const [giorno, ...orarioParte] = testoOrario.split(":");
+      const orarioHtmlParte = orarioParte.join(":"); // Mantiene l'orario o lo stato di chiusura
+
+      return `
+        <li class="footer-item" style="display: flex; justify-content: space-between; color:${colore}; ${peso}">
+            <span style="flex-shrink: 0; padding-right: 10px;">${giorno}:</span>
+            <span style="text-align: right; flex-grow: 1;">${orarioHtmlParte}</span>
+        </li>`;
     })
     .join("");
 
+  // MODIFICA 2: Struttura della legenda per allineare le etichette con la colonna degli orari
   const legendaHtml = `
     <div class="legenda-orari" style="font-size: 0.8em; margin-top: 10px;">
-        <div style="display: flex; align-items: center; margin-bottom: 5px;">
-            <span style="height: 10px; width: 10px; background-color: ${
-              legenda.colori.aperto || "#00FF7F"
-            }; margin-right: 8px; border-radius: 50%;"></span>
-            <span>${legenda.testo.aperto || "Aperto"}</span>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
+            <span style="flex-shrink: 0; padding-right: 10px; font-weight: bold;">Legenda:</span>
+            <div style="display: flex; align-items: center; justify-content: flex-end; flex-grow: 1; text-align: right;">
+                <span style="height: 10px; width: 10px; background-color: ${
+                  legenda.colori.aperto || "#00FF7F"
+                }; margin-right: 8px; border-radius: 50%;"></span>
+                <span>${legenda.testo.aperto || "Aperto"}</span>
+            </div>
         </div>
-        <div style="display: flex; align-items: center;">
-            <span style="height: 10px; width: 10px; background-color: ${
-              legenda.colori.chiuso || "orange"
-            }; margin-right: 8px; border-radius: 50%;"></span>
-            <span>${legenda.testo.chiuso || "In chiusura / Chiuso"}</span>
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <span style="flex-shrink: 0; padding-right: 10px; font-weight: bold;"></span> <div style="display: flex; align-items: center; justify-content: flex-end; flex-grow: 1; text-align: right;">
+                <span style="height: 10px; width: 10px; background-color: ${
+                  legenda.colori.chiuso || "orange"
+                }; margin-right: 8px; border-radius: 50%;"></span>
+                <span>${legenda.testo.chiuso || "In chiusura / Chiuso"}</span>
+            </div>
         </div>
     </div>
   `;
@@ -381,7 +395,7 @@ function createFooterHTML(data) {
 function aggiornaColoreOrari(data) {
   const orari = data.orari || [];
   const legenda = data.legendaOrari || { colori: {}, testo: {} };
-  
+
   if (!orari.length) return;
 
   const oggiReal = new Date();
@@ -480,7 +494,15 @@ function aggiornaColoreOrari(data) {
         }
       }
 
-      return `<li class="footer-item" style="color:${colore};${peso}">${testoOrario}</li>`;
+      // MODIFICA 1: Usa Flexbox per allineare giorno e orari/stato su lati opposti
+      const [giorno, ...orarioParte] = testoOrario.split(":");
+      const orarioHtmlParte = orarioParte.join(":");
+
+      return `
+        <li class="footer-item" style="display: flex; justify-content: space-between; color:${colore}; ${peso}">
+            <span style="flex-shrink: 0; padding-right: 10px;">${giorno}:</span>
+            <span style="text-align: right; flex-grow: 1;">${orarioHtmlParte}</span>
+        </li>`;
     })
     .join("");
 }
