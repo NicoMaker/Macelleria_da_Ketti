@@ -1019,5 +1019,19 @@ h6 {
 }
 
 .white-text {
-  color: white!important;
+  color: white !important;
+}
+
+/* Sposta la data di apertura più in basso su mobile e tablet */
+@media (max-width: 1024px) {
+  .opening-date {
+    margin-top: 2rem;
+  }
+}
+
+/* Nasconde il br su schermi desktop */
+@media (min-width: 1024px) {
+  .mobile-break {
+    display: none;
+  }
 }
