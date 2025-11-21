@@ -195,7 +195,7 @@ function createFooterHTML(data) {
     singleDayClosure && singleDayClosure.reason === "festivita";
   const eFerieOggi = singleDayClosure && singleDayClosure.reason === "ferie";
   const isMotivoExtra =
-    singleDayClosure && singleDayClosure.reason === "morivi-extra";
+    singleDayClosure && singleDayClosure.reason === "motivi-extra";
 
   // Se almeno una condizione di chiusura è vera
   const eChiusoOggi = isFestivita || eFerieOggi || isMotivoExtra;
@@ -262,7 +262,7 @@ function createFooterHTML(data) {
         testoOrario = `${nomeGiorno}: Chiuso (Ferie fino al ${closureCheck.dataChiusura})`;
       }
       // 3. PRIORITÀ: Motivi Extra
-      else if (closureCheck && closureCheck.reason === "morivi-extra") {
+      else if (closureCheck && closureCheck.reason === "motivi-extra") {
         testoOrario = `${nomeGiorno}: Chiuso (Motivi Extra)`;
       }
       // 4. Altrimenti, mostra l'orario normale (testoOrario = line)
@@ -448,7 +448,7 @@ function aggiornaColoreOrari(data) {
     singleDayClosure && singleDayClosure.reason === "festivita";
   const eFerieOggi = singleDayClosure && singleDayClosure.reason === "ferie";
   const isMotivoExtra =
-    singleDayClosure && singleDayClosure.reason === "morivi-extra";
+    singleDayClosure && singleDayClosure.reason === "motivi-extra";
 
   const eChiusoOggi = isFestivita || eFerieOggi || isMotivoExtra;
 
@@ -518,7 +518,7 @@ function aggiornaColoreOrari(data) {
         testoOrario = `${nomeGiorno}: Chiuso (Ferie fino al ${closureCheck.dataChiusura})`;
       }
       // 3. PRIORITÀ: Motivi Extra
-      else if (closureCheck && closureCheck.reason === "morivi-extra") {
+      else if (closureCheck && closureCheck.reason === "motivi-extra") {
         testoOrario = `${nomeGiorno}: Chiuso (Motivi Extra)`;
       }
 
