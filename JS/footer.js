@@ -288,6 +288,7 @@ function createFooterHTML(data) {
     
     <div style="margin-bottom: 10px;">
       <span style="color: white; font-weight: bold; font-size: 1.2em;">
+        <br>
         ${legenda.titolo || "Legenda Orari"}
       </span>
     </div>
