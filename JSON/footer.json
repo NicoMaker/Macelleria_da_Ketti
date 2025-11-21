@@ -28,6 +28,7 @@
     "Domenica: Chiuso"
   ],
   "legendaOrari": {
+    "titolo": "Legenda",
     "colori": {
       "aperto": "#00FF7F",
       "chiuso": "orange"
