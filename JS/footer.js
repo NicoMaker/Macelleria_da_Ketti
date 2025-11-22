@@ -3,27 +3,22 @@ document.addEventListener("DOMContentLoaded", () => {
   const footer = document.getElementById("Contatti");
   if (!footer) return;
 
-  // Determine the correct path to footer.json based on the current URL
   const jsonPath = window.location.pathname.includes("/Projects/")
     ? "../JSON/footer.json"
     : "JSON/footer.json";
 
-  // Load footer data
   fetch(jsonPath)
     .then((response) => response.json())
     .then((data) => {
       footer.innerHTML = createFooterHTML(data);
 
-      // Initialize map after DOM update
       setTimeout(() => {
         if (data.mappa && data.mappa.latitudine && data.mappa.longitudine) {
           initMap(data.mappa.latitudine, data.mappa.longitudine);
         }
 
-        // Notifica altri script
         document.dispatchEvent(new CustomEvent("footerLoaded"));
 
-        // --- Aggiorna i colori al minuto esatto ---
         const now = new Date();
         const secondsToNextMinute = 60 - now.getSeconds();
 
@@ -32,7 +27,6 @@ document.addEventListener("DOMContentLoaded", () => {
           setInterval(() => aggiornaColoreOrari(data), 60000);
         }, secondsToNextMinute * 1000);
 
-        // Primo aggiornamento immediato
         aggiornaColoreOrari(data);
       }, 100);
     })
@@ -42,29 +36,24 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 });
 
-// Helper per formattare la data in DD/MM
 const formatDateDM = (date) => {
   const giorno = String(date.getDate()).padStart(2, "0");
   const mese = String(date.getMonth() + 1).padStart(2, "0");
   return `${giorno}/${mese}`;
 };
 
-// 🌐 HELPER: Compila TUTTE le date di chiusura per "ferie" (singole e a periodo) in un unico Set di DD/MM strings
 function getUnifiedFerieDates(data, year) {
   const unifiedDates = new Set();
   const giorniExtraFerie =
     (data.giorniChiusuraExtra && data.giorniChiusuraExtra.ferie) || [];
 
-  // 1. Aggiungi i giorni singoli extra ferie
   giorniExtraFerie.forEach((date) => unifiedDates.add(date));
 
-  // Helper per creare oggetti Date da stringhe DD/MM
   const parseDate = (dateStr, y) => {
     const [day, month] = dateStr.split("/").map(Number);
     return new Date(y, month - 1, day, 0, 0, 0, 0);
   };
 
-  // 2. Aggiungi i periodi lunghi di ferie
   const feriePeriods = data.ferie || [];
   for (const period of feriePeriods) {
     if (!period.inizio || !period.fine) continue;
@@ -72,13 +61,11 @@ function getUnifiedFerieDates(data, year) {
     let dataInizio = parseDate(period.inizio, year);
     let dataFine = parseDate(period.fine, year);
 
-    // Gestione ferie a cavallo d'anno
     if (dataInizio.getTime() > dataFine.getTime()) {
       dataFine = parseDate(period.fine, year + 1);
     }
 
     let currentDate = new Date(dataInizio);
-    // Itera includendo la data di fine
     while (currentDate.getTime() <= dataFine.getTime()) {
       unifiedDates.add(formatDateDM(currentDate));
       currentDate.setDate(currentDate.getDate() + 1);
@@ -88,7 +75,6 @@ function getUnifiedFerieDates(data, year) {
   return unifiedDates;
 }
 
-// 📅 HELPER: Trova l'ultimo giorno consecutivo chiuso per "ferie" partendo da una data, usando il set unificato
 function findConsecutiveClosureEnd(startDate, unifiedFerieDates) {
   const startDateDM = formatDateDM(startDate);
 
@@ -99,26 +85,32 @@ function findConsecutiveClosureEnd(startDate, unifiedFerieDates) {
   let currentDate = new Date(startDate);
   let endDate = new Date(startDate);
 
-  // Loop per trovare l'ultimo giorno consecutivo nel set unificato
   while (true) {
     currentDate.setDate(currentDate.getDate() + 1);
     const nextDateDM = formatDateDM(currentDate);
 
-    // Se il giorno successivo NON è chiuso per ferie (né singole né lunghe), ci fermiamo.
     if (!unifiedFerieDates.has(nextDateDM)) {
-      // La data di fine è l'ultima data chiusa trovata
       return formatDateDM(endDate);
     }
 
-    // Se è chiuso, aggiorniamo la data di fine e continuiamo
     endDate = new Date(currentDate);
   }
 }
 
-// 🚨 FUNZIONE: Verifica lo stato di chiusura di un singolo giorno (Festività, Ferie Unificate, Motivi Extra)
+// Funzione helper per trovare il motivo extra di un giorno
+function getMotivoExtraForDate(data, dataFormattata) {
+  const motiviExtra = data.giorniChiusuraExtra?.["motivi-extra"] || [];
+
+  for (const item of motiviExtra) {
+    if (item.giorno === dataFormattata && item.giorno !== "") {
+      return item.motivo || "Motivi Extra";
+    }
+  }
+  return null;
+}
+
 function getSingleDayClosureReason(checkDate, data, unifiedFerieDates) {
   const festivita = data.festivita || [];
-  const giorniExtra = data.giorniChiusuraExtra || {};
 
   const dateToCheck = new Date(checkDate);
   const dataFormattata = formatDateDM(dateToCheck);
@@ -128,9 +120,8 @@ function getSingleDayClosureReason(checkDate, data, unifiedFerieDates) {
     return { reason: "festivita", dataChiusura: dataFormattata };
   }
 
-  // 2. Check Ferie (Unificate) (Priority 2) - Copre periodi lunghi e giorni singoli
+  // 2. Check Ferie (Unificate) (Priority 2)
   if (unifiedFerieDates.has(dataFormattata)) {
-    // Calcola la data di fine del blocco consecutivo unificato
     const fineChiusura = findConsecutiveClosureEnd(
       dateToCheck,
       unifiedFerieDates
@@ -141,25 +132,19 @@ function getSingleDayClosureReason(checkDate, data, unifiedFerieDates) {
     };
   }
 
-  // 3. Check Motivi Extra (altri giorni singoli) (Priority 3)
-  for (const reason in giorniExtra) {
-    // Ignora la ragione "ferie" perché è già coperta dal check unificato (Punto 2)
-    if (
-      reason !== "ferie" &&
-      Array.isArray(giorniExtra[reason]) &&
-      giorniExtra[reason].includes(dataFormattata)
-    ) {
-      return {
-        reason: reason,
-        dataChiusura: dataFormattata,
-      };
-    }
+  // 3. Check Motivi Extra (Priority 3) - ora con motivo specifico
+  const motivoExtra = getMotivoExtraForDate(data, dataFormattata);
+  if (motivoExtra) {
+    return {
+      reason: "motivi-extra",
+      dataChiusura: dataFormattata,
+      motivoSpecifico: motivoExtra,
+    };
   }
 
   return null;
 }
 
-// --- Funzione Principale di Generazione HTML ---
 function createFooterHTML(data) {
   const info = data.info || {};
   const contatti = data.contatti || {};
@@ -172,20 +157,17 @@ function createFooterHTML(data) {
     : "";
   const googleMapsUrl = `http://googleusercontent.com/maps.google.com/8${mapsQuery}`;
 
-  // --- LOGICA ORARI (Solo per lo stato di OGGI in tempo reale) ---
   const oggiReal = new Date();
   const oggi = new Date(oggiReal);
-  oggi.setHours(0, 0, 0, 0); // Normalizza oggi per i calcoli della data
+  oggi.setHours(0, 0, 0, 0);
 
-  const giornoSettimana = oggiReal.getDay(); // 0=Dom, 1=Lun, ..., 6=Sab
+  const giornoSettimana = oggiReal.getDay();
   const oraCorrente = oggiReal.getHours() * 100 + oggiReal.getMinutes();
 
-  let indiceGiornoCorrente = giornoSettimana === 0 ? 6 : giornoSettimana - 1; // 0=Lun, ..., 6=Dom (Indice array orari di oggi)
+  let indiceGiornoCorrente = giornoSettimana === 0 ? 6 : giornoSettimana - 1;
 
-  // Calcola il set unificato di date di ferie all'inizio
   const unifiedFerieDates = getUnifiedFerieDates(data, oggi.getFullYear());
 
-  // Calcolo stati di chiusura OGGI
   const singleDayClosure = getSingleDayClosureReason(
     oggiReal,
     data,
@@ -197,7 +179,6 @@ function createFooterHTML(data) {
   const isMotivoExtra =
     singleDayClosure && singleDayClosure.reason === "motivi-extra";
 
-  // Se almeno una condizione di chiusura è vera
   const eChiusoOggi = isFestivita || eFerieOggi || isMotivoExtra;
 
   function checkApertura(orariString) {
@@ -224,7 +205,6 @@ function createFooterHTML(data) {
 
   const statoApertura = checkApertura(orari[indiceGiornoCorrente]);
 
-  // --- LOGICA DI CALCOLO DATE ROLLING (7 giorni da oggi) ---
   const giorniDaVisualizzare = [];
   for (let i = 0; i < 7; i++) {
     const dataDelGiorno = new Date(oggi);
@@ -238,40 +218,30 @@ function createFooterHTML(data) {
       let colore = "";
       let peso = "";
 
-      // Calcola l'indice corretto per l'array 'orari' fisso (0=Lun, 6=Dom)
-      let dayOfWeek = dataDelGiorno.getDay(); // 0=Dom, 1=Lun, ..., 6=Sab
+      let dayOfWeek = dataDelGiorno.getDay();
       let orariIndex = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
 
-      let line = orari[orariIndex]; // Orario base del giorno della settimana
+      let line = orari[orariIndex];
       let testoOrario = line;
-      const nomeGiorno = line.split(":")[0]; // e.g., "Lunedì"
+      const nomeGiorno = line.split(":")[0];
 
-      // Ricalcolo stati di chiusura per il giorno in analisi
       const closureCheck = getSingleDayClosureReason(
         dataDelGiorno,
         data,
         unifiedFerieDates
       );
 
-      // 1. PRIORITÀ: Festività (Singolo Giorno)
       if (closureCheck && closureCheck.reason === "festivita") {
         testoOrario = `${nomeGiorno}: Chiuso (Festività)`;
-      }
-      // 2. PRIORITÀ: Ferie (Singoli/Multipli e unificati)
-      else if (closureCheck && closureCheck.reason === "ferie") {
+      } else if (closureCheck && closureCheck.reason === "ferie") {
         testoOrario = `${nomeGiorno}: Chiuso (Ferie fino al ${closureCheck.dataChiusura})`;
+      } else if (closureCheck && closureCheck.reason === "motivi-extra") {
+        testoOrario = `${nomeGiorno}: Chiuso (${closureCheck.motivoSpecifico})`;
       }
-      // 3. PRIORITÀ: Motivi Extra
-      else if (closureCheck && closureCheck.reason === "motivi-extra") {
-        testoOrario = `${nomeGiorno}: Chiuso (Motivi Extra)`;
-      }
-      // 4. Altrimenti, mostra l'orario normale (testoOrario = line)
 
-      // 5. STYLE CHECK: Applicazione dello stile SOLO al giorno corrente (i === 0).
       if (i === 0) {
         peso = "font-weight:bold;";
 
-        // Colora in base allo stato in tempo reale di OGGI
         if (eChiusoOggi || !statoApertura) {
           colore = legenda.colori.chiuso || "orange";
         } else {
@@ -285,46 +255,27 @@ function createFooterHTML(data) {
 
   const legendaHtml = `
   <div class="legenda-orari" style="margin-top: 10px;">
-    
     <div style="margin-bottom: 10px;">
       <span style="color: white; font-weight: bold; font-size: 1.2em;">
         <br>
         ${legenda.titolo || "Legenda Orari"}
       </span>
     </div>
-
     <div style="display: flex; align-items: center; margin-bottom: 5px;">
-      <span 
-        style="
-          height: 12px; 
-          width: 12px; 
-          background-color: ${legenda.colori.aperto || "#00FF7F"}; 
-          margin-right: 8px; 
-          border-radius: 50%;
-          display: inline-block;
-        ">
-      </span>
+      <span style="height: 12px; width: 12px; background-color: ${
+        legenda.colori.aperto || "#00FF7F"
+      }; margin-right: 8px; border-radius: 50%; display: inline-block;"></span>
       <span style="color: white;">${legenda.testo.aperto || "Aperto"}</span>
     </div>
-
     <div style="display: flex; align-items: center;">
-      <span 
-        style="
-          height: 12px; 
-          width: 12px; 
-          background-color: ${legenda.colori.chiuso || "orange"}; 
-          margin-right: 8px; 
-          border-radius: 50%;
-          display: inline-block;
-        ">
-      </span>
+      <span style="height: 12px; width: 12px; background-color: ${
+        legenda.colori.chiuso || "orange"
+      }; margin-right: 8px; border-radius: 50%; display: inline-block;"></span>
       <span style="color: white;">${
         legenda.testo.chiuso || "In chiusura / Chiuso"
       }</span>
     </div>
-
-  </div>
-`;
+  </div>`;
 
   return `
     <div class="footer-content">
@@ -419,8 +370,6 @@ function createFooterHTML(data) {
   `;
 }
 
-// 🔄 FUNZIONE DI AUTO-AGGIORNAMENTO COLORI ORARI
-
 function aggiornaColoreOrari(data) {
   const orari = data.orari || [];
   const legenda = data.legendaOrari || { colori: {}, testo: {} };
@@ -435,10 +384,8 @@ function aggiornaColoreOrari(data) {
 
   let indiceGiornoCorrente = giornoSettimana === 0 ? 6 : giornoSettimana - 1;
 
-  // Calcola il set unificato di date di ferie all'inizio
   const unifiedFerieDates = getUnifiedFerieDates(data, oggi.getFullYear());
 
-  // Verifica stato OGGI
   const singleDayClosure = getSingleDayClosureReason(
     oggiReal,
     data,
@@ -476,7 +423,6 @@ function aggiornaColoreOrari(data) {
 
   const statoApertura = checkApertura(orari[indiceGiornoCorrente]);
 
-  // --- LOGICA DI CALCOLO DATE ROLLING (7 giorni da oggi) ---
   const giorniDaVisualizzare = [];
   for (let i = 0; i < 7; i++) {
     const dataDelGiorno = new Date(oggi);
@@ -485,7 +431,6 @@ function aggiornaColoreOrari(data) {
     giorniDaVisualizzare.push(dataDelGiorno);
   }
 
-  // --- RISCRIVE L'ELENCO ORARI (aggiornamento reale) ---
   const lista = document.querySelector("#orari-footer");
   if (!lista) return;
 
@@ -494,7 +439,6 @@ function aggiornaColoreOrari(data) {
       let colore = "";
       let peso = "";
 
-      // Calcola l'indice corretto per l'array 'orari' fisso (0=Lun, 6=Dom)
       let dayOfWeek = dataDelGiorno.getDay();
       let orariIndex = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
 
@@ -502,27 +446,20 @@ function aggiornaColoreOrari(data) {
       let testoOrario = line;
       const nomeGiorno = line.split(":")[0];
 
-      // Ricalcolo stati di chiusura per il giorno in analisi
       const closureCheck = getSingleDayClosureReason(
         dataDelGiorno,
         data,
         unifiedFerieDates
       );
 
-      // 1. PRIORITÀ: Festività (Singolo Giorno)
       if (closureCheck && closureCheck.reason === "festivita") {
         testoOrario = `${nomeGiorno}: Chiuso (Festività)`;
-      }
-      // 2. PRIORITÀ: Ferie (Singoli/Multipli e unificati)
-      else if (closureCheck && closureCheck.reason === "ferie") {
+      } else if (closureCheck && closureCheck.reason === "ferie") {
         testoOrario = `${nomeGiorno}: Chiuso (Ferie fino al ${closureCheck.dataChiusura})`;
-      }
-      // 3. PRIORITÀ: Motivi Extra
-      else if (closureCheck && closureCheck.reason === "motivi-extra") {
-        testoOrario = `${nomeGiorno}: Chiuso (Motivi Extra)`;
+      } else if (closureCheck && closureCheck.reason === "motivi-extra") {
+        testoOrario = `${nomeGiorno}: Chiuso (${closureCheck.motivoSpecifico})`;
       }
 
-      // 4. STYLE CHECK: Applicazione dello stile SOLO al giorno corrente (i === 0).
       if (i === 0) {
         peso = "font-weight:bold;";
 
@@ -538,7 +475,6 @@ function aggiornaColoreOrari(data) {
     .join("");
 }
 
-// MAPPA
 function initMap(lat, lon) {
   const mapContainer = document.getElementById("map");
   if (!mapContainer) return;

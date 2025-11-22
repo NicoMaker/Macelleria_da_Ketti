@@ -64,7 +64,10 @@
   ],
   "giorniChiusuraExtra": {
     "motivi-extra": [
-      ""
+      {
+        "giorno": "",
+        "motivo": ""
+      }
     ],
     "ferie": [
       ""
