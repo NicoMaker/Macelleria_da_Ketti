@@ -181,29 +181,60 @@ function createFooterHTML(data) {
 
   const eChiusoOggi = isFestivita || eFerieOggi || isMotivoExtra;
 
-  function checkApertura(orariString) {
-    if (eChiusoOggi) return false;
+  function checkStatoApertura(orariString) {
+    if (eChiusoOggi) return { stato: "chiuso", minutiAllaChiusura: 0 };
 
     if (!orariString || orariString.toLowerCase().includes("chiuso"))
-      return false;
+      return { stato: "chiuso", minutiAllaChiusura: 0 };
 
     const orariMatch = orariString.match(
       /(\d{1,2}:\d{2}\s*-\s*\d{1,2}:\d{2})/g
     );
-    if (!orariMatch) return false;
+    if (!orariMatch) return { stato: "chiuso", minutiAllaChiusura: 0 };
 
     const parseTime = (timeStr) => {
       const [ore, minuti] = timeStr.split(":");
       return parseInt(ore, 10) * 100 + parseInt(minuti, 10);
     };
 
-    return orariMatch.some((intervallo) => {
+    for (const intervallo of orariMatch) {
       const [inizio, fine] = intervallo.split("-").map((t) => t.trim());
-      return oraCorrente >= parseTime(inizio) && oraCorrente < parseTime(fine);
-    });
+      const inizioTime = parseTime(inizio);
+      const fineTime = parseTime(fine);
+
+      // Calcola il tempo 30 minuti prima della chiusura
+      let fineMinuti = Math.floor(fineTime % 100);
+      let fineOre = Math.floor(fineTime / 100);
+      fineMinuti -= 30;
+      if (fineMinuti < 0) {
+        fineMinuti += 60;
+        fineOre -= 1;
+      }
+      const inChiusuraTime = fineOre * 100 + fineMinuti;
+
+      if (oraCorrente >= inizioTime && oraCorrente < fineTime) {
+        // Siamo nell'intervallo di apertura
+        if (oraCorrente >= inChiusuraTime) {
+          // Calcola i minuti esatti alla chiusura
+          const oreCorr = Math.floor(oraCorrente / 100);
+          const minCorr = oraCorrente % 100;
+          const oreFine = Math.floor(fineTime / 100);
+          const minFine = fineTime % 100;
+
+          const minutiTotaliCorrente = oreCorr * 60 + minCorr;
+          const minutiTotaliFine = oreFine * 60 + minFine;
+          const minutiMancanti = minutiTotaliFine - minutiTotaliCorrente;
+
+          return { stato: "in-chiusura", minutiAllaChiusura: minutiMancanti };
+        }
+        return { stato: "aperto", minutiAllaChiusura: 0 };
+      }
+    }
+
+    return { stato: "chiuso", minutiAllaChiusura: 0 };
   }
 
-  const statoApertura = checkApertura(orari[indiceGiornoCorrente]);
+  const statoApertura = checkStatoApertura(orari[indiceGiornoCorrente]);
 
   const giorniDaVisualizzare = [];
   for (let i = 0; i < 7; i++) {
@@ -242,8 +273,10 @@ function createFooterHTML(data) {
       if (i === 0) {
         peso = "font-weight:bold;";
 
-        if (eChiusoOggi || !statoApertura) {
+        if (eChiusoOggi || statoApertura.stato === "chiuso") {
           colore = legenda.colori.chiuso || "orange";
+        } else if (statoApertura.stato === "in-chiusura") {
+          colore = legenda.colori["in chiusura"] || "#FFD700";
         } else {
           colore = legenda.colori.aperto || "#00FF7F";
         }
@@ -252,6 +285,14 @@ function createFooterHTML(data) {
       return `<li class="footer-item" style="color:${colore};${peso}">${testoOrario}</li>`;
     })
     .join("");
+
+  // Prepara il testo per la legenda "in chiusura"
+  let testoInChiusura = legenda.testo["in chiusura"] || "In chiusura";
+  if (statoApertura.stato === "in-chiusura") {
+    const minuti = statoApertura.minutiAllaChiusura;
+    const testoMinuti = minuti === 1 ? "minuto" : "minuti";
+    testoInChiusura = `In chiusura tra ${minuti} ${testoMinuti}`;
+  }
 
   const legendaHtml = `
   <div class="legenda-orari" style="margin-top: 10px;">
@@ -267,13 +308,17 @@ function createFooterHTML(data) {
       }; margin-right: 8px; border-radius: 50%; display: inline-block;"></span>
       <span style="color: white;">${legenda.testo.aperto || "Aperto"}</span>
     </div>
+    <div style="display: flex; align-items: center; margin-bottom: 5px;">
+      <span style="height: 12px; width: 12px; background-color: ${
+        legenda.colori["in chiusura"] || "#FFD700"
+      }; margin-right: 8px; border-radius: 50%; display: inline-block;"></span>
+      <span id="testo-in-chiusura" style="color: white;">${testoInChiusura}</span>
+    </div>
     <div style="display: flex; align-items: center;">
       <span style="height: 12px; width: 12px; background-color: ${
         legenda.colori.chiuso || "orange"
       }; margin-right: 8px; border-radius: 50%; display: inline-block;"></span>
-      <span style="color: white;">${
-        legenda.testo.chiuso || "In chiusura / Chiuso"
-      }</span>
+      <span style="color: white;">${legenda.testo.chiuso || "Chiuso"}</span>
     </div>
   </div>`;
 
@@ -399,29 +444,60 @@ function aggiornaColoreOrari(data) {
 
   const eChiusoOggi = isFestivita || eFerieOggi || isMotivoExtra;
 
-  function checkApertura(orariString) {
-    if (eChiusoOggi) return false;
+  function checkStatoApertura(orariString) {
+    if (eChiusoOggi) return { stato: "chiuso", minutiAllaChiusura: 0 };
 
     if (!orariString || orariString.toLowerCase().includes("chiuso"))
-      return false;
+      return { stato: "chiuso", minutiAllaChiusura: 0 };
 
     const orariMatch = orariString.match(
       /(\d{1,2}:\d{2}\s*-\s*\d{1,2}:\d{2})/g
     );
-    if (!orariMatch) return false;
+    if (!orariMatch) return { stato: "chiuso", minutiAllaChiusura: 0 };
 
     const parseTime = (t) => {
       const [ore, minuti] = t.split(":");
       return parseInt(ore) * 100 + parseInt(minuti);
     };
 
-    return orariMatch.some((range) => {
+    for (const range of orariMatch) {
       const [inizio, fine] = range.split("-").map((s) => s.trim());
-      return oraCorrente >= parseTime(inizio) && oraCorrente < parseTime(fine);
-    });
+      const inizioTime = parseTime(inizio);
+      const fineTime = parseTime(fine);
+
+      // Calcola il tempo 30 minuti prima della chiusura
+      let fineMinuti = Math.floor(fineTime % 100);
+      let fineOre = Math.floor(fineTime / 100);
+      fineMinuti -= 30;
+      if (fineMinuti < 0) {
+        fineMinuti += 60;
+        fineOre -= 1;
+      }
+      const inChiusuraTime = fineOre * 100 + fineMinuti;
+
+      if (oraCorrente >= inizioTime && oraCorrente < fineTime) {
+        // Siamo nell'intervallo di apertura
+        if (oraCorrente >= inChiusuraTime) {
+          // Calcola i minuti esatti alla chiusura
+          const oreCorr = Math.floor(oraCorrente / 100);
+          const minCorr = oraCorrente % 100;
+          const oreFine = Math.floor(fineTime / 100);
+          const minFine = fineTime % 100;
+
+          const minutiTotaliCorrente = oreCorr * 60 + minCorr;
+          const minutiTotaliFine = oreFine * 60 + minFine;
+          const minutiMancanti = minutiTotaliFine - minutiTotaliCorrente;
+
+          return { stato: "in-chiusura", minutiAllaChiusura: minutiMancanti };
+        }
+        return { stato: "aperto", minutiAllaChiusura: 0 };
+      }
+    }
+
+    return { stato: "chiuso", minutiAllaChiusura: 0 };
   }
 
-  const statoApertura = checkApertura(orari[indiceGiornoCorrente]);
+  const statoApertura = checkStatoApertura(orari[indiceGiornoCorrente]);
 
   const giorniDaVisualizzare = [];
   for (let i = 0; i < 7; i++) {
@@ -463,8 +539,10 @@ function aggiornaColoreOrari(data) {
       if (i === 0) {
         peso = "font-weight:bold;";
 
-        if (eChiusoOggi || !statoApertura) {
+        if (eChiusoOggi || statoApertura.stato === "chiuso") {
           colore = legenda.colori.chiuso || "orange";
+        } else if (statoApertura.stato === "in-chiusura") {
+          colore = legenda.colori["in chiusura"] || "#FFD700";
         } else {
           colore = legenda.colori.aperto || "#00FF7F";
         }
@@ -473,6 +551,19 @@ function aggiornaColoreOrari(data) {
       return `<li class="footer-item" style="color:${colore};${peso}">${testoOrario}</li>`;
     })
     .join("");
+
+  // Aggiorna il testo della legenda "in chiusura"
+  const testoInChiusuraSpan = document.getElementById("testo-in-chiusura");
+  if (testoInChiusuraSpan) {
+    if (statoApertura.stato === "in-chiusura") {
+      const minuti = statoApertura.minutiAllaChiusura;
+      const testoMinuti = minuti === 1 ? "minuto" : "minuti";
+      testoInChiusuraSpan.textContent = `In chiusura tra ${minuti} ${testoMinuti}`;
+    } else {
+      testoInChiusuraSpan.textContent =
+        legenda.testo["in chiusura"] || "In chiusura";
+    }
+  }
 }
 
 function initMap(lat, lon) {

@@ -31,7 +31,8 @@
     "titolo": "Legenda",
     "colori": {
       "aperto": "#00FF7F",
-      "chiuso": "orange"
+      "in chiusura": "#FFD700",
+      "chiuso": "#ff5733;"
     },
     "testo": {
       "aperto": "Aperto",
@@ -68,8 +69,6 @@
         "motivo": ""
       }
     ],
-    "ferie": [
-      ""
-    ]
+    "ferie": [""]
   }
 }
