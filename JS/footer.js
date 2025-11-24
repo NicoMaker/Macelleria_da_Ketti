@@ -97,7 +97,6 @@ function findConsecutiveClosureEnd(startDate, unifiedFerieDates) {
   }
 }
 
-// Funzione helper per trovare il motivo extra di un giorno
 function getMotivoExtraForDate(data, dataFormattata) {
   const motiviExtra = data.giorniChiusuraExtra?.["motivi-extra"] || [];
 
@@ -115,12 +114,10 @@ function getSingleDayClosureReason(checkDate, data, unifiedFerieDates) {
   const dateToCheck = new Date(checkDate);
   const dataFormattata = formatDateDM(dateToCheck);
 
-  // 1. Check Festivita (Priority 1)
   if (festivita.includes(dataFormattata)) {
     return { reason: "festivita", dataChiusura: dataFormattata };
   }
 
-  // 2. Check Ferie (Unificate) (Priority 2)
   if (unifiedFerieDates.has(dataFormattata)) {
     const fineChiusura = findConsecutiveClosureEnd(
       dateToCheck,
@@ -132,7 +129,6 @@ function getSingleDayClosureReason(checkDate, data, unifiedFerieDates) {
     };
   }
 
-  // 3. Check Motivi Extra (Priority 3) - ora con motivo specifico
   const motivoExtra = getMotivoExtraForDate(data, dataFormattata);
   if (motivoExtra) {
     return {
@@ -202,7 +198,6 @@ function createFooterHTML(data) {
       const inizioTime = parseTime(inizio);
       const fineTime = parseTime(fine);
 
-      // Calcola il tempo 30 minuti prima della chiusura
       let fineMinuti = Math.floor(fineTime % 100);
       let fineOre = Math.floor(fineTime / 100);
       fineMinuti -= 30;
@@ -213,9 +208,7 @@ function createFooterHTML(data) {
       const inChiusuraTime = fineOre * 100 + fineMinuti;
 
       if (oraCorrente >= inizioTime && oraCorrente < fineTime) {
-        // Siamo nell'intervallo di apertura
         if (oraCorrente >= inChiusuraTime) {
-          // Calcola i minuti esatti alla chiusura
           const oreCorr = Math.floor(oraCorrente / 100);
           const minCorr = oraCorrente % 100;
           const oreFine = Math.floor(fineTime / 100);
@@ -248,6 +241,7 @@ function createFooterHTML(data) {
     .map((dataDelGiorno, i) => {
       let colore = "";
       let peso = "";
+      let testoExtra = "";
 
       let dayOfWeek = dataDelGiorno.getDay();
       let orariIndex = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
@@ -277,16 +271,18 @@ function createFooterHTML(data) {
           colore = legenda.colori.chiuso || "orange";
         } else if (statoApertura.stato === "in-chiusura") {
           colore = legenda.colori["in chiusura"] || "#FFD700";
+          const minuti = statoApertura.minutiAllaChiusura;
+          const testoMinuti = minuti === 1 ? "minuto" : "minuti";
+          testoExtra = ` <span id="minuti-chiusura-orario" style="font-size: 0.9em;">(chiude tra ${minuti} ${testoMinuti})</span>`;
         } else {
           colore = legenda.colori.aperto || "#00FF7F";
         }
       }
 
-      return `<li class="footer-item" style="color:${colore};${peso}">${testoOrario}</li>`;
+      return `<li class="footer-item" style="color:${colore};${peso}">${testoOrario}${testoExtra}</li>`;
     })
     .join("");
 
-  // Prepara il testo per la legenda "in chiusura"
   let testoInChiusura = legenda.testo["in chiusura"] || "In chiusura";
   if (statoApertura.stato === "in-chiusura") {
     const minuti = statoApertura.minutiAllaChiusura;
@@ -465,7 +461,6 @@ function aggiornaColoreOrari(data) {
       const inizioTime = parseTime(inizio);
       const fineTime = parseTime(fine);
 
-      // Calcola il tempo 30 minuti prima della chiusura
       let fineMinuti = Math.floor(fineTime % 100);
       let fineOre = Math.floor(fineTime / 100);
       fineMinuti -= 30;
@@ -476,9 +471,7 @@ function aggiornaColoreOrari(data) {
       const inChiusuraTime = fineOre * 100 + fineMinuti;
 
       if (oraCorrente >= inizioTime && oraCorrente < fineTime) {
-        // Siamo nell'intervallo di apertura
         if (oraCorrente >= inChiusuraTime) {
-          // Calcola i minuti esatti alla chiusura
           const oreCorr = Math.floor(oraCorrente / 100);
           const minCorr = oraCorrente % 100;
           const oreFine = Math.floor(fineTime / 100);
@@ -514,6 +507,7 @@ function aggiornaColoreOrari(data) {
     .map((dataDelGiorno, i) => {
       let colore = "";
       let peso = "";
+      let testoExtra = "";
 
       let dayOfWeek = dataDelGiorno.getDay();
       let orariIndex = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
@@ -543,12 +537,15 @@ function aggiornaColoreOrari(data) {
           colore = legenda.colori.chiuso || "orange";
         } else if (statoApertura.stato === "in-chiusura") {
           colore = legenda.colori["in chiusura"] || "#FFD700";
+          const minuti = statoApertura.minutiAllaChiusura;
+          const testoMinuti = minuti === 1 ? "minuto" : "minuti";
+          testoExtra = ` <span id="minuti-chiusura-orario" style="font-size: 0.9em;">(chiude tra ${minuti} ${testoMinuti})</span>`;
         } else {
           colore = legenda.colori.aperto || "#00FF7F";
         }
       }
 
-      return `<li class="footer-item" style="color:${colore};${peso}">${testoOrario}</li>`;
+      return `<li class="footer-item" style="color:${colore};${peso}">${testoOrario}${testoExtra}</li>`;
     })
     .join("");
 
