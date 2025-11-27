@@ -364,7 +364,6 @@ function createFooterHTML(data) {
                 <ul id="orari-footer" class="footer-list">
                     ${orariHtml}
                 </ul>
-                ${legendaHtml}
             </div>
 
             <div class="footer-section">
@@ -395,6 +394,7 @@ function createFooterHTML(data) {
                         : ""
                     }
                 </div>
+                ${legendaHtml}
             </div>
         </div>
 
