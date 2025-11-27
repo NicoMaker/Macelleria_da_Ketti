@@ -273,7 +273,10 @@ function createFooterHTML(data) {
           colore = legenda.colori["in chiusura"] || "#FFD700";
           const minuti = statoApertura.minutiAllaChiusura;
           const testoMinuti = minuti === 1 ? "minuto" : "minuti";
-          testoExtra = ` <span id="minuti-chiusura-orario" style="font-size: 0.9em;">(${minuti} ${testoMinuti})</span>`;
+
+          // QUI: minutaggio accodato subito dopo gli orari
+          testoOrario = `${testoOrario} (${minuti} ${testoMinuti})`;
+          testoExtra = "";
         } else {
           colore = legenda.colori.aperto || "#00FF7F";
         }
@@ -539,7 +542,10 @@ function aggiornaColoreOrari(data) {
           colore = legenda.colori["in chiusura"] || "#FFD700";
           const minuti = statoApertura.minutiAllaChiusura;
           const testoMinuti = minuti === 1 ? "minuto" : "minuti";
-          testoExtra = ` <span id="minuti-chiusura-orario" style="font-size: 0.9em;">(${minuti} ${testoMinuti})</span>`;
+
+          // QUI: minutaggio accodato subito dopo gli orari
+          testoOrario = `${testoOrario} (${minuti} ${testoMinuti})`;
+          testoExtra = "";
         } else {
           colore = legenda.colori.aperto || "#00FF7F";
         }
