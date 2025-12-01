@@ -7,7 +7,8 @@
   "contatti": {
     "telefono": "+39 3357802124",
     "email": "kettigregoris@yahoo.it",
-    "indirizzo": "Via Villa 26 San Giovanni di Casarsa (PN), Italia"
+    "indirizzo": "Via Villa, 26, 33072 Casarsa della Delizia PN",
+    "indirizzo_visuale": "Via Villa 26, San Giovanni di Casarsa (PN)"
   },
   "social": {
     "facebook": "https://www.facebook.com/macelleria.da.ketti/",
@@ -15,8 +16,8 @@
     "whatsapp": "https://wa.me/393357802124"
   },
   "mappa": {
-    "latitudine": 45.945,
-    "longitudine": 12.835
+    "latitudine": 45.9412964,
+    "longitudine": 12.837659
   },
   "orari": [
     "Lunedì: 8:00 - 13:00",

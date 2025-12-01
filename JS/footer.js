@@ -170,18 +170,21 @@ function createFooterHTML(data) {
   const social = data.social || {};
   const legenda = data.legendaOrari || { colori: {}, testo: {} };
 
-  const mapsQuery = contatti.indirizzo
-    ? encodeURIComponent(contatti.indirizzo)
-    : "";
-  const googleMapsUrl = `http://googleusercontent.com/maps.google.com/8${mapsQuery}`;
+const mapsQuery = contatti.indirizzo
+  ? encodeURIComponent(contatti.indirizzo)
+  : "Via Villa, 26, 33072 Casarsa della Delizia PN";
+
+const googleMapsUrl = `https://www.google.com/maps/search/?api=1&query=${mapsQuery}`;
+
+
+  // Indirizzo da MOSTRARE nel frontend
+  const indirizzoVisuale = contatti.indirizzo_visuale || contatti.indirizzo || "";
 
   const oggiReal = new Date(); // Data reale
   const oggi = new Date(oggiReal);
   oggi.setHours(0, 0, 0, 0);
-
   const giornoSettimana = oggiReal.getDay();
   const oraCorrente = oggiReal.getHours() * 100 + oggiReal.getMinutes();
-
   let indiceGiornoCorrente = giornoSettimana === 0 ? 6 : giornoSettimana - 1;
 
   // Crea Set per anno corrente E anno successivo (per gestire 31/12 -> 01/01)
@@ -197,8 +200,8 @@ function createFooterHTML(data) {
     unifiedFerieDates,
     unifiedFerieDatesNextYear
   );
-  const isFestivita =
-    singleDayClosure && singleDayClosure.reason === "festivita";
+
+  const isFestivita = singleDayClosure && singleDayClosure.reason === "festivita";
   const eFerieOggi = singleDayClosure && singleDayClosure.reason === "ferie";
   const isMotivoExtra =
     singleDayClosure && singleDayClosure.reason === "motivi-extra";
@@ -207,7 +210,6 @@ function createFooterHTML(data) {
 
   function checkStatoApertura(orariString) {
     if (eChiusoOggi) return { stato: "chiuso", minutiAllaChiusura: 0 };
-
     if (!orariString || orariString.toLowerCase().includes("chiuso"))
       return { stato: "chiuso", minutiAllaChiusura: 0 };
 
@@ -228,6 +230,8 @@ function createFooterHTML(data) {
 
       let fineMinuti = Math.floor(fineTime % 100);
       let fineOre = Math.floor(fineTime / 100);
+
+      // 30 minuti prima per "in chiusura"
       fineMinuti -= 30;
       if (fineMinuti < 0) {
         fineMinuti += 60;
@@ -273,9 +277,9 @@ function createFooterHTML(data) {
 
       let dayOfWeek = dataDelGiorno.getDay();
       let orariIndex = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
-
       let line = orari[orariIndex];
       let testoOrario = line;
+
       const nomeGiorno = line.split(":")[0];
 
       // Passa entrambi i Set per gestire il passaggio d'anno
@@ -296,152 +300,153 @@ function createFooterHTML(data) {
 
       if (i === 0) {
         peso = "font-weight:bold;";
-
         if (eChiusoOggi || statoApertura.stato === "chiuso") {
-          colore = legenda.colori.chiuso || "orange";
+          colore = legenda.colori["chiuso"] || "orange";
         } else if (statoApertura.stato === "in-chiusura") {
           colore = legenda.colori["in chiusura"] || "#FFD700";
           const minuti = statoApertura.minutiAllaChiusura;
-          const testoMinuti = minuti === 1 ? "minuto" : "minuti";
-
-          testoOrario = `${testoOrario} (${minuti} ${testoMinuti})`;
-          testoExtra = "";
+          const testoMinuti = minuti === 1 ? "1 minuto" : `${minuti} minuti`;
+          testoExtra = ` (chiusura tra ${testoMinuti})`;
         } else {
-          colore = legenda.colori.aperto || "#00FF7F";
+          colore = legenda.colori["aperto"] || "#00FF7F";
         }
+      } else {
+        colore = legenda.colori["chiuso"] || "orange";
       }
 
-      return `<li class="footer-item" style="color:${colore};${peso}">${testoOrario}${testoExtra}</li>`;
+      return `
+        <li class="footer-item" style="color:${colore};${peso}">
+          ${testoOrario}${testoExtra}
+        </li>
+      `;
     })
     .join("");
 
   let testoInChiusura = legenda.testo["in chiusura"] || "In chiusura";
   if (statoApertura.stato === "in-chiusura") {
     const minuti = statoApertura.minutiAllaChiusura;
-    const testoMinuti = minuti === 1 ? "minuto" : "minuti";
-    testoInChiusura = `In chiusura tra ${minuti} ${testoMinuti}`;
+    const testoMinuti = minuti === 1 ? "1 minuto" : `${minuti} minuti`;
+    testoInChiusura = `In chiusura tra ${testoMinuti}`;
   }
 
   const legendaHtml = `
-  <div class="legenda-orari" style="margin-top: 10px;">
-    <div style="margin-bottom: 10px;">
-      <span style="color: white; font-weight: bold; font-size: 1.2em;">
-        <br>
-        ${legenda.titolo || "Legenda Orari"}
-      </span>
+    <div class="legenda-orari" style="margin-top: 10px;">
+      <div style="margin-bottom: 10px;">
+        <span style="color: white; font-weight: bold; font-size: 1.2em;"><br>${legenda.titolo || "Legenda Orari"}</span>
+      </div>
+      <div style="display: flex; align-items: center; margin-bottom: 5px;">
+        <span style="height: 12px; width: 12px; background-color: ${legenda.colori.aperto ||
+          "#00FF7F"}; margin-right: 8px; border-radius: 50%; display: inline-block;"></span>
+        <span style="color: white;">${legenda.testo.aperto || "Aperto"}</span>
+      </div>
+      <div style="display: flex; align-items: center; margin-bottom: 5px;">
+        <span style="height: 12px; width: 12px; background-color: ${legenda.colori["in chiusura"] ||
+          "#FFD700"}; margin-right: 8px; border-radius: 50%; display: inline-block;"></span>
+        <span id="testo-in-chiusura" style="color: white;">${testoInChiusura}</span>
+      </div>
+      <div style="display: flex; align-items: center;">
+        <span style="height: 12px; width: 12px; background-color: ${legenda.colori.chiuso ||
+          "orange"}; margin-right: 8px; border-radius: 50%; display: inline-block;"></span>
+        <span style="color: white;">${legenda.testo.chiuso || "Chiuso"}</span>
+      </div>
     </div>
-    <div style="display: flex; align-items: center; margin-bottom: 5px;">
-      <span style="height: 12px; width: 12px; background-color: ${
-        legenda.colori.aperto || "#00FF7F"
-      }; margin-right: 8px; border-radius: 50%; display: inline-block;"></span>
-      <span style="color: white;">${legenda.testo.aperto || "Aperto"}</span>
-    </div>
-    <div style="display: flex; align-items: center; margin-bottom: 5px;">
-      <span style="height: 12px; width: 12px; background-color: ${
-        legenda.colori["in chiusura"] || "#FFD700"
-      }; margin-right: 8px; border-radius: 50%; display: inline-block;"></span>
-      <span id="testo-in-chiusura" style="color: white;">${testoInChiusura}</span>
-    </div>
-    <div style="display: flex; align-items: center;">
-      <span style="height: 12px; width: 12px; background-color: ${
-        legenda.colori.chiuso || "orange"
-      }; margin-right: 8px; border-radius: 50%; display: inline-block;"></span>
-      <span style="color: white;">${legenda.testo.chiuso || "Chiuso"}</span>
-    </div>
-  </div>`;
+  `;
 
   return `
     <div class="footer-content">
-        <div class="footer-grid">
-            <div class="footer-section">
-                <h3 class="footer-title">${info.titolo || ""}</h3>
-                <p class="footer-text">${info.testo || ""}</p>
-            </div>
-            
-            <div class="footer-section">
-                <h4 class="footer-subtitle">Contatti</h4>
-                <ul class="footer-list">
-                    ${
-                      contatti.telefono
-                        ? `
-                    <li class="footer-item">
-                        <span class="material-icons">phone</span>
-                        <a href="tel:${contatti.telefono}">${contatti.telefono}</a>
-                    </li>`
-                        : ""
-                    }
-                    ${
-                      contatti.email
-                        ? `
-                    <li class="footer-item">
-                        <span class="material-icons">email</span>
-                        <a href="mailto:${contatti.email}">${contatti.email}</a>
-                    </li>`
-                        : ""
-                    }
-                    ${
-                      contatti.indirizzo
-                        ? `
-                    <li class="footer-item">
-                        <span class="material-icons">location_on</span>
-                        <a href="${googleMapsUrl}" target="_blank" rel="noopener noreferrer">${contatti.indirizzo}</a>
-                    </li>`
-                        : ""
-                    }
-                </ul>
-            </div>
-
-            <div class="footer-section">
-                <h4 class="footer-subtitle">Orari</h4>
-                <ul id="orari-footer" class="footer-list">
-                    ${orariHtml}
-                </ul>
-            </div>
-
-            <div class="footer-section">
-                <h4 class="footer-subtitle">Seguici</h4>
-                <div class="social-links">
-                    ${
-                      social.facebook
-                        ? `
-                    <a href="${social.facebook}" class="social-link" aria-label="Facebook" target="_blank" rel="noopener noreferrer">
-                        <img src="https://img.icons8.com/ios-filled/50/ffffff/facebook-new.png" alt="Facebook" style="width: 24px; height: 24px;"/>
-                    </a>`
-                        : ""
-                    }
-                    ${
-                      social.instagram
-                        ? `
-                    <a href="${social.instagram}" class="social-link" aria-label="Instagram" target="_blank" rel="noopener noreferrer">
-                        <img src="https://img.icons8.com/ios-filled/50/ffffff/instagram-new.png" alt="Instagram" style="width: 24px; height: 24px;"/>
-                    </a>`
-                        : ""
-                    }
-                    ${
-                      social.whatsapp
-                        ? `
-                    <a href="${social.whatsapp}" class="social-link" aria-label="WhatsApp" target="_blank" rel="noopener noreferrer">
-                        <img src="https://img.icons8.com/ios-filled/50/ffffff/whatsapp.png" alt="WhatsApp" style="width: 24px; height: 24px;"/>
-                    </a>`
-                        : ""
-                    }
-                </div>
-                ${legendaHtml}
-            </div>
+      <div class="footer-grid">
+        <div class="footer-section">
+          <h3 class="footer-title">${info.titolo || ""}</h3>
+          <p class="footer-text">${info.testo || ""}</p>
         </div>
 
-        <div class="footer-map">
-            <div id="map"></div>
+        <div class="footer-section">
+          <h4 class="footer-subtitle">Contatti</h4>
+          <ul class="footer-list">
+            ${
+              contatti.telefono
+                ? `
+            <li class="footer-item">
+              <span class="material-icons">phone</span>
+              <a href="tel:${contatti.telefono}">${contatti.telefono}</a>
+            </li>
+            `
+                : ""
+            }
+            ${
+              contatti.email
+                ? `
+            <li class="footer-item">
+              <span class="material-icons">email</span>
+              <a href="mailto:${contatti.email}">${contatti.email}</a>
+            </li>
+            `
+                : ""
+            }
+            ${
+              indirizzoVisuale
+                ? `
+            <li class="footer-item">
+              <span class="material-icons">location_on</span>
+              <a href="${googleMapsUrl}" target="_blank" rel="noopener noreferrer">
+                ${indirizzoVisuale}
+              </a>
+            </li>
+            `
+                : ""
+            }
+          </ul>
         </div>
+
+        <div class="footer-section">
+          <h4 class="footer-subtitle">Orari</h4>
+          <ul id="orari-footer" class="footer-list">
+            ${orariHtml}
+          </ul>
+          ${legendaHtml}
+        </div>
+
+        <div class="footer-section">
+          <h4 class="footer-subtitle">Seguici</h4>
+          <div class="social-links">
+            ${
+              social.facebook
+                ? `<a href="${social.facebook}" class="social-link" aria-label="Facebook" target="_blank" rel="noopener noreferrer">
+                     <img src="https://img.icons8.com/ios-filled/50/ffffff/facebook-new.png" alt="Facebook" style="width: 24px; height: 24px;">
+                   </a>`
+                : ""
+            }
+            ${
+              social.instagram
+                ? `<a href="${social.instagram}" class="social-link" aria-label="Instagram" target="_blank" rel="noopener noreferrer">
+                     <img src="https://img.icons8.com/ios-filled/50/ffffff/instagram-new.png" alt="Instagram" style="width: 24px; height: 24px;">
+                   </a>`
+                : ""
+            }
+            ${
+              social.whatsapp
+                ? `<a href="${social.whatsapp}" class="social-link" aria-label="WhatsApp" target="_blank" rel="noopener noreferrer">
+                     <img src="https://img.icons8.com/ios-filled/50/ffffff/whatsapp.png" alt="WhatsApp" style="width: 24px; height: 24px;">
+                   </a>`
+                : ""
+            }
+          </div>
+        </div>
+      </div>
+
+      <div class="footer-map">
+        <div id="map"></div>
+      </div>
     </div>
-
     <div class="footer-bottom">
-        <p>© ${new Date().getFullYear()} Macelleria da Ketti. Tutti i diritti riservati.
-        ${info.p_iva ? ` - P.IVA: ${info.p_iva}` : ""}
-        </p>
+      <p>
+        © ${new Date().getFullYear()} ${info.titolo || ""}. Tutti i diritti riservati.
+        ${info.p_iva ? ` - P.IVA ${info.p_iva}` : ""}
+      </p>
     </div>
   `;
 }
+
 
 function aggiornaColoreOrari(data) {
   const orari = data.orari || [];
