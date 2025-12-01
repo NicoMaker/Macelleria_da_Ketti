@@ -108,20 +108,42 @@ function getMotivoExtraForDate(data, dataFormattata) {
   return null;
 }
 
-function getSingleDayClosureReason(checkDate, data, unifiedFerieDates) {
+function getSingleDayClosureReason(
+  checkDate,
+  data,
+  unifiedFerieDates,
+  unifiedFerieDatesNextYear = null
+) {
   const festivita = data.festivita || [];
 
   const dateToCheck = new Date(checkDate);
   const dataFormattata = formatDateDM(dateToCheck);
 
+  // Le festività sono in formato GG/MM, quindi funzionano per tutti gli anni
   if (festivita.includes(dataFormattata)) {
     return { reason: "festivita", dataChiusura: dataFormattata };
   }
 
+  // Controlla prima nell'anno corrente
   if (unifiedFerieDates.has(dataFormattata)) {
     const fineChiusura = findConsecutiveClosureEnd(
       dateToCheck,
       unifiedFerieDates
+    );
+    return {
+      reason: "ferie",
+      dataChiusura: fineChiusura,
+    };
+  }
+
+  // Se c'è un Set per l'anno successivo, controlla anche lì
+  if (
+    unifiedFerieDatesNextYear &&
+    unifiedFerieDatesNextYear.has(dataFormattata)
+  ) {
+    const fineChiusura = findConsecutiveClosureEnd(
+      dateToCheck,
+      unifiedFerieDatesNextYear
     );
     return {
       reason: "ferie",
@@ -153,7 +175,7 @@ function createFooterHTML(data) {
     : "";
   const googleMapsUrl = `http://googleusercontent.com/maps.google.com/8${mapsQuery}`;
 
-  const oggiReal = new Date();
+  const oggiReal = new Date(); // Data reale
   const oggi = new Date(oggiReal);
   oggi.setHours(0, 0, 0, 0);
 
@@ -162,12 +184,18 @@ function createFooterHTML(data) {
 
   let indiceGiornoCorrente = giornoSettimana === 0 ? 6 : giornoSettimana - 1;
 
+  // Crea Set per anno corrente E anno successivo (per gestire 31/12 -> 01/01)
   const unifiedFerieDates = getUnifiedFerieDates(data, oggi.getFullYear());
+  const unifiedFerieDatesNextYear = getUnifiedFerieDates(
+    data,
+    oggi.getFullYear() + 1
+  );
 
   const singleDayClosure = getSingleDayClosureReason(
     oggiReal,
     data,
-    unifiedFerieDates
+    unifiedFerieDates,
+    unifiedFerieDatesNextYear
   );
   const isFestivita =
     singleDayClosure && singleDayClosure.reason === "festivita";
@@ -250,10 +278,12 @@ function createFooterHTML(data) {
       let testoOrario = line;
       const nomeGiorno = line.split(":")[0];
 
+      // Passa entrambi i Set per gestire il passaggio d'anno
       const closureCheck = getSingleDayClosureReason(
         dataDelGiorno,
         data,
-        unifiedFerieDates
+        unifiedFerieDates,
+        unifiedFerieDatesNextYear
       );
 
       if (closureCheck && closureCheck.reason === "festivita") {
@@ -274,7 +304,6 @@ function createFooterHTML(data) {
           const minuti = statoApertura.minutiAllaChiusura;
           const testoMinuti = minuti === 1 ? "minuto" : "minuti";
 
-          // QUI: minutaggio accodato subito dopo gli orari
           testoOrario = `${testoOrario} (${minuti} ${testoMinuti})`;
           testoExtra = "";
         } else {
@@ -420,7 +449,7 @@ function aggiornaColoreOrari(data) {
 
   if (!orari.length) return;
 
-  const oggiReal = new Date();
+  const oggiReal = new Date(); // Data reale
   const oggi = new Date(oggiReal);
   oggi.setHours(0, 0, 0, 0);
   const giornoSettimana = oggiReal.getDay();
@@ -428,12 +457,18 @@ function aggiornaColoreOrari(data) {
 
   let indiceGiornoCorrente = giornoSettimana === 0 ? 6 : giornoSettimana - 1;
 
+  // Crea Set per anno corrente E anno successivo (per gestire 31/12 -> 01/01)
   const unifiedFerieDates = getUnifiedFerieDates(data, oggi.getFullYear());
+  const unifiedFerieDatesNextYear = getUnifiedFerieDates(
+    data,
+    oggi.getFullYear() + 1
+  );
 
   const singleDayClosure = getSingleDayClosureReason(
     oggiReal,
     data,
-    unifiedFerieDates
+    unifiedFerieDates,
+    unifiedFerieDatesNextYear
   );
   const isFestivita =
     singleDayClosure && singleDayClosure.reason === "festivita";
@@ -519,10 +554,12 @@ function aggiornaColoreOrari(data) {
       let testoOrario = line;
       const nomeGiorno = line.split(":")[0];
 
+      // Passa entrambi i Set per gestire il passaggio d'anno
       const closureCheck = getSingleDayClosureReason(
         dataDelGiorno,
         data,
-        unifiedFerieDates
+        unifiedFerieDates,
+        unifiedFerieDatesNextYear
       );
 
       if (closureCheck && closureCheck.reason === "festivita") {
@@ -543,7 +580,6 @@ function aggiornaColoreOrari(data) {
           const minuti = statoApertura.minutiAllaChiusura;
           const testoMinuti = minuti === 1 ? "minuto" : "minuti";
 
-          // QUI: minutaggio accodato subito dopo gli orari
           testoOrario = `${testoOrario} (${minuti} ${testoMinuti})`;
           testoExtra = "";
         } else {
