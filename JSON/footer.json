@@ -33,10 +33,11 @@
     "colori": {
       "aperto": "#00FF7F",
       "in chiusura": "#FFD700",
-      "chiuso": "#ff5733;"
+      "chiuso": "#ff5733"
     },
     "testo": {
       "aperto": "Aperto",
+      "in chiusura": "In chiusura",
       "chiuso": "Chiuso"
     }
   },

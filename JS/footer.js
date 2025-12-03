@@ -119,12 +119,10 @@ function getSingleDayClosureReason(
   const dateToCheck = new Date(checkDate);
   const dataFormattata = formatDateDM(dateToCheck);
 
-  // Le festività sono in formato GG/MM, quindi funzionano per tutti gli anni
   if (festivita.includes(dataFormattata)) {
     return { reason: "festivita", dataChiusura: dataFormattata };
   }
 
-  // Controlla prima nell'anno corrente
   if (unifiedFerieDates.has(dataFormattata)) {
     const fineChiusura = findConsecutiveClosureEnd(
       dateToCheck,
@@ -136,7 +134,6 @@ function getSingleDayClosureReason(
     };
   }
 
-  // Se c'è un Set per l'anno successivo, controlla anche lì
   if (
     unifiedFerieDatesNextYear &&
     unifiedFerieDatesNextYear.has(dataFormattata)
@@ -170,24 +167,22 @@ function createFooterHTML(data) {
   const social = data.social || {};
   const legenda = data.legendaOrari || { colori: {}, testo: {} };
 
-const mapsQuery = contatti.indirizzo
-  ? encodeURIComponent(contatti.indirizzo)
-  : "Via Villa, 26, 33072 Casarsa della Delizia PN";
+  const mapsQuery = contatti.indirizzo
+    ? encodeURIComponent(contatti.indirizzo)
+    : "Via Villa, 26, 33072 Casarsa della Delizia PN";
 
-const googleMapsUrl = `https://www.google.com/maps/search/?api=1&query=${mapsQuery}`;
+  const googleMapsUrl = `https://www.google.com/maps/search/?api=1&query=${mapsQuery}`;
 
+  const indirizzoVisuale =
+    contatti.indirizzo_visuale || contatti.indirizzo || "";
 
-  // Indirizzo da MOSTRARE nel frontend
-  const indirizzoVisuale = contatti.indirizzo_visuale || contatti.indirizzo || "";
-
-  const oggiReal = new Date(); // Data reale
+  const oggiReal = new Date();
   const oggi = new Date(oggiReal);
   oggi.setHours(0, 0, 0, 0);
   const giornoSettimana = oggiReal.getDay();
   const oraCorrente = oggiReal.getHours() * 100 + oggiReal.getMinutes();
   let indiceGiornoCorrente = giornoSettimana === 0 ? 6 : giornoSettimana - 1;
 
-  // Crea Set per anno corrente E anno successivo (per gestire 31/12 -> 01/01)
   const unifiedFerieDates = getUnifiedFerieDates(data, oggi.getFullYear());
   const unifiedFerieDatesNextYear = getUnifiedFerieDates(
     data,
@@ -201,7 +196,8 @@ const googleMapsUrl = `https://www.google.com/maps/search/?api=1&query=${mapsQue
     unifiedFerieDatesNextYear
   );
 
-  const isFestivita = singleDayClosure && singleDayClosure.reason === "festivita";
+  const isFestivita =
+    singleDayClosure && singleDayClosure.reason === "festivita";
   const eFerieOggi = singleDayClosure && singleDayClosure.reason === "ferie";
   const isMotivoExtra =
     singleDayClosure && singleDayClosure.reason === "motivi-extra";
@@ -231,8 +227,9 @@ const googleMapsUrl = `https://www.google.com/maps/search/?api=1&query=${mapsQue
       let fineMinuti = Math.floor(fineTime % 100);
       let fineOre = Math.floor(fineTime / 100);
 
-      // 30 minuti prima per "in chiusura"
-      fineMinuti -= 30;
+      // Usa i minuti configurati dal JSON (default 30)
+      const minutiPrimaChiusura = data.minutiInChiusura || 30;
+      fineMinuti -= minutiPrimaChiusura;
       if (fineMinuti < 0) {
         fineMinuti += 60;
         fineOre -= 1;
@@ -282,7 +279,6 @@ const googleMapsUrl = `https://www.google.com/maps/search/?api=1&query=${mapsQue
 
       const nomeGiorno = line.split(":")[0];
 
-      // Passa entrambi i Set per gestire il passaggio d'anno
       const closureCheck = getSingleDayClosureReason(
         dataDelGiorno,
         data,
@@ -332,21 +328,26 @@ const googleMapsUrl = `https://www.google.com/maps/search/?api=1&query=${mapsQue
   const legendaHtml = `
     <div class="legenda-orari" style="margin-top: 10px;">
       <div style="margin-bottom: 10px;">
-        <span style="color: white; font-weight: bold; font-size: 1.2em;"><br>${legenda.titolo || "Legenda Orari"}</span>
+        <span style="color: white; font-weight: bold; font-size: 1.2em;"><br>${
+          legenda.titolo || "Legenda Orari"
+        }</span>
       </div>
       <div style="display: flex; align-items: center; margin-bottom: 5px;">
-        <span style="height: 12px; width: 12px; background-color: ${legenda.colori.aperto ||
-          "#00FF7F"}; margin-right: 8px; border-radius: 50%; display: inline-block;"></span>
+        <span style="height: 12px; width: 12px; background-color: ${
+          legenda.colori.aperto || "#00FF7F"
+        }; margin-right: 8px; border-radius: 50%; display: inline-block;"></span>
         <span style="color: white;">${legenda.testo.aperto || "Aperto"}</span>
       </div>
       <div style="display: flex; align-items: center; margin-bottom: 5px;">
-        <span style="height: 12px; width: 12px; background-color: ${legenda.colori["in chiusura"] ||
-          "#FFD700"}; margin-right: 8px; border-radius: 50%; display: inline-block;"></span>
+        <span style="height: 12px; width: 12px; background-color: ${
+          legenda.colori["in chiusura"] || "#FFD700"
+        }; margin-right: 8px; border-radius: 50%; display: inline-block;"></span>
         <span id="testo-in-chiusura" style="color: white;">${testoInChiusura}</span>
       </div>
       <div style="display: flex; align-items: center;">
-        <span style="height: 12px; width: 12px; background-color: ${legenda.colori.chiuso ||
-          "orange"}; margin-right: 8px; border-radius: 50%; display: inline-block;"></span>
+        <span style="height: 12px; width: 12px; background-color: ${
+          legenda.colori.chiuso || "orange"
+        }; margin-right: 8px; border-radius: 50%; display: inline-block;"></span>
         <span style="color: white;">${legenda.testo.chiuso || "Chiuso"}</span>
       </div>
     </div>
@@ -440,13 +441,14 @@ const googleMapsUrl = `https://www.google.com/maps/search/?api=1&query=${mapsQue
     </div>
     <div class="footer-bottom">
       <p>
-        © ${new Date().getFullYear()} ${info.titolo || ""}. Tutti i diritti riservati.
+        © ${new Date().getFullYear()} ${
+    info.titolo || ""
+  }. Tutti i diritti riservati.
         ${info.p_iva ? ` - P.IVA ${info.p_iva}` : ""}
       </p>
     </div>
   `;
 }
-
 
 function aggiornaColoreOrari(data) {
   const orari = data.orari || [];
@@ -454,7 +456,7 @@ function aggiornaColoreOrari(data) {
 
   if (!orari.length) return;
 
-  const oggiReal = new Date(); // Data reale
+  const oggiReal = new Date();
   const oggi = new Date(oggiReal);
   oggi.setHours(0, 0, 0, 0);
   const giornoSettimana = oggiReal.getDay();
@@ -462,7 +464,6 @@ function aggiornaColoreOrari(data) {
 
   let indiceGiornoCorrente = giornoSettimana === 0 ? 6 : giornoSettimana - 1;
 
-  // Crea Set per anno corrente E anno successivo (per gestire 31/12 -> 01/01)
   const unifiedFerieDates = getUnifiedFerieDates(data, oggi.getFullYear());
   const unifiedFerieDatesNextYear = getUnifiedFerieDates(
     data,
@@ -506,7 +507,10 @@ function aggiornaColoreOrari(data) {
 
       let fineMinuti = Math.floor(fineTime % 100);
       let fineOre = Math.floor(fineTime / 100);
-      fineMinuti -= 30;
+
+      // Usa i minuti configurati dal JSON (default 30)
+      const minutiPrimaChiusura = data.minutiInChiusura || 30;
+      fineMinuti -= minutiPrimaChiusura;
       if (fineMinuti < 0) {
         fineMinuti += 60;
         fineOre -= 1;
@@ -559,7 +563,6 @@ function aggiornaColoreOrari(data) {
       let testoOrario = line;
       const nomeGiorno = line.split(":")[0];
 
-      // Passa entrambi i Set per gestire il passaggio d'anno
       const closureCheck = getSingleDayClosureReason(
         dataDelGiorno,
         data,
@@ -596,7 +599,6 @@ function aggiornaColoreOrari(data) {
     })
     .join("");
 
-  // Aggiorna il testo della legenda "in chiusura"
   const testoInChiusuraSpan = document.getElementById("testo-in-chiusura");
   if (testoInChiusuraSpan) {
     if (statoApertura.stato === "in-chiusura") {
