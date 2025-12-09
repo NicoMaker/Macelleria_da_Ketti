@@ -42,6 +42,16 @@ const formatDateDM = (date) => {
   return `${giorno}/${mese}`;
 };
 
+const nomiGiorni = [
+  "Domenica",
+  "Lunedì",
+  "Martedì",
+  "Mercoledì",
+  "Giovedì",
+  "Venerdì",
+  "Sabato",
+];
+
 function getUnifiedFerieDates(data, year) {
   const unifiedDates = new Set();
   const giorniExtraFerie =
@@ -103,6 +113,19 @@ function getMotivoExtraForDate(data, dataFormattata) {
   for (const item of motiviExtra) {
     if (item.giorno === dataFormattata && item.giorno !== "") {
       return item.motivo || "Motivi Extra";
+    }
+  }
+  return null;
+}
+
+// Nuova funzione per ottenere gli orari extra per una data specifica
+function getOrariExtraForDate(data, dataFormattata, dayOfWeek) {
+  const orariExtra = data.orariExtra || [];
+
+  for (const item of orariExtra) {
+    if (item.giorno === dataFormattata && item.orari) {
+      const nomeGiorno = nomiGiorni[dayOfWeek];
+      return `${nomeGiorno}: ${item.orari}`;
     }
   }
   return null;
@@ -227,7 +250,6 @@ function createFooterHTML(data) {
       let fineMinuti = Math.floor(fineTime % 100);
       let fineOre = Math.floor(fineTime / 100);
 
-      // Usa i minuti configurati dal JSON (default 30)
       const minutiPrimaChiusura = data.minutiInChiusura || 30;
       fineMinuti -= minutiPrimaChiusura;
       if (fineMinuti < 0) {
@@ -256,7 +278,16 @@ function createFooterHTML(data) {
     return { stato: "chiuso", minutiAllaChiusura: 0 };
   }
 
-  const statoApertura = checkStatoApertura(orari[indiceGiornoCorrente]);
+  // Verifica se oggi ha orari extra
+  const dataOggiFormattata = formatDateDM(oggiReal);
+  const orariExtraOggi = getOrariExtraForDate(
+    data,
+    dataOggiFormattata,
+    giornoSettimana
+  );
+  const orariDaUsareOggi = orariExtraOggi || orari[indiceGiornoCorrente];
+
+  const statoApertura = checkStatoApertura(orariDaUsareOggi);
 
   const giorniDaVisualizzare = [];
   for (let i = 0; i < 7; i++) {
@@ -274,7 +305,15 @@ function createFooterHTML(data) {
 
       let dayOfWeek = dataDelGiorno.getDay();
       let orariIndex = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
-      let line = orari[orariIndex];
+
+      const dataFormattata = formatDateDM(dataDelGiorno);
+      const orariExtraGiorno = getOrariExtraForDate(
+        data,
+        dataFormattata,
+        dayOfWeek
+      );
+
+      let line = orariExtraGiorno || orari[orariIndex];
       let testoOrario = line;
 
       const nomeGiorno = line.split(":")[0];
@@ -508,7 +547,6 @@ function aggiornaColoreOrari(data) {
       let fineMinuti = Math.floor(fineTime % 100);
       let fineOre = Math.floor(fineTime / 100);
 
-      // Usa i minuti configurati dal JSON (default 30)
       const minutiPrimaChiusura = data.minutiInChiusura || 30;
       fineMinuti -= minutiPrimaChiusura;
       if (fineMinuti < 0) {
@@ -537,7 +575,16 @@ function aggiornaColoreOrari(data) {
     return { stato: "chiuso", minutiAllaChiusura: 0 };
   }
 
-  const statoApertura = checkStatoApertura(orari[indiceGiornoCorrente]);
+  // Verifica se oggi ha orari extra
+  const dataOggiFormattata = formatDateDM(oggiReal);
+  const orariExtraOggi = getOrariExtraForDate(
+    data,
+    dataOggiFormattata,
+    giornoSettimana
+  );
+  const orariDaUsareOggi = orariExtraOggi || orari[indiceGiornoCorrente];
+
+  const statoApertura = checkStatoApertura(orariDaUsareOggi);
 
   const giorniDaVisualizzare = [];
   for (let i = 0; i < 7; i++) {
@@ -559,7 +606,14 @@ function aggiornaColoreOrari(data) {
       let dayOfWeek = dataDelGiorno.getDay();
       let orariIndex = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
 
-      let line = orari[orariIndex];
+      const dataFormattata = formatDateDM(dataDelGiorno);
+      const orariExtraGiorno = getOrariExtraForDate(
+        data,
+        dataFormattata,
+        dayOfWeek
+      );
+
+      let line = orariExtraGiorno || orari[orariIndex];
       let testoOrario = line;
       const nomeGiorno = line.split(":")[0];
 

@@ -28,6 +28,13 @@
     "Sabato: 8:00 - 13:00 / 15:30 - 19:30",
     "Domenica: Chiuso"
   ],
+  "minutiInChiusura": 30,
+  "orariExtra": [
+    {
+      "giorno": "",
+      "orari": ""
+    }
+  ],
   "legendaOrari": {
     "titolo": "Legenda",
     "colori": {
