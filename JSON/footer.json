@@ -19,6 +19,15 @@
     "latitudine": 45.9412964,
     "longitudine": 12.837659
   },
+  "nomiGiorni": [
+    "Domenica",
+    "Lunedì",
+    "Martedì",
+    "Mercoledì",
+    "Giovedì",
+    "Venerdì",
+    "Sabato"
+  ],
   "orari": [
     "Lunedì: 8:00 - 13:00",
     "Martedì: 8:00 - 13:00 / 15:30 - 19:30",

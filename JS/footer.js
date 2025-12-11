@@ -42,16 +42,6 @@ const formatDateDM = (date) => {
   return `${giorno}/${mese}`;
 };
 
-const nomiGiorni = [
-  "Domenica",
-  "Lunedì",
-  "Martedì",
-  "Mercoledì",
-  "Giovedì",
-  "Venerdì",
-  "Sabato",
-];
-
 function getUnifiedFerieDates(data, year) {
   const unifiedDates = new Set();
   const giorniExtraFerie =
@@ -118,9 +108,9 @@ function getMotivoExtraForDate(data, dataFormattata) {
   return null;
 }
 
-// Nuova funzione per ottenere gli orari extra per una data specifica
 function getOrariExtraForDate(data, dataFormattata, dayOfWeek) {
   const orariExtra = data.orariExtra || [];
+  const nomiGiorni = data.nomiGiorni;
 
   for (const item of orariExtra) {
     if (item.giorno === dataFormattata && item.orari) {
@@ -278,7 +268,6 @@ function createFooterHTML(data) {
     return { stato: "chiuso", minutiAllaChiusura: 0 };
   }
 
-  // Verifica se oggi ha orari extra
   const dataOggiFormattata = formatDateDM(oggiReal);
   const orariExtraOggi = getOrariExtraForDate(
     data,
@@ -575,7 +564,6 @@ function aggiornaColoreOrari(data) {
     return { stato: "chiuso", minutiAllaChiusura: 0 };
   }
 
-  // Verifica se oggi ha orari extra
   const dataOggiFormattata = formatDateDM(oggiReal);
   const orariExtraOggi = getOrariExtraForDate(
     data,
