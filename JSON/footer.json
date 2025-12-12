@@ -41,7 +41,8 @@
   "orariExtra": [
     {
       "giorno": "",
-      "orari": ""
+      "orari": "",
+      "motivo": ""
     }
   ],
   "legendaOrari": {
