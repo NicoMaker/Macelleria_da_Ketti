@@ -225,7 +225,8 @@ function createFooterHTML(data) {
   let eChiusoOggi = isFestivita || eFerieOggi || isMotivoExtra;
 
   function checkStatoApertura(orariString) {
-    if (eChiusoOggi && !orariExtraOggi) return { stato: "chiuso", minutiAllaChiusura: 0 };
+    if (eChiusoOggi && !orariExtraOggi)
+      return { stato: "chiuso", minutiAllaChiusura: 0 };
     if (!orariString || orariString.toLowerCase().includes("chiuso"))
       return { stato: "chiuso", minutiAllaChiusura: 0 };
 
@@ -318,7 +319,12 @@ function createFooterHTML(data) {
       } else {
         // Altrimenti, usa la logica standard
         testoOrario = orari[orariIndex];
-        const closureCheck = getSingleDayClosureReason(dataDelGiorno, data, unifiedFerieDates, unifiedFerieDatesNextYear);
+        const closureCheck = getSingleDayClosureReason(
+          dataDelGiorno,
+          data,
+          unifiedFerieDates,
+          unifiedFerieDatesNextYear
+        );
         if (closureCheck && closureCheck.reason === "festivita") {
           testoOrario = `${nomeGiorno}: Chiuso (Festività)`;
         } else if (closureCheck && closureCheck.reason === "ferie") {
@@ -362,22 +368,26 @@ function createFooterHTML(data) {
   const legendaHtml = `
     <div class="legenda-orari" style="margin-top: 10px;">
       <div style="margin-bottom: 10px;">
-        <span style="color: white; font-weight: bold; font-size: 1.2em;"><br>${legenda.titolo || "Legenda Orari"
-    }</span>
+        <span style="color: white; font-weight: bold; font-size: 1.2em;"><br>${
+          legenda.titolo || "Legenda Orari"
+        }</span>
       </div>
       <div style="display: flex; align-items: center; margin-bottom: 5px;">
-        <span style="height: 12px; width: 12px; background-color: ${legenda.colori.aperto || "#00FF7F"
-    }; margin-right: 8px; border-radius: 50%; display: inline-block;"></span>
+        <span style="height: 12px; width: 12px; background-color: ${
+          legenda.colori.aperto || "#00FF7F"
+        }; margin-right: 8px; border-radius: 50%; display: inline-block;"></span>
         <span style="color: white;">${legenda.testo.aperto || "Aperto"}</span>
       </div>
       <div style="display: flex; align-items: center; margin-bottom: 5px;">
-        <span style="height: 12px; width: 12px; background-color: ${legenda.colori["in chiusura"] || "#FFD700"
-    }; margin-right: 8px; border-radius: 50%; display: inline-block;"></span>
+        <span style="height: 12px; width: 12px; background-color: ${
+          legenda.colori["in chiusura"] || "#FFD700"
+        }; margin-right: 8px; border-radius: 50%; display: inline-block;"></span>
         <span id="testo-in-chiusura" style="color: white;">${testoInChiusura}</span>
       </div>
       <div style="display: flex; align-items: center;">
-        <span style="height: 12px; width: 12px; background-color: ${legenda.colori.chiuso || "orange"
-    }; margin-right: 8px; border-radius: 50%; display: inline-block;"></span>
+        <span style="height: 12px; width: 12px; background-color: ${
+          legenda.colori.chiuso || "orange"
+        }; margin-right: 8px; border-radius: 50%; display: inline-block;"></span>
         <span style="color: white;">${legenda.testo.chiuso || "Chiuso"}</span>
       </div>
     </div>
@@ -394,26 +404,29 @@ function createFooterHTML(data) {
         <div class="footer-section">
           <h4 class="footer-subtitle">Contatti</h4>
           <ul class="footer-list">
-            ${contatti.telefono
-      ? `
+            ${
+              contatti.telefono
+                ? `
             <li class="footer-item">
               <span class="material-icons">phone</span>
               <a href="tel:${contatti.telefono}">${contatti.telefono}</a>
             </li>
             `
-      : ""
-    }
-            ${contatti.email
-      ? `
+                : ""
+            }
+            ${
+              contatti.email
+                ? `
             <li class="footer-item">
               <span class="material-icons">email</span>
               <a href="mailto:${contatti.email}">${contatti.email}</a>
             </li>
             `
-      : ""
-    }
-            ${indirizzoVisuale
-      ? `
+                : ""
+            }
+            ${
+              indirizzoVisuale
+                ? `
             <li class="footer-item">
               <span class="material-icons">location_on</span>
               <a href="${googleMapsUrl}" target="_blank" rel="noopener noreferrer">
@@ -421,8 +434,8 @@ function createFooterHTML(data) {
               </a>
             </li>
             `
-      : ""
-    }
+                : ""
+            }
           </ul>
         </div>
 
@@ -437,24 +450,27 @@ function createFooterHTML(data) {
         <div class="footer-section">
           <h4 class="footer-subtitle">Seguici</h4>
           <div class="social-links">
-            ${social.facebook
-      ? `<a href="${social.facebook}" class="social-link" aria-label="Facebook" target="_blank" rel="noopener noreferrer">
+            ${
+              social.facebook
+                ? `<a href="${social.facebook}" class="social-link" aria-label="Facebook" target="_blank" rel="noopener noreferrer">
                      <img src="https://img.icons8.com/ios-filled/50/ffffff/facebook-new.png" alt="Facebook" style="width: 24px; height: 24px;">
                    </a>`
-      : ""
-    }
-            ${social.instagram
-      ? `<a href="${social.instagram}" class="social-link" aria-label="Instagram" target="_blank" rel="noopener noreferrer">
+                : ""
+            }
+            ${
+              social.instagram
+                ? `<a href="${social.instagram}" class="social-link" aria-label="Instagram" target="_blank" rel="noopener noreferrer">
                      <img src="https://img.icons8.com/ios-filled/50/ffffff/instagram-new.png" alt="Instagram" style="width: 24px; height: 24px;">
                    </a>`
-      : ""
-    }
-            ${social.whatsapp
-      ? `<a href="${social.whatsapp}" class="social-link" aria-label="WhatsApp" target="_blank" rel="noopener noreferrer">
+                : ""
+            }
+            ${
+              social.whatsapp
+                ? `<a href="${social.whatsapp}" class="social-link" aria-label="WhatsApp" target="_blank" rel="noopener noreferrer">
                      <img src="https://img.icons8.com/ios-filled/50/ffffff/whatsapp.png" alt="WhatsApp" style="width: 24px; height: 24px;">
                    </a>`
-      : ""
-    }
+                : ""
+            }
           </div>
         </div>
       </div>
@@ -465,8 +481,9 @@ function createFooterHTML(data) {
     </div>
     <div class="footer-bottom">
       <p>
-        © ${new Date().getFullYear()} ${info.titolo || ""
-    }. Tutti i diritti riservati.
+        © ${new Date().getFullYear()} ${
+    info.titolo || ""
+  }. Tutti i diritti riservati.
         ${info.p_iva ? ` - P.IVA ${info.p_iva}` : ""}
       </p>
     </div>
@@ -515,7 +532,8 @@ function aggiornaColoreOrari(data) {
   let eChiusoOggi = isFestivita || eFerieOggi || isMotivoExtra;
 
   function checkStatoApertura(orariString) {
-    if (eChiusoOggi && !orariExtraOggi) return { stato: "chiuso", minutiAllaChiusura: 0 };
+    if (eChiusoOggi && !orariExtraOggi)
+      return { stato: "chiuso", minutiAllaChiusura: 0 };
 
     if (!orariString || orariString.toLowerCase().includes("chiuso"))
       return { stato: "chiuso", minutiAllaChiusura: 0 };
@@ -611,7 +629,12 @@ function aggiornaColoreOrari(data) {
       } else {
         // Altrimenti, usa la logica standard
         testoOrario = orari[orariIndex];
-        const closureCheck = getSingleDayClosureReason(dataDelGiorno, data, unifiedFerieDates, unifiedFerieDatesNextYear);
+        const closureCheck = getSingleDayClosureReason(
+          dataDelGiorno,
+          data,
+          unifiedFerieDates,
+          unifiedFerieDatesNextYear
+        );
         if (closureCheck && closureCheck.reason === "festivita") {
           testoOrario = `${nomeGiorno}: Chiuso (Festività)`;
         } else if (closureCheck && closureCheck.reason === "ferie") {
@@ -666,9 +689,11 @@ function initMap(lat, lon) {
   iframe.style.border = "none";
 
   const zoomLevel = 0.0005;
-  iframe.src = `https://www.openstreetmap.org/export/embed.html?bbox=${lon - zoomLevel
-    },${lat - zoomLevel},${lon + zoomLevel},${lat + zoomLevel
-    }&layer=mapnik&marker=${lat},${lon}`;
+  iframe.src = `https://www.openstreetmap.org/export/embed.html?bbox=${
+    lon - zoomLevel
+  },${lat - zoomLevel},${lon + zoomLevel},${
+    lat + zoomLevel
+  }&layer=mapnik&marker=${lat},${lon}`;
   iframe.loading = "lazy";
 
   mapContainer.appendChild(iframe);
