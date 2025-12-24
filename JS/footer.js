@@ -176,28 +176,21 @@ function getSingleDayClosureReason(
   return null;
 }
 
-function createFooterHTML(data) {
+// Funzione principale per creare il footer dinamico
+function createFooterHTML(data, giornoPartenza) {
+  const oggiReal = giornoPartenza || new Date(); // usa la data passata o quella reale
+  const oggi = new Date(oggiReal);
+  oggi.setHours(0, 0, 0, 0);
+
+  const giornoSettimana = oggiReal.getDay();
+  const oraCorrente = oggiReal.getHours() * 100 + oggiReal.getMinutes();
+  let indiceGiornoCorrente = giornoSettimana === 0 ? 6 : giornoSettimana - 1;
+
   const info = data.info || {};
   const contatti = data.contatti || {};
   const orari = data.orari || [];
   const social = data.social || {};
   const legenda = data.legendaOrari || { colori: {}, testo: {} };
-
-  const mapsQuery = contatti.indirizzo
-    ? encodeURIComponent(contatti.indirizzo)
-    : "Via Villa, 26, 33072 Casarsa della Delizia PN";
-
-  const googleMapsUrl = `https://www.google.com/maps/search/?api=1&query=${mapsQuery}`;
-  const indirizzoVisuale =
-    contatti.indirizzo_visuale || contatti.indirizzo || "";
-
-  // IMPORTANTE: usa sempre la data reale del momento
-  const oggiReal = new Date();
-  const oggi = new Date(oggiReal);
-  oggi.setHours(0, 0, 0, 0);
-  const giornoSettimana = oggiReal.getDay();
-  const oraCorrente = oggiReal.getHours() * 100 + oggiReal.getMinutes();
-  let indiceGiornoCorrente = giornoSettimana === 0 ? 6 : giornoSettimana - 1;
 
   const unifiedFerieDates = getUnifiedFerieDates(data, oggi.getFullYear());
   const unifiedFerieDatesNextYear = getUnifiedFerieDates(
@@ -218,7 +211,6 @@ function createFooterHTML(data) {
     unifiedFerieDates,
     unifiedFerieDatesNextYear
   );
-
   const isFestivita =
     singleDayClosure && singleDayClosure.reason === "festivita";
   const eFerieOggi = singleDayClosure && singleDayClosure.reason === "ferie";
@@ -230,6 +222,7 @@ function createFooterHTML(data) {
   function checkStatoApertura(orariString) {
     if (eChiusoOggi && !orariExtraOggi)
       return { stato: "chiuso", minutiAllaChiusura: 0 };
+
     if (!orariString || orariString.toLowerCase().includes("chiuso"))
       return { stato: "chiuso", minutiAllaChiusura: 0 };
 
@@ -238,17 +231,17 @@ function createFooterHTML(data) {
     );
     if (!orariMatch) return { stato: "chiuso", minutiAllaChiusura: 0 };
 
-    const parseTime = (timeStr) => {
-      const [ore, minuti] = timeStr.split(":");
-      return parseInt(ore, 10) * 100 + parseInt(minuti, 10);
+    const parseTime = (t) => {
+      const [ore, minuti] = t.split(":");
+      return parseInt(ore) * 100 + parseInt(minuti);
     };
 
-    for (const intervallo of orariMatch) {
-      const [inizio, fine] = intervallo.split("-").map((t) => t.trim());
+    for (const range of orariMatch) {
+      const [inizio, fine] = range.split("-").map((s) => s.trim());
       const inizioTime = parseTime(inizio);
       const fineTime = parseTime(fine);
 
-      let fineMinuti = Math.floor(fineTime % 100);
+      let fineMinuti = fineTime % 100;
       let fineOre = Math.floor(fineTime / 100);
 
       const minutiPrimaChiusura = data.minutiInChiusura || 30;
@@ -265,7 +258,6 @@ function createFooterHTML(data) {
           const minCorr = oraCorrente % 100;
           const oreFine = Math.floor(fineTime / 100);
           const minFine = fineTime % 100;
-
           const minutiTotaliCorrente = oreCorr * 60 + minCorr;
           const minutiTotaliFine = oreFine * 60 + minFine;
           const minutiMancanti = minutiTotaliFine - minutiTotaliCorrente;
@@ -280,33 +272,28 @@ function createFooterHTML(data) {
   }
 
   const orariDaUsareOggi = orariExtraOggi || orari[indiceGiornoCorrente];
-
-  if (orariExtraOggi) {
-    eChiusoOggi = false;
-  }
+  if (orariExtraOggi) eChiusoOggi = false;
 
   const statoApertura = checkStatoApertura(orariDaUsareOggi);
 
-  // Genera i prossimi 7 giorni partendo da OGGI (data reale)
+  // Genera i prossimi 7 giorni partendo dal giorno reale
   const giorniDaVisualizzare = [];
   for (let i = 0; i < 7; i++) {
     const dataDelGiorno = new Date(oggi);
     dataDelGiorno.setDate(oggi.getDate() + i);
-    dataDelGiorno.setHours(0, 0, 0, 0);
     giorniDaVisualizzare.push(dataDelGiorno);
   }
 
+  // Costruzione HTML degli orari
   const orariHtml = giorniDaVisualizzare
     .map((dataDelGiorno, i) => {
       let colore = "";
       let peso = "";
       let testoExtra = "";
 
-      let dayOfWeek = dataDelGiorno.getDay();
-      let orariIndex = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
-
+      const dayOfWeek = dataDelGiorno.getDay();
+      const orariIndex = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
       const dataFormattata = formatDateDM(dataDelGiorno);
-
       const orariExtraGiorno = getOrariExtraForDate(
         data,
         dataFormattata,
@@ -338,64 +325,35 @@ function createFooterHTML(data) {
       if (i === 0) {
         peso = "font-weight:bold;";
         if (eChiusoOggi || statoApertura.stato === "chiuso") {
-          colore = legenda.colori["chiuso"] || "orange";
+          colore = legenda.colori.chiuso || "orange";
         } else if (statoApertura.stato === "in-chiusura") {
           colore = legenda.colori["in chiusura"] || "#FFD700";
           const minuti = statoApertura.minutiAllaChiusura;
-          const testoMinuti = minuti === 1 ? "1 minuto" : `${minuti} minuti`;
-          testoExtra = ` (chiusura tra ${testoMinuti})`;
+          const testoMinuti = minuti === 1 ? "minuto" : "minuti";
+          testoOrario = `${testoOrario} (${minuti} ${testoMinuti})`;
+          testoExtra = "";
         } else {
-          colore = legenda.colori["aperto"] || "#00FF7F";
+          colore = legenda.colori.aperto || "#00FF7F";
         }
       } else {
-        colore = legenda.colori["chiuso"] || "orange";
+        colore = legenda.colori.chiuso || "orange";
       }
 
-      return `
-        <li class="footer-item" style="color:${colore};${peso}">
-          ${testoOrario}${testoExtra}
-        </li>
-      `;
+      return `<li class="footer-item" style="color:${colore};${peso}">${testoOrario}${testoExtra}</li>`;
     })
     .join("");
 
-  let testoInChiusura = legenda.testo["in chiusura"] || "In chiusura";
-  if (statoApertura.stato === "in-chiusura") {
-    const minuti = statoApertura.minutiAllaChiusura;
-    const testoMinuti = minuti === 1 ? "1 minuto" : `${minuti} minuti`;
-    testoInChiusura = `In chiusura tra ${testoMinuti}`;
-  }
+  const testoInChiusuraSpan =
+    statoApertura.stato === "in-chiusura"
+      ? `In chiusura tra ${statoApertura.minutiAllaChiusura} ${
+          statoApertura.minutiAllaChiusura === 1 ? "minuto" : "minuti"
+        }`
+      : legenda.testo["in chiusura"] || "In chiusura";
 
-  const legendaHtml = `
-    <div class="legenda-orari" style="margin-top: 10px;">
-      <div style="margin-bottom: 10px;">
-        <span style="color: white; font-weight: bold; font-size: 1.2em;"><br>${
-          legenda.titolo || "Legenda Orari"
-        }</span>
-      </div>
-      <div style="display: flex; align-items: center; margin-bottom: 5px;">
-        <span style="height: 12px; width: 12px; background-color: ${
-          legenda.colori.aperto || "#00FF7F"
-        }; margin-right: 8px; border-radius: 50%; display: inline-block;"></span>
-        <span style="color: white;">${legenda.testo.aperto || "Aperto"}</span>
-      </div>
-      <div style="display: flex; align-items: center; margin-bottom: 5px;">
-        <span style="height: 12px; width: 12px; background-color: ${
-          legenda.colori["in chiusura"] || "#FFD700"
-        }; margin-right: 8px; border-radius: 50%; display: inline-block;"></span>
-        <span id="testo-in-chiusura" style="color: white;">${testoInChiusura}</span>
-      </div>
-      <div style="display: flex; align-items: center;">
-        <span style="height: 12px; width: 12px; background-color: ${
-          legenda.colori.chiuso || "orange"
-        }; margin-right: 8px; border-radius: 50%; display: inline-block;"></span>
-        <span style="color: white;">${legenda.testo.chiuso || "Chiuso"}</span>
-      </div>
-    </div>
-  `;
-
+  // Restituisci l'HTML completo del footer
   return `
     <div class="footer-content">
+      <!-- Sezioni info, contatti, orari e social -->
       <div class="footer-grid">
         <div class="footer-section">
           <h3 class="footer-title">${info.titolo || ""}</h3>
@@ -407,34 +365,19 @@ function createFooterHTML(data) {
           <ul class="footer-list">
             ${
               contatti.telefono
-                ? `
-            <li class="footer-item">
-              <span class="material-icons">phone</span>
-              <a href="tel:${contatti.telefono}">${contatti.telefono}</a>
-            </li>
-            `
+                ? `<li class="footer-item"><span class="material-icons">phone</span> <a href="tel:${contatti.telefono}">${contatti.telefono}</a></li>`
                 : ""
             }
             ${
               contatti.email
-                ? `
-            <li class="footer-item">
-              <span class="material-icons">email</span>
-              <a href="mailto:${contatti.email}">${contatti.email}</a>
-            </li>
-            `
+                ? `<li class="footer-item"><span class="material-icons">email</span> <a href="mailto:${contatti.email}">${contatti.email}</a></li>`
                 : ""
             }
             ${
-              indirizzoVisuale
-                ? `
-            <li class="footer-item">
-              <span class="material-icons">location_on</span>
-              <a href="${googleMapsUrl}" target="_blank" rel="noopener noreferrer">
-                ${indirizzoVisuale}
-              </a>
-            </li>
-            `
+              contatti.indirizzo
+                ? `<li class="footer-item"><span class="material-icons">location_on</span> <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+                    contatti.indirizzo
+                  )}" target="_blank">${contatti.indirizzo}</a></li>`
                 : ""
             }
           </ul>
@@ -442,10 +385,22 @@ function createFooterHTML(data) {
 
         <div class="footer-section">
           <h4 class="footer-subtitle">Orari</h4>
-          <ul id="orari-footer" class="footer-list">
-            ${orariHtml}
-          </ul>
-          ${legendaHtml}
+          <ul id="orari-footer" class="footer-list">${orariHtml}</ul>
+          <div class="legenda-orari">
+            <div><span style="height:12px;width:12px;background-color:${
+              legenda.colori.aperto || "#00FF7F"
+            };margin-right:8px;border-radius:50%;display:inline-block;"></span>${
+    legenda.testo.aperto || "Aperto"
+  }</div>
+            <div><span style="height:12px;width:12px;background-color:${
+              legenda.colori["in chiusura"] || "#FFD700"
+            };margin-right:8px;border-radius:50%;display:inline-block;"></span><span id="testo-in-chiusura">${testoInChiusuraSpan}</span></div>
+            <div><span style="height:12px;width:12px;background-color:${
+              legenda.colori.chiuso || "orange"
+            };margin-right:8px;border-radius:50%;display:inline-block;"></span>${
+    legenda.testo.chiuso || "Chiuso"
+  }</div>
+          </div>
         </div>
 
         <div class="footer-section">
@@ -453,40 +408,29 @@ function createFooterHTML(data) {
           <div class="social-links">
             ${
               social.facebook
-                ? `<a href="${social.facebook}" class="social-link" aria-label="Facebook" target="_blank" rel="noopener noreferrer">
-                     <img src="https://img.icons8.com/ios-filled/50/ffffff/facebook-new.png" alt="Facebook" style="width: 24px; height: 24px;">
-                   </a>`
+                ? `<a href="${social.facebook}" target="_blank"><img src="https://img.icons8.com/ios-filled/50/ffffff/facebook-new.png" style="width:24px;height:24px;"></a>`
                 : ""
             }
             ${
               social.instagram
-                ? `<a href="${social.instagram}" class="social-link" aria-label="Instagram" target="_blank" rel="noopener noreferrer">
-                     <img src="https://img.icons8.com/ios-filled/50/ffffff/instagram-new.png" alt="Instagram" style="width: 24px; height: 24px;">
-                   </a>`
+                ? `<a href="${social.instagram}" target="_blank"><img src="https://img.icons8.com/ios-filled/50/ffffff/instagram-new.png" style="width:24px;height:24px;"></a>`
                 : ""
             }
             ${
               social.whatsapp
-                ? `<a href="${social.whatsapp}" class="social-link" aria-label="WhatsApp" target="_blank" rel="noopener noreferrer">
-                     <img src="https://img.icons8.com/ios-filled/50/ffffff/whatsapp.png" alt="WhatsApp" style="width: 24px; height: 24px;">
-                   </a>`
+                ? `<a href="${social.whatsapp}" target="_blank"><img src="https://img.icons8.com/ios-filled/50/ffffff/whatsapp.png" style="width:24px;height:24px;"></a>`
                 : ""
             }
           </div>
         </div>
       </div>
 
-      <div class="footer-map">
-        <div id="map"></div>
-      </div>
+      <div class="footer-map"><div id="map"></div></div>
     </div>
     <div class="footer-bottom">
-      <p>
-        © ${new Date().getFullYear()} ${
+      <p>© ${oggiReal.getFullYear()} ${
     info.titolo || ""
-  }. Tutti i diritti riservati.
-        ${info.p_iva ? ` - P.IVA ${info.p_iva}` : ""}
-      </p>
+  }. Tutti i diritti riservati.${info.p_iva ? ` - P.IVA ${info.p_iva}` : ""}</p>
     </div>
   `;
 }
@@ -709,21 +653,21 @@ function scheduleFooterRefreshAtMidnight(data) {
   const msUntilMidnight = tomorrow.getTime() - now.getTime();
 
   setTimeout(() => {
-    // Ricarica completamente il footer
+    // Usa la data reale al momento dell'esecuzione
     const footer = document.getElementById("Contatti");
     if (footer && data) {
-      footer.innerHTML = createFooterHTML(data);
+      // Passa come giorno di partenza il nuovo giorno reale
+      footer.innerHTML = createFooterHTML(data, new Date());
 
       setTimeout(() => {
         if (data.mappa && data.mappa.latitudine && data.mappa.longitudine) {
           initMap(data.mappa.latitudine, data.mappa.longitudine);
         }
 
-        // Riavvia l'aggiornamento minuto per minuto
         aggiornaColoreOrari(data);
         setInterval(() => aggiornaColoreOrari(data), 60000);
 
-        // Schedula il prossimo refresh a mezzanotte
+        // Riprogramma il refresh per la prossima mezzanotte
         scheduleFooterRefreshAtMidnight(data);
       }, 100);
     }
