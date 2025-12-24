@@ -1,4 +1,7 @@
 // Footer dynamic content and map initialization
+// Variabili globali per tracciare lo stato della mappa
+let currentMapCoordinates = null;
+
 document.addEventListener("DOMContentLoaded", () => {
   const footer = document.getElementById("Contatti");
   if (!footer) return;
@@ -13,6 +16,7 @@ document.addEventListener("DOMContentLoaded", () => {
       footer.innerHTML = createFooterHTML(data);
 
       setTimeout(() => {
+        // Inizializza la mappa solo se necessario
         if (data.mappa && data.mappa.latitudine && data.mappa.longitudine) {
           initMap(data.mappa.latitudine, data.mappa.longitudine);
         }
@@ -29,7 +33,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         aggiornaColoreOrari(data);
 
-        // AGGIUNTO: Schedula il refresh a mezzanotte
+        // Schedula il refresh intelligente a mezzanotte
         scheduleFooterRefreshAtMidnight(data);
       }, 100);
     })
@@ -178,7 +182,7 @@ function getSingleDayClosureReason(
 
 // Funzione principale per creare il footer dinamico
 function createFooterHTML(data, giornoPartenza) {
-  const oggiReal = giornoPartenza || new Date(); // usa la data passata o quella reale
+  const oggiReal = giornoPartenza || new Date();
   const oggi = new Date(oggiReal);
   oggi.setHours(0, 0, 0, 0);
 
@@ -387,6 +391,8 @@ function createFooterHTML(data, giornoPartenza) {
           <h4 class="footer-subtitle">Orari</h4>
           <ul id="orari-footer" class="footer-list">${orariHtml}</ul>
           <div class="legenda-orari">
+          <br>
+            <h1 class="footer-subtitle"> ${legenda.titolo || "Legenda"} </h1>
             <div><span style="height:12px;width:12px;background-color:${
               legenda.colori.aperto || "#00FF7F"
             };margin-right:8px;border-radius:50%;display:inline-block;"></span>${
@@ -626,6 +632,19 @@ function initMap(lat, lon) {
   const mapContainer = document.getElementById("map");
   if (!mapContainer) return;
 
+  // Verifica se le coordinate sono cambiate
+  const newCoordinates = `${lat},${lon}`;
+  if (currentMapCoordinates === newCoordinates) {
+    console.log("Coordinate invariate - mappa non ricaricata");
+    return;
+  }
+
+  // Aggiorna le coordinate correnti
+  currentMapCoordinates = newCoordinates;
+
+  // Svuota il contenitore prima di creare una nuova mappa
+  mapContainer.innerHTML = "";
+
   const iframe = document.createElement("iframe");
   iframe.width = "100%";
   iframe.height = "100%";
@@ -641,6 +660,7 @@ function initMap(lat, lon) {
   iframe.loading = "lazy";
 
   mapContainer.appendChild(iframe);
+  console.log("Mappa inizializzata con coordinate:", newCoordinates);
 }
 
 // Funzione per aggiornare completamente il footer a mezzanotte
@@ -652,6 +672,12 @@ function scheduleFooterRefreshAtMidnight(data) {
 
   const msUntilMidnight = tomorrow.getTime() - now.getTime();
 
+  console.log(
+    `Prossimo aggiornamento footer schedulato tra ${Math.round(
+      msUntilMidnight / 1000 / 60
+    )} minuti`
+  );
+
   setTimeout(() => {
     // Usa la data reale al momento dell'esecuzione
     const footer = document.getElementById("Contatti");
@@ -660,6 +686,7 @@ function scheduleFooterRefreshAtMidnight(data) {
       footer.innerHTML = createFooterHTML(data, new Date());
 
       setTimeout(() => {
+        // Inizializza la mappa SOLO se le coordinate sono cambiate
         if (data.mappa && data.mappa.latitudine && data.mappa.longitudine) {
           initMap(data.mappa.latitudine, data.mappa.longitudine);
         }
