@@ -28,6 +28,9 @@ document.addEventListener("DOMContentLoaded", () => {
         }, secondsToNextMinute * 1000);
 
         aggiornaColoreOrari(data);
+        
+        // AGGIUNTO: Schedula il refresh a mezzanotte
+        scheduleFooterRefreshAtMidnight(data);
       }, 100);
     })
     .catch((error) => {
@@ -185,10 +188,9 @@ function createFooterHTML(data) {
     : "Via Villa, 26, 33072 Casarsa della Delizia PN";
 
   const googleMapsUrl = `https://www.google.com/maps/search/?api=1&query=${mapsQuery}`;
+  const indirizzoVisuale = contatti.indirizzo_visuale || contatti.indirizzo || "";
 
-  const indirizzoVisuale =
-    contatti.indirizzo_visuale || contatti.indirizzo || "";
-
+  // IMPORTANTE: usa sempre la data reale del momento
   const oggiReal = new Date();
   const oggi = new Date(oggiReal);
   oggi.setHours(0, 0, 0, 0);
@@ -197,17 +199,10 @@ function createFooterHTML(data) {
   let indiceGiornoCorrente = giornoSettimana === 0 ? 6 : giornoSettimana - 1;
 
   const unifiedFerieDates = getUnifiedFerieDates(data, oggi.getFullYear());
-  const unifiedFerieDatesNextYear = getUnifiedFerieDates(
-    data,
-    oggi.getFullYear() + 1
-  );
+  const unifiedFerieDatesNextYear = getUnifiedFerieDates(data, oggi.getFullYear() + 1);
 
   const dataOggiFormattata = formatDateDM(oggiReal);
-  const orariExtraOggi = getOrariExtraForDate(
-    data,
-    dataOggiFormattata,
-    giornoSettimana
-  );
+  const orariExtraOggi = getOrariExtraForDate(data, dataOggiFormattata, giornoSettimana);
 
   const singleDayClosure = getSingleDayClosureReason(
     oggiReal,
@@ -216,11 +211,9 @@ function createFooterHTML(data) {
     unifiedFerieDatesNextYear
   );
 
-  const isFestivita =
-    singleDayClosure && singleDayClosure.reason === "festivita";
+  const isFestivita = singleDayClosure && singleDayClosure.reason === "festivita";
   const eFerieOggi = singleDayClosure && singleDayClosure.reason === "ferie";
-  const isMotivoExtra =
-    singleDayClosure && singleDayClosure.reason === "motivi-extra";
+  const isMotivoExtra = singleDayClosure && singleDayClosure.reason === "motivi-extra";
 
   let eChiusoOggi = isFestivita || eFerieOggi || isMotivoExtra;
 
@@ -230,9 +223,7 @@ function createFooterHTML(data) {
     if (!orariString || orariString.toLowerCase().includes("chiuso"))
       return { stato: "chiuso", minutiAllaChiusura: 0 };
 
-    const orariMatch = orariString.match(
-      /(\d{1,2}:\d{2}\s*-\s*\d{1,2}:\d{2})/g
-    );
+    const orariMatch = orariString.match(/(\d{1,2}:\d{2}\s*-\s*\d{1,2}:\d{2})/g);
     if (!orariMatch) return { stato: "chiuso", minutiAllaChiusura: 0 };
 
     const parseTime = (timeStr) => {
@@ -284,6 +275,7 @@ function createFooterHTML(data) {
 
   const statoApertura = checkStatoApertura(orariDaUsareOggi);
 
+  // Genera i prossimi 7 giorni partendo da OGGI (data reale)
   const giorniDaVisualizzare = [];
   for (let i = 0; i < 7; i++) {
     const dataDelGiorno = new Date(oggi);
@@ -303,21 +295,14 @@ function createFooterHTML(data) {
 
       const dataFormattata = formatDateDM(dataDelGiorno);
 
-      // Prima controlla se c'è un orario extra per questo giorno
-      const orariExtraGiorno = getOrariExtraForDate(
-        data,
-        dataFormattata,
-        dayOfWeek
-      );
+      const orariExtraGiorno = getOrariExtraForDate(data, dataFormattata, dayOfWeek);
 
       let testoOrario;
       const nomeGiorno = data.nomiGiorni[dayOfWeek];
 
       if (orariExtraGiorno) {
-        // Se c'è un orario extra, vince su tutto
         testoOrario = orariExtraGiorno;
       } else {
-        // Altrimenti, usa la logica standard
         testoOrario = orari[orariIndex];
         const closureCheck = getSingleDayClosureReason(
           dataDelGiorno,
@@ -481,9 +466,7 @@ function createFooterHTML(data) {
     </div>
     <div class="footer-bottom">
       <p>
-        © ${new Date().getFullYear()} ${
-    info.titolo || ""
-  }. Tutti i diritti riservati.
+        © ${new Date().getFullYear()} ${info.titolo || ""}. Tutti i diritti riservati.
         ${info.p_iva ? ` - P.IVA ${info.p_iva}` : ""}
       </p>
     </div>
@@ -496,6 +479,7 @@ function aggiornaColoreOrari(data) {
 
   if (!orari.length) return;
 
+  // USA SEMPRE LA DATA REALE DEL MOMENTO
   const oggiReal = new Date();
   const oggi = new Date(oggiReal);
   oggi.setHours(0, 0, 0, 0);
@@ -505,17 +489,10 @@ function aggiornaColoreOrari(data) {
   let indiceGiornoCorrente = giornoSettimana === 0 ? 6 : giornoSettimana - 1;
 
   const unifiedFerieDates = getUnifiedFerieDates(data, oggi.getFullYear());
-  const unifiedFerieDatesNextYear = getUnifiedFerieDates(
-    data,
-    oggi.getFullYear() + 1
-  );
+  const unifiedFerieDatesNextYear = getUnifiedFerieDates(data, oggi.getFullYear() + 1);
 
   const dataOggiFormattata = formatDateDM(oggiReal);
-  const orariExtraOggi = getOrariExtraForDate(
-    data,
-    dataOggiFormattata,
-    giornoSettimana
-  );
+  const orariExtraOggi = getOrariExtraForDate(data, dataOggiFormattata, giornoSettimana);
 
   const singleDayClosure = getSingleDayClosureReason(
     oggiReal,
@@ -523,11 +500,9 @@ function aggiornaColoreOrari(data) {
     unifiedFerieDates,
     unifiedFerieDatesNextYear
   );
-  const isFestivita =
-    singleDayClosure && singleDayClosure.reason === "festivita";
+  const isFestivita = singleDayClosure && singleDayClosure.reason === "festivita";
   const eFerieOggi = singleDayClosure && singleDayClosure.reason === "ferie";
-  const isMotivoExtra =
-    singleDayClosure && singleDayClosure.reason === "motivi-extra";
+  const isMotivoExtra = singleDayClosure && singleDayClosure.reason === "motivi-extra";
 
   let eChiusoOggi = isFestivita || eFerieOggi || isMotivoExtra;
 
@@ -538,9 +513,7 @@ function aggiornaColoreOrari(data) {
     if (!orariString || orariString.toLowerCase().includes("chiuso"))
       return { stato: "chiuso", minutiAllaChiusura: 0 };
 
-    const orariMatch = orariString.match(
-      /(\d{1,2}:\d{2}\s*-\s*\d{1,2}:\d{2})/g
-    );
+    const orariMatch = orariString.match(/(\d{1,2}:\d{2}\s*-\s*\d{1,2}:\d{2})/g);
     if (!orariMatch) return { stato: "chiuso", minutiAllaChiusura: 0 };
 
     const parseTime = (t) => {
@@ -592,6 +565,7 @@ function aggiornaColoreOrari(data) {
 
   const statoApertura = checkStatoApertura(orariDaUsareOggi);
 
+  // Genera i prossimi 7 giorni partendo da OGGI (data reale)
   const giorniDaVisualizzare = [];
   for (let i = 0; i < 7; i++) {
     const dataDelGiorno = new Date(oggi);
@@ -613,21 +587,14 @@ function aggiornaColoreOrari(data) {
       let orariIndex = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
 
       const dataFormattata = formatDateDM(dataDelGiorno);
-      // Prima controlla se c'è un orario extra per questo giorno
-      const orariExtraGiorno = getOrariExtraForDate(
-        data,
-        dataFormattata,
-        dayOfWeek
-      );
+      const orariExtraGiorno = getOrariExtraForDate(data, dataFormattata, dayOfWeek);
 
       let testoOrario;
       const nomeGiorno = data.nomiGiorni[dayOfWeek];
 
       if (orariExtraGiorno) {
-        // Se c'è un orario extra, vince su tutto
         testoOrario = orariExtraGiorno;
       } else {
-        // Altrimenti, usa la logica standard
         testoOrario = orari[orariIndex];
         const closureCheck = getSingleDayClosureReason(
           dataDelGiorno,
@@ -672,8 +639,7 @@ function aggiornaColoreOrari(data) {
       const testoMinuti = minuti === 1 ? "minuto" : "minuti";
       testoInChiusuraSpan.textContent = `In chiusura tra ${minuti} ${testoMinuti}`;
     } else {
-      testoInChiusuraSpan.textContent =
-        legenda.testo["in chiusura"] || "In chiusura";
+      testoInChiusuraSpan.textContent = legenda.testo["in chiusura"] || "In chiusura";
     }
   }
 }
@@ -697,4 +663,35 @@ function initMap(lat, lon) {
   iframe.loading = "lazy";
 
   mapContainer.appendChild(iframe);
+}
+
+// Funzione per aggiornare completamente il footer a mezzanotte
+function scheduleFooterRefreshAtMidnight(data) {
+  const now = new Date();
+  const tomorrow = new Date(now);
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  tomorrow.setHours(0, 0, 0, 0);
+  
+  const msUntilMidnight = tomorrow.getTime() - now.getTime();
+  
+  setTimeout(() => {
+    // Ricarica completamente il footer
+    const footer = document.getElementById("Contatti");
+    if (footer && data) {
+      footer.innerHTML = createFooterHTML(data);
+      
+      setTimeout(() => {
+        if (data.mappa && data.mappa.latitudine && data.mappa.longitudine) {
+          initMap(data.mappa.latitudine, data.mappa.longitudine);
+        }
+        
+        // Riavvia l'aggiornamento minuto per minuto
+        aggiornaColoreOrari(data);
+        setInterval(() => aggiornaColoreOrari(data), 60000);
+        
+        // Schedula il prossimo refresh a mezzanotte
+        scheduleFooterRefreshAtMidnight(data);
+      }, 100);
+    }
+  }, msUntilMidnight);
 }
