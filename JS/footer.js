@@ -417,28 +417,28 @@ function createFooterHTML(data, giornoPartenza) {
             <div><span style="height:12px;width:12px;background-color:${
               legenda.colori.aperto || "#00FF7F"
             };margin-right:8px;border-radius:50%;display:inline-block;"></span>${
-    legenda.testo.aperto || "Aperto"
-  }</div>
+            legenda.testo.aperto || "Aperto"
+            }</div>
             <div><span style="height:12px;width:12px;background-color:${
               legenda.colori["in chiusura"] || "#FFD700"
             };margin-right:8px;border-radius:50%;display:inline-block;"></span><span id="testo-in-chiusura">${testoInChiusuraSpan}</span></div>
             <div><span style="height:12px;width:12px;background-color:${
               legenda.colori.chiuso || "orange"
             };margin-right:8px;border-radius:50%;display:inline-block;"></span>${
-    legenda.testo.chiuso || "Chiuso"
-  }</div>
+            legenda.testo.chiuso || "Chiuso"
+            }</div>
           </div>
         </div>
       </div>
 
       <div class="footer-map"><div id="map"></div></div>
-    </div>
-    <div class="footer-bottom">
+      </div>
+      <div class="footer-bottom">
       <p>© ${oggiReal.getFullYear()} ${
-    info.titolo || ""
-  }. Tutti i diritti riservati.${info.p_iva ? ` - P.IVA ${info.p_iva}` : ""}</p>
+      info.titolo || ""
+      }. Tutti i diritti riservati.${info.p_iva ? ` - P.IVA ${info.p_iva}` : ""}</p>
     </div>
-  `;
+    `;
 }
 
 function aggiornaColoreOrari(data) {
