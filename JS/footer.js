@@ -390,23 +390,6 @@ function createFooterHTML(data, giornoPartenza) {
         <div class="footer-section">
           <h4 class="footer-subtitle">Orari</h4>
           <ul id="orari-footer" class="footer-list">${orariHtml}</ul>
-          <div class="legenda-orari">
-          <br>
-            <h1 class="footer-subtitle"> ${legenda.titolo || "Legenda"} </h1>
-            <div><span style="height:12px;width:12px;background-color:${
-              legenda.colori.aperto || "#00FF7F"
-            };margin-right:8px;border-radius:50%;display:inline-block;"></span>${
-    legenda.testo.aperto || "Aperto"
-  }</div>
-            <div><span style="height:12px;width:12px;background-color:${
-              legenda.colori["in chiusura"] || "#FFD700"
-            };margin-right:8px;border-radius:50%;display:inline-block;"></span><span id="testo-in-chiusura">${testoInChiusuraSpan}</span></div>
-            <div><span style="height:12px;width:12px;background-color:${
-              legenda.colori.chiuso || "orange"
-            };margin-right:8px;border-radius:50%;display:inline-block;"></span>${
-    legenda.testo.chiuso || "Chiuso"
-  }</div>
-          </div>
         </div>
 
         <div class="footer-section">
@@ -427,6 +410,23 @@ function createFooterHTML(data, giornoPartenza) {
                 ? `<a href="${social.whatsapp}" target="_blank"><img src="https://img.icons8.com/ios-filled/50/ffffff/whatsapp.png" style="width:24px;height:24px;"></a>`
                 : ""
             }
+          </div>
+          <div class="legenda-orari">
+          <br>
+            <h1 class="footer-subtitle"> ${legenda.titolo || "Legenda"} </h1>
+            <div><span style="height:12px;width:12px;background-color:${
+              legenda.colori.aperto || "#00FF7F"
+            };margin-right:8px;border-radius:50%;display:inline-block;"></span>${
+    legenda.testo.aperto || "Aperto"
+  }</div>
+            <div><span style="height:12px;width:12px;background-color:${
+              legenda.colori["in chiusura"] || "#FFD700"
+            };margin-right:8px;border-radius:50%;display:inline-block;"></span><span id="testo-in-chiusura">${testoInChiusuraSpan}</span></div>
+            <div><span style="height:12px;width:12px;background-color:${
+              legenda.colori.chiuso || "orange"
+            };margin-right:8px;border-radius:50%;display:inline-block;"></span>${
+    legenda.testo.chiuso || "Chiuso"
+  }</div>
           </div>
         </div>
       </div>
