@@ -379,9 +379,9 @@ function createFooterHTML(data, giornoPartenza) {
             }
             ${
               contatti.indirizzo
-                ? `<li class="footer-item"><span class="material-icons">location_on</span> <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+                ? `<li class="footer-item"><span class="material-icons">location_on</span> <a href="${
                     contatti.indirizzo
-                  )}" target="_blank">${contatti.indirizzo}</a></li>`
+                  }" target="_blank">${contatti.indirizzo_visuale}</a></li>`
                 : ""
             }
           </ul>
