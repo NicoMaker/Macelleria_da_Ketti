@@ -49,8 +49,8 @@
     "titolo": "Legenda",
     "colori": {
       "aperto": "#00FF7F",
-      "in chiusura": "#FFD700",
-      "chiuso": "#ff5733"
+      "in chiusura": "yellow",
+      "chiuso": "orange"
     },
     "testo": {
       "aperto": "Aperto",
