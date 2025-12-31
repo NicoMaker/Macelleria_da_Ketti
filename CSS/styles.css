@@ -1136,3 +1136,10 @@ h6 {
 .footer-section-tradizione-contatti .footer-subtitle {
   margin-top: 0.75rem; /* aumenta/diminuisci a gusto */
 }
+
+/* Da tablet in su: 3 colonne */
+@media (min-width: 768px) {
+  .footer-grid {
+    grid-template-columns: 1.5fr 1.2fr 1fr;
+  }
+}
