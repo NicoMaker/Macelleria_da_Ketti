@@ -29,7 +29,6 @@
       property="og:description"
       content="offriamo carni di prima scelta, tagliate con passione e maestria. Scopri i nostri prodotti di bovino, suino e pollame."
     />
-    <!-- CORREZIONE: usa URL assoluto completo per il logo -->
     <meta
       property="og:image"
       content="https://www.macelleriadaketti.it/img/logo.png"
@@ -49,7 +48,6 @@
       name="twitter:description"
       content="offriamo carni di prima scelta, tagliate con passione e maestria. Scopri i nostri prodotti di bovino, suino e pollame."
     />
-    <!-- CORREZIONE: usa lo stesso logo anche per Twitter -->
     <meta
       name="twitter:image"
       content="https://www.macelleriadaketti.it/img/logo.png"
@@ -58,6 +56,22 @@
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="img/logo.png" />
     <link rel="apple-touch-icon" href="img/logo.png" />
+
+    <!-- Structured Data JSON-LD -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "name": "Macelleria da Ketti",
+        "url": "https://www.macelleriadaketti.it/",
+        "logo": "https://www.macelleriadaketti.it/img/logo.png",
+        "description": "Macelleria da Ketti: offriamo carni di prima scelta, tagliate con passione e maestria. Scopri i nostri prodotti di bovino, suino e pollame.",
+        "address": {
+          "@type": "PostalAddress",
+          "addressCountry": "IT"
+        }
+      }
+    </script>
 
     <!-- Font e CSS -->
     <link rel="stylesheet" href="CSS/styles.css" />
