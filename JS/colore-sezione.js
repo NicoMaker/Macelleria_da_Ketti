@@ -8,32 +8,52 @@ document.addEventListener("DOMContentLoaded", () => {
   let isManualNavigation = false;
   let scrollTimeout;
   let preventHashUpdate = false;
-  let isInitialLoad = true; // Flag per il caricamento iniziale
+  let isInitialLoad = true;
 
   function highlightNavigation() {
-    // Durante il caricamento iniziale, NON calcolare automaticamente la sezione
     if (isInitialLoad) return;
 
     const scrollY = window.pageYOffset;
     let currentSectionId = "";
 
-    // PRIMA controlla se siamo alla fine della pagina (Contatti)
-    const contattiSection = document.getElementById('Contatti');
-    if (contattiSection && (window.innerHeight + scrollY) >= document.body.offsetHeight - 50) {
+    // Crea un array di sezioni con le loro posizioni
+    const sectionPositions = Array.from(sections).map(section => ({
+      id: section.getAttribute("id"),
+      top: section.offsetTop,
+      bottom: section.offsetTop + section.offsetHeight
+    }));
+
+    // Controlla se siamo alla fine della pagina (Contatti)
+    const windowBottom = scrollY + window.innerHeight;
+    const documentHeight = document.documentElement.scrollHeight;
+    
+    if (windowBottom >= documentHeight - 50) {
       currentSectionId = "Contatti";
     } else {
-      // Trova la sezione corrente
-      sections.forEach((section) => {
-        const rect = section.getBoundingClientRect();
-        if (rect.top <= window.innerHeight * 0.3) {
-          currentSectionId = section.getAttribute("id");
-        }
-      });
+      // Trova la sezione corrente basandosi sulla posizione di scroll
+      // Usa un offset per l'header
+      const header = document.querySelector('.site-header');
+      const headerHeight = header ? header.offsetHeight : 80;
+      const scrollPosition = scrollY + headerHeight + 100; // Aggiungi un margine
 
-      // Se nessuna sezione trovata, è Home
-      if (!currentSectionId) {
+      // Trova la sezione che contiene la posizione corrente
+      for (let i = sectionPositions.length - 1; i >= 0; i--) {
+        const section = sectionPositions[i];
+        if (scrollPosition >= section.top) {
+          currentSectionId = section.id;
+          break;
+        }
+      }
+
+      // Se siamo in cima alla pagina
+      if (scrollY < 100) {
         currentSectionId = "Home";
       }
+    }
+
+    // Se non abbiamo trovato una sezione, usa Home come default
+    if (!currentSectionId) {
+      currentSectionId = "Home";
     }
 
     // Aggiorna i link di navigazione
@@ -47,6 +67,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (currentHash !== currentSectionId) {
       try {
         history.replaceState(null, null, `#${currentSectionId}`);
+        console.log(`📍 Hash aggiornato: #${currentSectionId}`);
       } catch (e) {
         console.error("Errore nell'aggiornamento dell'hash:", e);
       }
@@ -56,8 +77,13 @@ document.addEventListener("DOMContentLoaded", () => {
   function updateActiveLink(sectionId) {
     navLinks.forEach((link) => {
       const targetId = link.getAttribute("href").substring(1);
-      link.classList.toggle("active", targetId === sectionId);
+      if (targetId === sectionId) {
+        link.classList.add("active");
+      } else {
+        link.classList.remove("active");
+      }
     });
+    console.log(`🎯 Link attivo: ${sectionId}`);
   }
 
   // Click su link
@@ -66,9 +92,7 @@ document.addEventListener("DOMContentLoaded", () => {
       event.preventDefault();
       const targetId = link.getAttribute("href").substring(1);
       
-      // Se clicchiamo su Contatti e non è ancora caricato
       if (targetId === 'Contatti' && !document.getElementById('Contatti')) {
-        // Aspetta che il footer sia caricato
         document.addEventListener('footerLoaded', () => {
           scrollToSection(targetId);
         }, { once: true });
@@ -81,7 +105,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function scrollToSection(targetId) {
     const targetElement = document.getElementById(targetId);
-    if (!targetElement) return;
+    if (!targetElement) {
+      console.warn(`⚠️ Sezione ${targetId} non trovata`);
+      return;
+    }
 
     isManualNavigation = true;
     preventHashUpdate = true;
@@ -89,50 +116,46 @@ document.addEventListener("DOMContentLoaded", () => {
     updateActiveLink(targetId);
     history.replaceState(null, null, `#${targetId}`);
 
-    // Calcola dinamicamente l'offset per lo scroll
     const header = document.querySelector('.site-header');
     let totalOffset = header ? header.offsetHeight : 80;
 
     const offsetPosition = targetElement.offsetTop - totalOffset;
     window.scrollTo({ top: offsetPosition, behavior: "smooth" });
 
-    // Sblocca dopo un momento
+    console.log(`🔄 Scroll verso: ${targetId}`);
+
     setTimeout(() => {
       preventHashUpdate = false;
       isManualNavigation = false;
-    }, 500);
+    }, 800);
   }
 
-  // Scroll listener
+  // Scroll listener con debounce
   window.addEventListener("scroll", () => {
     if (isManualNavigation || isInitialLoad) return;
 
     clearTimeout(scrollTimeout);
-    scrollTimeout = setTimeout(highlightNavigation, 100);
+    scrollTimeout = setTimeout(highlightNavigation, 150);
   });
 
   // Inizializzazione
   function initializePage() {
     const hash = window.location.hash.substring(1);
 
-    // Funzione helper per eseguire lo scroll e l'evidenziazione
     const scrollToHash = (targetId) => {
       const targetElement = document.getElementById(targetId);
       if (targetElement) {
         updateActiveLink(targetId);
 
-        // Applica lo stesso offset di scroll
         const header = document.querySelector('.site-header');
         const headerHeight = header ? header.offsetHeight : 80;
         
         if (targetId === 'Prodotti') {
-          // Scroll solo se non siamo già in cima
           if (window.pageYOffset > 0) {
             const offsetPosition = targetElement.offsetTop - headerHeight;
             window.scrollTo({ top: offsetPosition, behavior: "auto" });
           }
         } else if (targetId === 'Contatti') {
-          // Per Contatti, scroll alla fine della pagina
           console.log("⬇️ Scrolling verso Contatti (fine pagina)");
           setTimeout(() => {
             window.scrollTo({ 
@@ -141,23 +164,20 @@ document.addEventListener("DOMContentLoaded", () => {
             });
           }, 100);
         } else if (targetId === 'Home') {
-          // Per Home, non fare nulla, evita lo scroll all'avvio
           console.log("🏠 Sezione Home, scroll non necessario.");
         } else {
           const offsetPosition = targetElement.offsetTop - headerHeight;
-          window.scrollTo({ top: offsetPosition, behavior: "auto" }); // Scroll per le altre sezioni
+          window.scrollTo({ top: offsetPosition, behavior: "auto" });
         }
 
         preventHashUpdate = true;
         
-        // Sblocca il sistema dopo che lo scroll è completato
         setTimeout(() => {
           preventHashUpdate = false;
-          isInitialLoad = false; // Disabilita il flag di caricamento iniziale
+          isInitialLoad = false;
           console.log("✅ Inizializzazione completata, sistema sbloccato");
         }, 1500);
       } else {
-        // Hash non valido o elemento non trovato
         preventHashUpdate = false;
         isInitialLoad = false;
         highlightNavigation();
@@ -167,7 +187,6 @@ document.addEventListener("DOMContentLoaded", () => {
     if (hash) {
       console.log(`🎯 Hash rilevato al caricamento: #${hash}`);
       
-      // Se l'hash è "Contatti", aspetta che il footer sia caricato
       if (hash === 'Contatti') {
         preventHashUpdate = true;
         console.log("🔄 In attesa del caricamento del footer per sezione Contatti...");
@@ -177,7 +196,6 @@ document.addEventListener("DOMContentLoaded", () => {
           scrollToHash(hash);
         }, { once: true });
         
-        // Timeout di sicurezza se il footer non si carica
         setTimeout(() => {
           if (!document.getElementById('Contatti')) {
             console.warn("⚠️ Timeout: Footer non caricato entro 5 secondi");
@@ -187,16 +205,12 @@ document.addEventListener("DOMContentLoaded", () => {
           }
         }, 5000);
       } else {
-        // Per tutte le altre sezioni, esegui subito lo scroll
         scrollToHash(hash);
       }
     } else {
-      // Nessun hash: imposta Home come predefinito
       console.log("🏠 Nessun hash, imposto Home");
       updateActiveLink("Home");
-      // history.replaceState(null, null, '#Home'); // Rimosso per evitare di aggiungere #Home all'URL all'avvio
       
-      // Sblocca il sistema
       setTimeout(() => {
         preventHashUpdate = false;
         isInitialLoad = false;
