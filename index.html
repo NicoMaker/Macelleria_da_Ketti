@@ -29,17 +29,18 @@
       property="og:description"
       content="offriamo carni di prima scelta, tagliate con passione e maestria. Scopri i nostri prodotti di bovino, suino e pollame."
     />
+    <!-- CORREZIONE: usa URL assoluto completo per il logo -->
     <meta
       property="og:image"
       content="https://www.macelleriadaketti.it/img/logo.png"
     />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Logo Macelleria da Ketti" />
 
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta
-      name="twitter:url"
-      content="https://www.macelleriadaketti.it/index.html"
-    />
+    <meta name="twitter:url" content="https://www.macelleriadaketti.it/" />
     <meta
       name="twitter:title"
       content="Macelleria da Ketti - Carne di Qualità"
@@ -48,13 +49,15 @@
       name="twitter:description"
       content="offriamo carni di prima scelta, tagliate con passione e maestria. Scopri i nostri prodotti di bovino, suino e pollame."
     />
+    <!-- CORREZIONE: usa lo stesso logo anche per Twitter -->
     <meta
       name="twitter:image"
-      content="https://images.unsplash.com/photo-1607623814075-e51df1bdc82f?w=1200&h=800&fit=crop"
+      content="https://www.macelleriadaketti.it/img/logo.png"
     />
 
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="img/logo.png" />
+    <link rel="apple-touch-icon" href="img/logo.png" />
 
     <!-- Font e CSS -->
     <link rel="stylesheet" href="CSS/styles.css" />
@@ -114,15 +117,6 @@
     <section id="Home" class="hero-section">
       <div class="hero-overlay"></div>
       <div class="hero-content">
-        <!-- <h2 class="hero-subtitle opening-date white-text">
-          <span
-            class="material-icons"
-            style="vertical-align: middle; font-size: 1.1em"
-            >calendar_today</span
-          >
-          Prossima Apertura: <br class="mobile-break" />
-          10 Dicembre 2025
-        </h2> -->
         <br />
         <h1 class="hero-title">Tradizione e Qualità</h1>
         <p class="hero-subtitle">Carni selezionate, tagliate con passione</p>
@@ -162,7 +156,7 @@
             <div class="about-text">
               <p>
                 La Macelleria da Ketti nasce da una passione vera, coltivata con
-                dedizione da oltre trent’anni.
+                dedizione da oltre trent'anni.
                 <br />
                 Ogni giorno metto il cuore in quello che faccio, offrendo ai
                 clienti carni selezionate, salumi, formaggi e prodotti tipici
@@ -182,7 +176,7 @@
                   dedizione.
                   <br />
                   Oggi investo su me stessa dando vita al progetto più
-                  entusiasmante: l’apertura del mio punto vendita, la Macelleria
+                  entusiasmante: l'apertura del mio punto vendita, la Macelleria
                   da Ketti.
                   <br />
                   Nel mio negozio troverete ciò che rappresenta la mia visione:
@@ -280,7 +274,6 @@
     <script src="JS/more_info_story.js"></script>
     <script src="JS/novita.js"></script>
     <script src="JS/colore-sezione.js"></script>
-    <!-- Gestisce l'evidenziazione della sezione attiva e l'URL -->
     <script src="JS/progetti.js"></script>
     <script src="JS/footer.js"></script>
     <script src="JS/sticky_controls.js"></script>

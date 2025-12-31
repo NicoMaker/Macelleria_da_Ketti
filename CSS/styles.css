@@ -1035,3 +1035,73 @@ h6 {
     display: none;
   }
 }
+
+/* SOLUZIONE 1: Altezza minima fissa per tutte le card */
+.Progetti-card {
+  background-color: var(--surface);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  transition: all var(--transition-base);
+  cursor: pointer;
+  border: 2px solid transparent;
+  display: flex;
+  flex-direction: column;
+  min-height: 520px; /* Altezza minima uguale per tutte */
+  height: 100%; /* Occupa tutta l'altezza disponibile nella griglia */
+}
+
+/* Assicura che tutte le righe della griglia abbiano la stessa altezza */
+.progetti-container,
+.novita-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: var(--spacing-lg);
+  grid-auto-rows: 1fr; /* QUESTA È LA RIGA CHIAVE - rende tutte le righe uguali */
+}
+
+/* Il contenuto della card si espande per riempire lo spazio */
+.Progetti-card-content {
+  padding: var(--spacing-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  flex-grow: 1; /* Si espande per riempire lo spazio disponibile */
+  text-align: center;
+}
+
+/* La descrizione occupa lo spazio rimanente */
+.descrizione {
+  padding: 0;
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  line-height: 1.6;
+  margin-bottom: auto; /* Spinge prezzo e categoria in basso */
+  padding-bottom: var(--spacing-sm);
+  flex-grow: 1; /* Si espande per riempire lo spazio */
+}
+
+/* L'immagine ha altezza fissa */
+.container-immagine {
+  width: 100%;
+  height: 250px; /* Altezza fissa per tutte le immagini */
+  overflow: hidden;
+  background-color: var(--gray-light);
+  flex-shrink: 0; /* Non si riduce */
+}
+
+/* Responsive: adatta l'altezza minima su schermi più piccoli */
+@media (max-width: 768px) {
+  .Progetti-card {
+    min-height: 480px; /* Leggermente più bassa su mobile */
+  }
+}
+
+@media (max-width: 480px) {
+  .Progetti-card {
+    min-height: 450px;
+  }
+  
+  .container-immagine {
+    height: 220px; /* Immagine leggermente più piccola su mobile */
+  }
+}
