@@ -1105,3 +1105,34 @@ h6 {
     height: 220px; /* Immagine leggermente più piccola su mobile */
   }
 }
+
+.footer-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--spacing-xl);
+  margin-bottom: var(--spacing-xl);
+}
+
+/* Tablet: 2 colonne */
+@media (min-width: 768px) {
+  .footer-grid {
+    grid-template-columns: 1.2fr 1fr;
+  }
+}
+
+/* Desktop: 3 colonne con larghezze diverse */
+@media (min-width: 1024px) {
+  .footer-grid {
+    grid-template-columns: 1.5fr 1.2fr 1fr; /* info+contatti più largo, orari medi, social stretta */
+  }
+}
+
+/* solo il sottotitolo Contatti nel footer */
+.footer-section .footer-subtitle:first-of-type {
+  margin-top: 1rem; /* aumenta se vuoi più spazio */
+}
+
+/* Spazio SOLO tra "Tradizione e qualità" e "Contatti" */
+.footer-section-tradizione-contatti .footer-subtitle {
+  margin-top: 0.75rem; /* aumenta/diminuisci a gusto */
+}

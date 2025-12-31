@@ -181,6 +181,7 @@ function getSingleDayClosureReason(
 }
 
 // Funzione principale per creare il footer dinamico
+// Funzione principale per creare il footer dinamico
 function createFooterHTML(data, giornoPartenza) {
   const oggiReal = giornoPartenza || new Date();
   const oggi = new Date(oggiReal);
@@ -357,41 +358,42 @@ function createFooterHTML(data, giornoPartenza) {
   // Restituisci l'HTML completo del footer
   return `
     <div class="footer-content">
-      <!-- Sezioni info, contatti, orari e social -->
+      <!-- Sezioni info+contatti, orari e social -->
       <div class="footer-grid">
-        <div class="footer-section">
-          <h3 class="footer-title">${info.titolo || ""}</h3>
-          <p class="footer-text">${info.testo || ""}</p>
-        </div>
+       <!-- Tradizione e qualità + Contatti -->
+      <div class="footer-section footer-section-tradizione-contatti">
+        <br>
+        <h3 class="footer-title">${info.titolo || ""}</h3>
+        <p class="footer-text">${info.testo || ""}</p>
 
-        <div class="footer-section">
-          <h4 class="footer-subtitle">Contatti</h4>
-          <ul class="footer-list">
-            ${
-              contatti.telefono
-                ? `<li class="footer-item"><span class="material-icons">phone</span> <a href="tel:${contatti.telefono}">${contatti.telefono}</a></li>`
-                : ""
-            }
-            ${
-              contatti.email
-                ? `<li class="footer-item"><span class="material-icons">email</span> <a href="mailto:${contatti.email}">${contatti.email}</a></li>`
-                : ""
-            }
-            ${
-              contatti.indirizzo
-                ? `<li class="footer-item"><span class="material-icons">location_on</span> <a href="${
-                    contatti.indirizzo
-                  }" target="_blank">${contatti.indirizzo_visuale}</a></li>`
-                : ""
-            }
-          </ul>
-        </div>
+        <h4 class="footer-subtitle">Contatti</h4>
+        <ul class="footer-list">
+          ${
+            contatti.telefono
+              ? `<li class="footer-item"><span class="material-icons">phone</span> <a href="tel:${contatti.telefono}">${contatti.telefono}</a></li>`
+              : ""
+          }
+          ${
+            contatti.email
+              ? `<li class="footer-item"><span class="material-icons">email</span> <a href="mailto:${contatti.email}">${contatti.email}</a></li>`
+              : ""
+          }
+          ${
+            contatti.indirizzo
+              ? `<li class="footer-item"><span class="material-icons">location_on</span> <a href="${contatti.indirizzo}" target="_blank">${contatti.indirizzo_visuale}</a></li>`
+              : ""
+          }
+        </ul>
+      </div>
 
+
+        <!-- Orari -->
         <div class="footer-section">
           <h4 class="footer-subtitle">Orari</h4>
           <ul id="orari-footer" class="footer-list">${orariHtml}</ul>
         </div>
 
+        <!-- Social + Legenda -->
         <div class="footer-section">
           <h4 class="footer-subtitle">Seguici</h4>
           <div class="social-links">
@@ -412,12 +414,12 @@ function createFooterHTML(data, giornoPartenza) {
             }
           </div>
           <div class="legenda-orari">
-          <br>
+            <br>
             <h1 class="footer-subtitle"> ${legenda.titolo || "Legenda"} </h1>
             <div><span style="height:12px;width:12px;background-color:${
               legenda.colori.aperto || "#00FF7F"
             };margin-right:8px;border-radius:50%;display:inline-block;"></span>${
-            legenda.testo.aperto || "Aperto"
+              legenda.testo.aperto || "Aperto"
             }</div>
             <div><span style="height:12px;width:12px;background-color:${
               legenda.colori["in chiusura"] || "#FFD700"
@@ -425,21 +427,24 @@ function createFooterHTML(data, giornoPartenza) {
             <div><span style="height:12px;width:12px;background-color:${
               legenda.colori.chiuso || "orange"
             };margin-right:8px;border-radius:50%;display:inline-block;"></span>${
-            legenda.testo.chiuso || "Chiuso"
+              legenda.testo.chiuso || "Chiuso"
             }</div>
           </div>
         </div>
       </div>
 
       <div class="footer-map"><div id="map"></div></div>
-      </div>
-      <div class="footer-bottom">
+    </div>
+    <div class="footer-bottom">
       <p>© ${oggiReal.getFullYear()} ${
-      info.titolo || ""
-      }. Tutti i diritti riservati.${info.p_iva ? ` - P.IVA ${info.p_iva}` : ""}</p>
+        info.titolo || ""
+      }. Tutti i diritti riservati.${
+        info.p_iva ? ` - P.IVA ${info.p_iva}` : ""
+      }</p>
     </div>
     `;
 }
+
 
 function aggiornaColoreOrari(data) {
   const orari = data.orari || [];
