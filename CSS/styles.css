@@ -1255,3 +1255,49 @@ h6 {
   margin-top: -0.3rem !important;   /* aumenta in negativo se la vuoi ancora più su */
 }
 
+
+.footer-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--spacing-xl);
+  margin-bottom: var(--spacing-xl);
+}
+
+/* Da tablet in su: 3 colonne sulla stessa riga */
+@media (min-width: 768px) {
+  .footer-grid {
+    grid-template-columns: 1.5fr 1.2fr 1fr; /* Tradizione, Orari, Contatti+Legenda */
+    align-items: flex-start;
+  }
+
+  /* Ogni colonna è una colonna verticale */
+  .footer-grid .footer-section {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  /* Titoli allineati in alto */
+  .footer-section .footer-title,
+  .footer-section .footer-subtitle {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+  }
+}
+
+/* Tutti i titoli allineati in alto */
+.footer-section .footer-title,
+.footer-section .footer-subtitle {
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+}
+
+/* Spazio tra "Tradizione e qualità" e "Contatti" */
+.footer-section-tradizione-contatti .footer-subtitle {
+  margin-top: 1.5rem !important;  /* spazio verticale dopo Tradizione e qualità */
+}
+
+/* Allinea "Contatti" con "Legenda" */
+.legenda-orari {
+  margin-top: 1.5rem !important;  /* stesso offset di Contatti */
+}

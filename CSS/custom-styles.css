@@ -1093,3 +1093,91 @@ footer {
     transform: none !important;
   }
 }
+
+/* Griglia prodotti / novità */
+.novita-container,
+.progetti-container,
+.pc-view {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 30px;
+  justify-items: center;
+  align-items: start;
+  margin: 30px auto;
+  max-width: 1200px;
+  padding: 0 20px;
+  width: 100%;
+  min-height: 400px;
+  position: relative;
+}
+
+/* TABLET: 2 per riga */
+@media (max-width: 1024px) and (min-width: 769px) {
+  .novita-container,
+  .progetti-container,
+  .pc-view {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    margin: 30px auto;
+    justify-items: center;
+  }
+}
+
+/* MOBILE: 1 per riga */
+@media (max-width: 768px) {
+  .novita-container,
+  .progetti-container,
+  .pc-view {
+    grid-template-columns: 1fr;
+    gap: 20px;
+    padding: 0 15px;
+    margin: 30px auto;
+    justify-items: center;
+    max-width: 500px;
+    width: 100%;
+  }
+}
+
+/* Griglia prodotti / novità */
+.novita-container,
+.progetti-container,
+.pc-view {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 30px;
+  justify-items: center;
+  align-items: start;
+  margin: 30px auto;
+  max-width: 1200px;
+  padding: 0 20px;
+  width: 100%;
+  min-height: 400px;
+  position: relative;
+}
+
+/* TABLET + iPad mini: 2 per riga (600px–1024px) */
+@media (max-width: 1024px) and (min-width: 600px) {
+  .novita-container,
+  .progetti-container,
+  .pc-view {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    margin: 30px auto;
+    justify-items: center;
+  }
+}
+
+/* MOBILE piccolo: 1 per riga (< 600px) */
+@media (max-width: 599px) {
+  .novita-container,
+  .progetti-container,
+  .pc-view {
+    grid-template-columns: 1fr;
+    gap: 20px;
+    padding: 0 15px;
+    margin: 30px auto;
+    justify-items: center;
+    max-width: 500px;
+    width: 100%;
+  }
+}
