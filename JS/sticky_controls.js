@@ -15,7 +15,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const stickyTop = headerHeight + 5;
       stickyControls.style.top = `${stickyTop}px`;
       
-      console.log(`📏 Header height: ${headerHeight}px - Sticky top: ${stickyTop}px`);
+      console.log(`🔧 Header height: ${headerHeight}px - Sticky top: ${stickyTop}px`);
     }
   }
 
@@ -33,6 +33,11 @@ document.addEventListener("DOMContentLoaded", () => {
   window.addEventListener('orientationchange', () => {
     setTimeout(setHeaderHeight, 300);
   });
+
+  // Ricalcola quando si scrolla verso la sezione prodotti
+  window.addEventListener('scroll', () => {
+    setHeaderHeight();
+  }, { passive: true });
 
   console.log("✅ Sistema sticky controls inizializzato");
 });
