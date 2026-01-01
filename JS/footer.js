@@ -362,7 +362,6 @@ function createFooterHTML(data, giornoPartenza) {
       <div class="footer-grid">
        <!-- Tradizione e qualità + Contatti -->
       <div class="footer-section footer-section-tradizione-contatti">
-        <br>
         <h3 class="footer-title">${info.titolo || ""}</h3>
         <p class="footer-text">${info.testo || ""}</p>
 
@@ -414,7 +413,6 @@ function createFooterHTML(data, giornoPartenza) {
             }
           </div>
           <div class="legenda-orari">
-            <br>
             <h1 class="footer-subtitle"> ${legenda.titolo || "Legenda"} </h1>
             <div><span style="height:12px;width:12px;background-color:${
               legenda.colori.aperto || "#00FF7F"

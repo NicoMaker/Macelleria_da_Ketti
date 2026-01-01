@@ -1143,3 +1143,86 @@ h6 {
     grid-template-columns: 1.5fr 1.2fr 1fr;
   }
 }
+
+/* Rimuovi il <br> nel footer.js e aggiungi questo CSS */
+
+/* Allineamento uniforme dei titoli nel footer */
+.footer-section .footer-title {
+  margin-top: 0;
+  padding-top: 0;
+}
+
+.footer-section .footer-subtitle {
+  margin-top: 0;
+  padding-top: 0;
+}
+
+/* Spazio consistente tra sezioni */
+.footer-section-tradizione-contatti .footer-subtitle {
+  margin-top: 1.5rem; /* Spazio tra "Tradizione e qualità" e "Contatti" */
+}
+
+/* Assicura che tutti i titoli partano dalla stessa altezza */
+.footer-grid > .footer-section {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Alternativa: se vuoi mantenere il <br>, uniforma tutti */
+.footer-section {
+  padding-top: 1rem; /* Applica lo stesso padding a tutte le sezioni */
+}
+
+/* SOLUZIONE COMPLETA PER ALLINEAMENTO FOOTER */
+
+/* Reset completo dei margini per tutti i titoli del footer */
+.footer-section .footer-title,
+.footer-section .footer-subtitle {
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+}
+
+/* Allinea tutti i primi titoli delle sezioni alla stessa altezza */
+.footer-section > .footer-subtitle:first-child,
+.footer-section > .footer-title:first-child {
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+}
+
+/* Spazio solo tra "Tradizione e qualità" e il sottotitolo "Contatti" */
+.footer-section-tradizione-contatti .footer-subtitle {
+  margin-top: 1.5rem !important;
+}
+
+/* Assicura che il layout sia consistente */
+.footer-grid > .footer-section {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+/* Rimuovi eventuali <br> visivi */
+.footer-section > br:first-child {
+  display: none;
+}
+
+/* Spazio tra icone social e scritta Legenda */
+.social-links {
+  margin-bottom: 1.5rem; /* aumenta/diminuisci a gusto */
+}
+
+
+/* Spazio tra icone social e titolo Legenda */
+.social-links {
+  margin-bottom: 1.5rem;   /* aumenta se vuoi più spazio */
+}
+
+/* Allineamento verticale dei titoli nel footer */
+.footer-grid {
+  align-items: flex-start; /* già usato per allineare in alto le sezioni */
+}
+
+/* Forza Legenda a stare sulla stessa riga “di base” di Contatti */
+.legenda-orari {
+  margin-top: 0;           /* azzera eventuali spazi extra */
+}
