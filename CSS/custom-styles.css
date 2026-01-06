@@ -1181,3 +1181,24 @@ footer {
     width: 100%;
   }
 }
+
+/* Formattazione numero di telefono */
+.footer-item a[href^="tel"] {
+  letter-spacing: 0.05em;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Alternativa: se vuoi uno spacing più specifico */
+.footer-item a[href^="tel"]::before {
+  content: attr(href);
+  content: '+39 335 780 2124'; /* Sostituisci con il tuo numero formattato */
+  letter-spacing: normal;
+}
+
+.footer-item a[href^="tel"] {
+  font-size: 0; /* Nasconde il testo originale */
+}
+
+.footer-item a[href^="tel"]::before {
+  font-size: 16px; /* Ripristina la dimensione del font */
+}
