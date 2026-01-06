@@ -2,6 +2,35 @@
 // Variabili globali per tracciare lo stato della mappa
 let currentMapCoordinates = null;
 
+function formatPhoneNumber(phoneNumber) {
+  // Remove all existing spaces
+  const cleaned = phoneNumber.replace(/\s/g, "");
+
+  // Check if it's an Italian number (+39)
+  if (cleaned.startsWith("+39")) {
+    const prefix = "+39";
+    const rest = cleaned.substring(3);
+
+    // Format based on number length
+    if (rest.length === 10) {
+      // Format: +39 XXX XXX XXXX
+      return `${prefix} ${rest.substring(0, 3)} ${rest.substring(
+        3,
+        6
+      )} ${rest.substring(6)}`;
+    } else if (rest.length === 9) {
+      // Format: +39 XXX XXXX XXX (for older formats)
+      return `${prefix} ${rest.substring(0, 3)} ${rest.substring(
+        3,
+        7
+      )} ${rest.substring(7)}`;
+    }
+  }
+
+  // Return original if format doesn't match
+  return phoneNumber;
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   const footer = document.getElementById("Contatti");
   if (!footer) return;
@@ -65,14 +94,14 @@ function getUnifiedFerieDates(data, year) {
   for (const period of feriePeriods) {
     if (!period.inizio || !period.fine) continue;
 
-    let dataInizio = parseDate(period.inizio, year);
+    const dataInizio = parseDate(period.inizio, year);
     let dataFine = parseDate(period.fine, year);
 
     if (dataInizio.getTime() > dataFine.getTime()) {
       dataFine = parseDate(period.fine, year + 1);
     }
 
-    let currentDate = new Date(dataInizio);
+    const currentDate = new Date(dataInizio);
     while (currentDate.getTime() <= dataFine.getTime()) {
       unifiedDates.add(formatDateDM(currentDate));
       currentDate.setDate(currentDate.getDate() + 1);
@@ -89,7 +118,7 @@ function findConsecutiveClosureEnd(startDate, unifiedFerieDates) {
     return startDateDM;
   }
 
-  let currentDate = new Date(startDate);
+  const currentDate = new Date(startDate);
   let endDate = new Date(startDate);
 
   while (true) {
@@ -189,7 +218,7 @@ function createFooterHTML(data, giornoPartenza) {
 
   const giornoSettimana = oggiReal.getDay();
   const oraCorrente = oggiReal.getHours() * 100 + oggiReal.getMinutes();
-  let indiceGiornoCorrente = giornoSettimana === 0 ? 6 : giornoSettimana - 1;
+  const indiceGiornoCorrente = giornoSettimana === 0 ? 6 : giornoSettimana - 1;
 
   const info = data.info || {};
   const contatti = data.contatti || {};
@@ -238,7 +267,7 @@ function createFooterHTML(data, giornoPartenza) {
 
     const parseTime = (t) => {
       const [ore, minuti] = t.split(":");
-      return parseInt(ore) * 100 + parseInt(minuti);
+      return Number.parseInt(ore) * 100 + Number.parseInt(minuti);
     };
 
     for (const range of orariMatch) {
@@ -369,7 +398,10 @@ function createFooterHTML(data, giornoPartenza) {
         <ul class="footer-list">
           ${
             contatti.telefono
-              ? `<li class="footer-item"><span class="material-icons">phone</span> <a href="tel:${contatti.telefono}">${contatti.telefono}</a></li>`
+              ? `<li class="footer-item"><span class="material-icons">phone</span> <a href="tel:${contatti.telefono.replace(
+                  /\s/g,
+                  ""
+                )}">${formatPhoneNumber(contatti.telefono)}</a></li>`
               : ""
           }
           ${
@@ -417,16 +449,16 @@ function createFooterHTML(data, giornoPartenza) {
             <div><span style="height:12px;width:12px;background-color:${
               legenda.colori.aperto || "#00FF7F"
             };margin-right:8px;border-radius:50%;display:inline-block;"></span>${
-              legenda.testo.aperto || "Aperto"
-            }</div>
+    legenda.testo.aperto || "Aperto"
+  }</div>
             <div><span style="height:12px;width:12px;background-color:${
               legenda.colori["in chiusura"] || "#FFD700"
             };margin-right:8px;border-radius:50%;display:inline-block;"></span><span id="testo-in-chiusura">${testoInChiusuraSpan}</span></div>
             <div><span style="height:12px;width:12px;background-color:${
               legenda.colori.chiuso || "orange"
             };margin-right:8px;border-radius:50%;display:inline-block;"></span>${
-              legenda.testo.chiuso || "Chiuso"
-            }</div>
+    legenda.testo.chiuso || "Chiuso"
+  }</div>
           </div>
         </div>
       </div>
@@ -435,14 +467,11 @@ function createFooterHTML(data, giornoPartenza) {
     </div>
     <div class="footer-bottom">
       <p>© ${oggiReal.getFullYear()} ${
-        info.titolo || ""
-      }. Tutti i diritti riservati.${
-        info.p_iva ? ` - P.IVA ${info.p_iva}` : ""
-      }</p>
+    info.titolo || ""
+  }. Tutti i diritti riservati.${info.p_iva ? ` - P.IVA ${info.p_iva}` : ""}</p>
     </div>
     `;
 }
-
 
 function aggiornaColoreOrari(data) {
   const orari = data.orari || [];
@@ -457,7 +486,7 @@ function aggiornaColoreOrari(data) {
   const giornoSettimana = oggiReal.getDay();
   const oraCorrente = oggiReal.getHours() * 100 + oggiReal.getMinutes();
 
-  let indiceGiornoCorrente = giornoSettimana === 0 ? 6 : giornoSettimana - 1;
+  const indiceGiornoCorrente = giornoSettimana === 0 ? 6 : giornoSettimana - 1;
 
   const unifiedFerieDates = getUnifiedFerieDates(data, oggi.getFullYear());
   const unifiedFerieDatesNextYear = getUnifiedFerieDates(
@@ -500,7 +529,7 @@ function aggiornaColoreOrari(data) {
 
     const parseTime = (t) => {
       const [ore, minuti] = t.split(":");
-      return parseInt(ore) * 100 + parseInt(minuti);
+      return Number.parseInt(ore) * 100 + Number.parseInt(minuti);
     };
 
     for (const range of orariMatch) {
@@ -565,8 +594,8 @@ function aggiornaColoreOrari(data) {
       let peso = "";
       let testoExtra = "";
 
-      let dayOfWeek = dataDelGiorno.getDay();
-      let orariIndex = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
+      const dayOfWeek = dataDelGiorno.getDay();
+      const orariIndex = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
 
       const dataFormattata = formatDateDM(dataDelGiorno);
       const orariExtraGiorno = getOrariExtraForDate(
