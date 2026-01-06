@@ -1191,7 +1191,6 @@ footer {
 /* Alternativa: se vuoi uno spacing più specifico */
 .footer-item a[href^="tel"]::before {
   content: attr(href);
-  content: '+39 335 780 2124'; /* Sostituisci con il tuo numero formattato */
   letter-spacing: normal;
 }
 
