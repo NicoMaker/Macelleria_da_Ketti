@@ -164,11 +164,26 @@ function getSingleDayClosureReason(
   unifiedFerieDatesNextYear = null
 ) {
   const festivita = data.festivita || [];
+  
+  // *** AGGIUNTA: Calcola le date pasquali per l'anno corrente e successivo ***
+  const annoCorrente = checkDate.getFullYear();
+  const datePasqualiCorrente = getDatePasquali(annoCorrente);
+  const datePasqualiSuccessive = getDatePasquali(annoCorrente + 1);
+  
+  // *** AGGIUNTA: Crea un array con tutte le festività incluse Pasqua e Pasquetta ***
+  const festivitaComplete = [
+    ...festivita,
+    datePasqualiCorrente.pasqua,
+    datePasqualiCorrente.pasquetta,
+    datePasqualiSuccessive.pasqua,
+    datePasqualiSuccessive.pasquetta
+  ];
 
   const dateToCheck = new Date(checkDate);
   const dataFormattata = formatDateDM(dateToCheck);
 
-  if (festivita.includes(dataFormattata)) {
+  // *** MODIFICA: Usa festivitaComplete invece di festivita ***
+  if (festivitaComplete.includes(dataFormattata)) {
     return { reason: "festivita", dataChiusura: dataFormattata };
   }
 
@@ -731,4 +746,36 @@ function scheduleFooterRefreshAtMidnight(data) {
       }, 100);
     }
   }, msUntilMidnight);
+}
+
+// Funzione per calcolare la data di Pasqua (algoritmo di Gauss)
+function calcolaPasqua(anno) {
+  const a = anno % 19;
+  const b = Math.floor(anno / 100);
+  const c = anno % 100;
+  const d = Math.floor(b / 4);
+  const e = b % 4;
+  const f = Math.floor((b + 8) / 25);
+  const g = Math.floor((b - f + 1) / 3);
+  const h = (19 * a + b - d - g + 15) % 30;
+  const i = Math.floor(c / 4);
+  const k = c % 4;
+  const l = (32 + 2 * e + 2 * i - h - k) % 7;
+  const m = Math.floor((a + 11 * h + 22 * l) / 451);
+  const mese = Math.floor((h + l - 7 * m + 114) / 31);
+  const giorno = ((h + l - 7 * m + 114) % 31) + 1;
+  
+  return new Date(anno, mese - 1, giorno);
+}
+
+// Funzione per ottenere le date di Pasqua e Pasquetta formattate
+function getDatePasquali(anno) {
+  const pasqua = calcolaPasqua(anno);
+  const pasquetta = new Date(pasqua);
+  pasquetta.setDate(pasquetta.getDate() + 1);
+  
+  return {
+    pasqua: formatDateDM(pasqua),
+    pasquetta: formatDateDM(pasquetta)
+  };
 }
