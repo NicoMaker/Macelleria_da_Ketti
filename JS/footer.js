@@ -168,15 +168,12 @@ function getSingleDayClosureReason(
   // *** AGGIUNTA: Calcola le date pasquali per l'anno corrente e successivo ***
   const annoCorrente = checkDate.getFullYear();
   const datePasqualiCorrente = getDatePasquali(annoCorrente);
-  const datePasqualiSuccessive = getDatePasquali(annoCorrente + 1);
   
   // *** AGGIUNTA: Crea un array con tutte le festività incluse Pasqua e Pasquetta ***
   const festivitaComplete = [
     ...festivita,
     datePasqualiCorrente.pasqua,
     datePasqualiCorrente.pasquetta,
-    datePasqualiSuccessive.pasqua,
-    datePasqualiSuccessive.pasquetta
   ];
 
   const dateToCheck = new Date(checkDate);
