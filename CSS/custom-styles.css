@@ -1181,3 +1181,15 @@ footer {
     width: 100%;
   }
 }
+
+
+.search-input {
+  width: 100%;
+  padding: 12px 15px;
+  border: none;
+  border-radius: 30px;
+  font-size: 1.1em;
+  background-color: #f5f1e8; /* stesso sfondo del sito */
+  color: #333;
+  transition: all 0.3s ease;
+}

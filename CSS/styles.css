@@ -1301,3 +1301,341 @@ h6 {
 .legenda-orari {
   margin-top: 1.5rem !important;  /* stesso offset di Contatti */
 }
+
+/* ============================================================
+   FIX DEFINITIVO PER CONTROLLI STICKY
+   AGGIUNGI QUESTO ALLA FINE DI styles.css
+   ============================================================ */
+
+/* Controlli Sticky - Barra di ricerca e filtri */
+.product-controls-sticky {
+  position: sticky;
+  top: 80px; /* Verrà aggiornato da JavaScript */
+  z-index: 100 !important; /* IMPORTANTE: Sopra le card */
+  background-color: #f5f1e8 !important; /* Sfondo OPACO - stesso colore di --ash-lightest */
+  padding: var(--spacing-md) 0;
+  margin-bottom: var(--spacing-lg);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  transition: box-shadow var(--transition-base);
+  /* AGGIUNGI QUESTE PROPRIETÀ CRITICHE */
+  width: 100%;
+  isolation: isolate; /* Crea un nuovo stacking context */
+}
+
+/* Assicurati che il background copra tutto */
+.product-controls-sticky::before {
+  content: '';
+  position: absolute;
+  top: -10px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #f5f1e8;
+  z-index: -1;
+}
+
+@media (min-width: 768px) {
+  .product-controls-sticky {
+    padding-left: var(--spacing-md);
+    padding-right: var(--spacing-md);
+  }
+}
+
+/* Container della barra di ricerca */
+.search-container {
+  max-width: 1200px;
+  margin: 0 auto var(--spacing-md) auto;
+  padding: 0 var(--spacing-md);
+  position: relative;
+  z-index: 2;
+  background-color: #f5f1e8;
+}
+
+.search-input-wrapper {
+  position: relative;
+  max-width: 600px;
+  margin: 0 auto;
+  z-index: 2;
+}
+
+.search-input {
+  width: 100%;
+  padding: var(--spacing-sm) var(--spacing-md);
+  font-size: 1rem;
+  border: 2px solid var(--gray-medium);
+  border-radius: var(--radius-button);
+  background-color: var(--surface);
+  transition: all var(--transition-base);
+  position: relative;
+  z-index: 2;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(139, 115, 85, 0.1);
+}
+
+/* Container dei filtri */
+.filter-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-sm);
+  justify-content: center;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 var(--spacing-md);
+  position: relative;
+  z-index: 2;
+  background-color: #f5f1e8;
+}
+
+.filter-button {
+  padding: var(--spacing-sm) var(--spacing-lg);
+  background-color: var(--surface);
+  color: var(--text-secondary);
+  border: 2px solid var(--gray-medium);
+  border-radius: var(--radius-button);
+  font-weight: 500;
+  font-size: 0.95rem;
+  transition: all var(--transition-base);
+  cursor: pointer;
+  position: relative;
+  z-index: 2;
+}
+
+.filter-button:hover {
+  background-color: var(--accent-warm);
+  color: var(--white);
+  border-color: var(--accent-warm);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.filter-button.active {
+  background-color: var(--primary);
+  color: var(--white);
+  border-color: var(--primary);
+}
+
+/* Responsive - Mobile */
+@media (max-width: 768px) {
+  .product-controls-sticky {
+    padding: var(--spacing-sm) var(--spacing-sm);
+  }
+
+  .filter-container {
+    gap: var(--spacing-xs);
+  }
+
+  .filter-button {
+    padding: var(--spacing-xs) var(--spacing-md);
+    font-size: 0.9rem;
+  }
+}
+
+/* IMPORTANTE: Assicurati che le card siano SOTTO i controlli */
+.progetti-container {
+  position: relative;
+  z-index: 1 !important; /* DEVE essere inferiore a 100 */
+}
+
+.Progetti-card {
+  position: relative;
+  z-index: 1 !important;
+}
+
+/* Assicurati che anche la sezione prodotti abbia z-index basso */
+#Prodotti {
+  position: relative;
+  z-index: 1;
+}
+
+.products-section {
+  position: relative;
+  z-index: 1;
+}
+
+/* Disabilita effetti hover su dispositivi touch */
+@media (hover: none) and (pointer: coarse) {
+  .filter-button:hover {
+    background-color: var(--surface);
+    color: var(--text-secondary);
+    border-color: var(--gray-medium);
+    transform: none;
+    box-shadow: none;
+  }
+
+  .filter-button.active:hover {
+    background-color: var(--primary);
+    color: var(--white);
+    border-color: var(--primary);
+  }
+}
+
+/* ============================================================
+   FIX DEFINITIVO - SENZA OMBRA SUI FILTRI
+   SOSTITUISCI IL CODICE PRECEDENTE CON QUESTO
+   ============================================================ */
+
+.product-controls-sticky {
+  position: sticky;
+  top: 80px;
+  z-index: 100 !important;
+  background-color: #f5f1e8 !important;
+  padding: var(--spacing-md) 0;
+  margin-bottom: var(--spacing-lg);
+  transition: all var(--transition-base);
+  width: 100%;
+  isolation: isolate;
+  border: none;
+}
+
+.product-controls-sticky::before {
+  content: '';
+  position: absolute;
+  top: -10px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #f5f1e8;
+  z-index: -1;
+  border: none;
+}
+
+@media (min-width: 768px) {
+  .product-controls-sticky {
+    padding-left: var(--spacing-md);
+    padding-right: var(--spacing-md);
+  }
+}
+
+.search-container {
+  max-width: 1200px;
+  margin: 0 auto var(--spacing-md) auto;
+  padding: 0 var(--spacing-md);
+  position: relative;
+  z-index: 2;
+  background-color: #f5f1e8;
+}
+
+.search-input-wrapper {
+  position: relative;
+  max-width: 600px;
+  margin: 0 auto;
+  z-index: 2;
+}
+
+.search-input {
+  width: 100%;
+  padding: var(--spacing-sm) var(--spacing-md);
+  font-size: 1rem;
+  border: 2px solid var(--gray-medium);
+  border-radius: var(--radius-button);
+  background-color: var(--surface);
+  transition: all var(--transition-base);
+  position: relative;
+  z-index: 2;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(139, 115, 85, 0.1);
+}
+
+.filter-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-sm);
+  justify-content: center;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 var(--spacing-md);
+  padding-bottom: var(--spacing-md);
+  position: relative;
+  z-index: 2;
+  background-color: #f5f1e8;
+}
+
+.filter-button {
+  padding: var(--spacing-sm) var(--spacing-lg);
+  background-color: var(--surface);
+  color: var(--text-secondary);
+  border: 2px solid var(--gray-medium);
+  border-radius: var(--radius-button);
+  font-weight: 500;
+  font-size: 0.95rem;
+  transition: all var(--transition-base);
+  cursor: pointer;
+  position: relative;
+  z-index: 2;
+  box-shadow: none !important; /* RIMOSSA OMBRA DAI FILTRI */
+}
+
+.filter-button:hover {
+  background-color: var(--accent-warm);
+  color: var(--white);
+  border-color: var(--accent-warm);
+  transform: translateY(-2px);
+  box-shadow: none !important; /* NESSUNA OMBRA AL HOVER */
+}
+
+.filter-button.active {
+  background-color: var(--primary);
+  color: var(--white);
+  border-color: var(--primary);
+  box-shadow: none !important; /* NESSUNA OMBRA QUANDO ATTIVO */
+}
+
+@media (max-width: 768px) {
+  .product-controls-sticky {
+    padding: var(--spacing-sm) var(--spacing-sm);
+  }
+
+  .filter-container {
+    gap: var(--spacing-xs);
+  }
+
+  .filter-button {
+    padding: var(--spacing-xs) var(--spacing-md);
+    font-size: 0.9rem;
+  }
+}
+
+.progetti-container {
+  position: relative;
+  z-index: 1 !important;
+}
+
+.Progetti-card {
+  position: relative;
+  z-index: 1 !important;
+}
+
+#Prodotti {
+  position: relative;
+  z-index: 1;
+}
+
+.products-section {
+  position: relative;
+  z-index: 1;
+}
+
+@media (hover: none) and (pointer: coarse) {
+  .filter-button:hover {
+    background-color: var(--surface);
+    color: var(--text-secondary);
+    border-color: var(--gray-medium);
+    transform: none;
+    box-shadow: none !important;
+  }
+
+  .filter-button.active:hover {
+    background-color: var(--primary);
+    color: var(--white);
+    border-color: var(--primary);
+    box-shadow: none !important;
+  }
+}
