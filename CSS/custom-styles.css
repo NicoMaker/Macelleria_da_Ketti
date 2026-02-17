@@ -1193,3 +1193,97 @@ footer {
   color: #333;
   transition: all 0.3s ease;
 }
+
+/* ===== FOOTER HOVER EFFECTS ===== */
+
+/* Contatti: link telefono, email, indirizzo */
+.footer-list .footer-item a {
+  color: #fff;
+  text-decoration: none;
+  transition: color 0.25s ease;
+  position: relative;
+}
+
+.footer-list .footer-item a::after {
+  content: "";
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 1px;
+  background-color: #ffcc80;
+  transition: width 0.3s ease;
+}
+
+.footer-list .footer-item a:hover {
+  color: #ffcc80;
+}
+
+.footer-list .footer-item a:hover::after {
+  width: 100%;
+}
+
+/* Icone Material Icons accanto ai contatti */
+.footer-list .footer-item .material-icons {
+  transition: transform 0.25s ease, color 0.25s ease;
+  vertical-align: middle;
+}
+
+.footer-list .footer-item:hover .material-icons {
+  transform: scale(1.2);
+  color: #ffcc80;
+}
+
+/* Social icons */
+.social-links a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.1);
+  transition: background-color 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.social-links a:hover {
+  background-color: rgba(255, 204, 128, 0.25);
+  transform: translateY(-4px) scale(1.1);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
+}
+
+.social-links a img {
+  width: 24px;
+  height: 24px;
+  transition: filter 0.25s ease;
+}
+
+.social-links a:hover img {
+  filter: brightness(1.15) drop-shadow(0 0 4px rgba(255, 204, 128, 0.6));
+}
+
+/* Disabilita hover footer su touch */
+@media (hover: none) and (pointer: coarse) {
+  .footer-list .footer-item a:hover {
+    color: #fff !important;
+  }
+
+  .footer-list .footer-item a:hover::after {
+    width: 0 !important;
+  }
+
+  .footer-list .footer-item:hover .material-icons {
+    transform: none !important;
+    color: inherit !important;
+  }
+
+  .social-links a:hover {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+    transform: none !important;
+    box-shadow: none !important;
+  }
+
+  .social-links a:hover img {
+    filter: none !important;
+  }
+}
