@@ -1,6 +1,6 @@
 // ============================================================
-// footer-html.js — Costruzione HTML del footer
-// Dipende da: footer-date-utils.js, footer-chiusure.js, footer-apertura.js
+// creazione_html.js — Costruzione HTML del footer
+// Dipende da: date-utils.js, Gestisci_chiusure.js, gestisci_apertura.js
 // ============================================================
 
 function createFooterHTML(data, giornoPartenza) {
@@ -14,25 +14,39 @@ function createFooterHTML(data, giornoPartenza) {
 
   const info = data.info || {};
   const contatti = data.contatti || {};
-  const orari = data.orari || [];
   const social = data.social || {};
   const legenda = data.legendaOrari || { colori: {}, testo: {} };
 
+  // Orari attivi: stagionali se presenti, altrimenti base
+  const { orari, nomeStagione } = getOrariAttiviOggi(data, oggiReal);
+
+  // Titolo sezione orari: "Orario Estivo" / "Orario Invernale" / "Orari"
+  const titoloOrari = nomeStagione ? `Orario ${nomeStagione}` : "Orari";
+
   const unifiedFerieDates = getUnifiedFerieDates(data, oggi.getFullYear());
-  const unifiedFerieDatesNextYear = getUnifiedFerieDates(data, oggi.getFullYear() + 1);
+  const unifiedFerieDatesNextYear = getUnifiedFerieDates(
+    data,
+    oggi.getFullYear() + 1,
+  );
 
   const dataOggiFormattata = formatDateDM(oggiReal);
-  const orariExtraOggi = getOrariExtraForDate(data, dataOggiFormattata, giornoSettimana);
+  const orariExtraOggi = getOrariExtraForDate(
+    data,
+    dataOggiFormattata,
+    giornoSettimana,
+  );
 
   const singleDayClosure = getSingleDayClosureReason(
     oggiReal,
     data,
     unifiedFerieDates,
-    unifiedFerieDatesNextYear
+    unifiedFerieDatesNextYear,
   );
-  const isFestivita = singleDayClosure && singleDayClosure.reason === "festivita";
+  const isFestivita =
+    singleDayClosure && singleDayClosure.reason === "festivita";
   const eFerieOggi = singleDayClosure && singleDayClosure.reason === "ferie";
-  const isMotivoExtra = singleDayClosure && singleDayClosure.reason === "motivi-extra";
+  const isMotivoExtra =
+    singleDayClosure && singleDayClosure.reason === "motivi-extra";
 
   let eChiusoOggi = isFestivita || eFerieOggi || isMotivoExtra;
 
@@ -44,15 +58,15 @@ function createFooterHTML(data, giornoPartenza) {
     oraCorrente,
     eChiusoOggi,
     orariExtraOggi,
-    data.minutiInChiusura
+    data.minutiInChiusura,
   );
 
-  // Genera i prossimi 7 giorni partendo dal giorno reale
+  // Prossimi 7 giorni
   const giorniDaVisualizzare = [];
   for (let i = 0; i < 7; i++) {
-    const dataDelGiorno = new Date(oggi);
-    dataDelGiorno.setDate(oggi.getDate() + i);
-    giorniDaVisualizzare.push(dataDelGiorno);
+    const d = new Date(oggi);
+    d.setDate(oggi.getDate() + i);
+    giorniDaVisualizzare.push(d);
   }
 
   // Costruzione HTML degli orari
@@ -60,30 +74,33 @@ function createFooterHTML(data, giornoPartenza) {
     .map((dataDelGiorno, i) => {
       let colore = "";
       let peso = "";
-      let testoExtra = "";
 
       const dayOfWeek = dataDelGiorno.getDay();
       const orariIndex = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
-      const dataFormattata = formatDateDM(dataDelGiorno);
-      const orariExtraGiorno = getOrariExtraForDate(data, dataFormattata, dayOfWeek);
+      const dataFmt = formatDateDM(dataDelGiorno);
+      const nomeGiorno = data.nomiGiorni[dayOfWeek];
+      const orariExtraGiorno = getOrariExtraForDate(data, dataFmt, dayOfWeek);
+
+      // Per ogni giorno usa la stagione corretta (potrebbe cambiare a cavallo)
+      const { orari: orariGiorno } = getOrariAttiviOggi(data, dataDelGiorno);
 
       let testoOrario;
-      const nomeGiorno = data.nomiGiorni[dayOfWeek];
 
       if (orariExtraGiorno) {
         testoOrario = orariExtraGiorno;
       } else {
-        testoOrario = orari[orariIndex];
+        testoOrario = orariGiorno[orariIndex];
         const closureCheck = getSingleDayClosureReason(
           dataDelGiorno,
           data,
           unifiedFerieDates,
-          unifiedFerieDatesNextYear
+          unifiedFerieDatesNextYear,
         );
         if (closureCheck && closureCheck.reason === "festivita") {
           testoOrario = `${nomeGiorno}: Chiuso (Festività)`;
         } else if (closureCheck && closureCheck.reason === "ferie") {
-          testoOrario = `${nomeGiorno}: Chiuso (Ferie fino al ${closureCheck.dataChiusura})`;
+          const motivo = closureCheck.motivoSpecifico || "Ferie";
+          testoOrario = `${nomeGiorno}: Chiuso (${motivo}) fino al ${closureCheck.dataChiusura}`;
         } else if (closureCheck && closureCheck.reason === "motivi-extra") {
           testoOrario = `${nomeGiorno}: Chiuso (${closureCheck.motivoSpecifico})`;
         }
@@ -96,15 +113,13 @@ function createFooterHTML(data, giornoPartenza) {
         } else if (statoApertura.stato === "in-chiusura") {
           colore = legenda.colori["in chiusura"] || "#FFD700";
           const minuti = statoApertura.minutiAllaChiusura;
-          const testoMinuti = minuti === 1 ? "minuto" : "minuti";
-          testoOrario = `${testoOrario} (${minuti} ${testoMinuti})`;
-          testoExtra = "";
+          testoOrario += ` (${minuti} ${minuti === 1 ? "minuto" : "minuti"})`;
         } else {
           colore = legenda.colori.aperto || "#00FF7F";
         }
       }
 
-      return `<li class="footer-item" style="color:${colore};${peso}">${testoOrario}${testoExtra}</li>`;
+      return `<li class="footer-item" style="color:${colore};${peso}">${testoOrario}</li>`;
     })
     .join("");
 
@@ -130,7 +145,7 @@ function createFooterHTML(data, giornoPartenza) {
             contatti.telefono
               ? `<li class="footer-item"><span class="material-icons">phone</span> <a href="tel:${contatti.telefono.replace(
                   /\s/g,
-                  ""
+                  "",
                 )}">${formatPhoneNumber(contatti.telefono)}</a></li>`
               : ""
           }
@@ -150,7 +165,7 @@ function createFooterHTML(data, giornoPartenza) {
 
         <!-- Orari -->
         <div class="footer-section">
-          <h4 class="footer-subtitle">Orari</h4>
+          <h4 id="titolo-orari" class="footer-subtitle">${titoloOrari}</h4>
           <ul id="orari-footer" class="footer-list">${orariHtml}</ul>
         </div>
 
@@ -179,16 +194,16 @@ function createFooterHTML(data, giornoPartenza) {
             <div><span style="height:12px;width:12px;background-color:${
               legenda.colori.aperto || "#00FF7F"
             };margin-right:8px;border-radius:50%;display:inline-block;"></span>${
-    legenda.testo.aperto || "Aperto"
-  }</div>
+              legenda.testo.aperto || "Aperto"
+            }</div>
             <div><span style="height:12px;width:12px;background-color:${
               legenda.colori["in chiusura"] || "#FFD700"
             };margin-right:8px;border-radius:50%;display:inline-block;"></span><span id="testo-in-chiusura">${testoInChiusuraSpan}</span></div>
             <div><span style="height:12px;width:12px;background-color:${
               legenda.colori.chiuso || "orange"
             };margin-right:8px;border-radius:50%;display:inline-block;"></span>${
-    legenda.testo.chiuso || "Chiuso"
-  }</div>
+              legenda.testo.chiuso || "Chiuso"
+            }</div>
           </div>
         </div>
       </div>
@@ -197,8 +212,8 @@ function createFooterHTML(data, giornoPartenza) {
     </div>
     <div class="footer-bottom">
       <p>© ${oggiReal.getFullYear()} ${
-    info.titolo || ""
-  }. Tutti i diritti riservati.${info.p_iva ? ` - P.IVA ${info.p_iva}` : ""}</p>
+        info.titolo || ""
+      }. Tutti i diritti riservati.${info.p_iva ? ` - P.IVA ${info.p_iva}` : ""}</p>
     </div>
     `;
 }

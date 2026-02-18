@@ -28,6 +28,7 @@
     "Venerdì",
     "Sabato"
   ],
+
   "orari": [
     "Lunedì: 8:00 - 13:00",
     "Martedì: 8:00 - 13:00 / 15:00 - 19:00",
@@ -37,14 +38,40 @@
     "Sabato: 8:00 - 13:00 / 15:00 - 19:00",
     "Domenica: Chiuso"
   ],
-  "minutiInChiusura": 30,
-  "orariExtra": [
+
+  "orariStagionali": [
     {
-      "giorno": "",
-      "orari": "",
-      "motivo": ""
+      "nome": "Estivo",
+      "inizio": "01/06",
+      "fine": "31/08",
+      "orari": [
+        "Lunedì: 8:00 - 13:00",
+        "Martedì: 8:00 - 13:00 / 15:30 - 19:30",
+        "Mercoledì: 8:00 - 13:00",
+        "Giovedì: 8:00 - 13:00 / 15:30 - 19:30",
+        "Venerdì: 8:00 - 13:00 / 15:30 - 19:30",
+        "Sabato: 8:00 - 13:00 / 15:30 - 19:30",
+        "Domenica: Chiuso"
+      ]
+    },
+    {
+      "nome": "Invernale",
+      "inizio": "01/12",
+      "fine": "28/02",
+      "orari": [
+        "Lunedì: 8:00 - 13:00",
+        "Martedì: 8:00 - 13:00 / 15:00 - 19:00",
+        "Mercoledì: 8:00 - 13:00",
+        "Giovedì: 8:00 - 13:00 / 15:00 - 19:00",
+        "Venerdì: 8:00 - 13:00 / 15:00 - 19:00",
+        "Sabato: 8:00 - 13:00 / 15:00 - 19:00",
+        "Domenica: Chiuso"
+      ]
     }
   ],
+
+  "minutiInChiusura": 30,
+
   "legendaOrari": {
     "titolo": "Legenda",
     "colori": {
@@ -58,6 +85,7 @@
       "chiuso": "Chiuso"
     }
   },
+
   "festivita": [
     "01/01",
     "06/01",
@@ -71,23 +99,16 @@
     "25/12",
     "26/12"
   ],
-  "ferie": [
+
+  "chiusure": [
     {
+      "tipo": "periodo",
       "inizio": "",
-      "fine": ""
+      "fine": "",
+      "motivo": ""
     },
-    {
-      "inizio": "",
-      "fine": ""
-    }
+    { "tipo": "giorno", "data": "", "motivo": "" }
   ],
-  "giorniChiusuraExtra": {
-    "motivi-extra": [
-      {
-        "giorno": "",
-        "motivo": ""
-      }
-    ],
-    "ferie": [""]
-  }
+
+  "orariExtra": [{ "giorno": "", "orari": "", "motivo": "" }]
 }
