@@ -42,8 +42,8 @@
   "orariStagionali": [
     {
       "nome": "Estivo",
-      "inizio": "01/06",
-      "fine": "31/08",
+      "inizio": "29/03",
+      "fine": "24/10",
       "orari": [
         "Lunedì: 8:00 - 13:00",
         "Martedì: 8:00 - 13:00 / 15:30 - 19:30",
@@ -56,8 +56,8 @@
     },
     {
       "nome": "Invernale",
-      "inizio": "01/12",
-      "fine": "28/02",
+      "inizio": "25/10",
+      "fine": "28/03",
       "orari": [
         "Lunedì: 8:00 - 13:00",
         "Martedì: 8:00 - 13:00 / 15:00 - 19:00",
