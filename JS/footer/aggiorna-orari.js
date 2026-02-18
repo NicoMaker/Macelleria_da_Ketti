@@ -150,25 +150,31 @@ function aggiornaColoreOrari(data) {
   if (descEl) {
     const stagioni = data.orariStagionali || [];
     const stagioneAttivaResult = getStagioneAttivaConDate(data, oggiReal);
-    const stagioneAttiva = stagioneAttivaResult ? stagioneAttivaResult.stagione : null;
+    const stagioneAttiva = stagioneAttivaResult
+      ? stagioneAttivaResult.stagione
+      : null;
 
     const valide = stagioni.filter((s) => s.nome && s.inizio && s.fine);
 
     if (!valide.length) {
       descEl.style.display = "none";
     } else {
-      const attive    = valide.filter((s) => stagioneAttiva && s.nome === stagioneAttiva.nome);
-      const nonAttive = valide.filter((s) => !stagioneAttiva || s.nome !== stagioneAttiva.nome);
+      const attive = valide.filter(
+        (s) => stagioneAttiva && s.nome === stagioneAttiva.nome,
+      );
+      const nonAttive = valide.filter(
+        (s) => !stagioneAttiva || s.nome !== stagioneAttiva.nome,
+      );
 
       const _riga = (s, isAttiva) => {
         let annoInizio, annoFine;
         if (isAttiva && stagioneAttivaResult) {
           annoInizio = stagioneAttivaResult.annoInizio;
-          annoFine   = stagioneAttivaResult.annoFine;
+          annoFine = stagioneAttivaResult.annoFine;
         } else {
           const prossima = _getProssimaIstanzaStagione(s, oggiReal);
           annoInizio = prossima.annoInizio;
-          annoFine   = prossima.annoFine;
+          annoFine = prossima.annoFine;
         }
         const testo = _testoStagioneConAnni(s, annoInizio, annoFine);
         return `<div style="${isAttiva ? "font-weight:bold;" : "opacity:0.65;"}">${testo}</div>`;

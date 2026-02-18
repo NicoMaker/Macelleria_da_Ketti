@@ -24,33 +24,26 @@ function _testoStagioneConAnni(stagione, annoInizio, annoFine) {
   let testo = `Orario ${nome}`;
 
   const strIni = _resolveDataLabelConAnno(stagione.inizio, annoInizio);
-  const strFin = _resolveDataLabelConAnno(stagione.fine,   annoFine);
+  const strFin = _resolveDataLabelConAnno(stagione.fine, annoFine);
 
   if (strIni && strFin) testo += `: dal ${strIni} al ${strFin}`;
-  else if (strIni)      testo += `: dal ${strIni}`;
-  else if (strFin)      testo += `: fino al ${strFin}`;
+  else if (strIni) testo += `: dal ${strIni}`;
+  else if (strFin) testo += `: fino al ${strFin}`;
   return testo;
 }
 
 // Risolve la data e aggiunge l'anno se la data è dinamica (auto-marzo/auto-ottobre)
-// Restituisce la data formattata con il mese scritto per esteso, senza anno
-// Es: "26 ottobre", "29 marzo"
+// Per date fisse "DD/MM" non aggiunge l'anno perché è già implicito
 function _resolveDataLabelConAnno(ddmm, anno) {
   if (!ddmm) return "";
-  const nomiMesi = ["gennaio","febbraio","marzo","aprile","maggio","giugno",
-                    "luglio","agosto","settembre","ottobre","novembre","dicembre"];
   const minusOne = ddmm.endsWith("-1");
   const base = minusOne ? ddmm.slice(0, -2) : ddmm;
   let d;
   if (base === "auto-marzo") d = ultimaDomenica(anno, 3);
   else if (base === "auto-ottobre") d = ultimaDomenica(anno, 10);
-  else {
-    // Data fissa DD/MM: scrivi mese per esteso
-    const [gg, mm] = ddmm.split("/").map(Number);
-    return `${gg} ${nomiMesi[mm - 1]}`;
-  }
+  else return ddmm; // data fissa: mostra senza anno
   if (minusOne) d.setDate(d.getDate() - 1);
-  return `${d.getDate()} ${nomiMesi[d.getMonth()]}`;
+  return `${formatDateDM(d)}/${anno}`;
 }
 
 // Compatibilità con chiamate vecchie che passano solo un anno
@@ -72,9 +65,10 @@ function _getProssimaIstanzaStagione(stagione, dataRiferimento) {
     if (!dataInizio) continue;
     if (dataInizio.getTime() >= oggi.getTime()) {
       const dataFine = _resolveDataStagione(stagione.fine, anno + offset);
-      const annoFine = dataFine && dataInizio.getTime() > dataFine.getTime()
-        ? anno + offset + 1
-        : anno + offset;
+      const annoFine =
+        dataFine && dataInizio.getTime() > dataFine.getTime()
+          ? anno + offset + 1
+          : anno + offset;
       return { annoInizio: anno + offset, annoFine };
     }
   }
@@ -102,23 +96,29 @@ function getAllStagioniHTML(data, dataRiferimento) {
 
   const ref = dataRiferimento || new Date();
   const stagioneAttivaResult = getStagioneAttivaConDate(data, ref);
-  const stagioneAttiva = stagioneAttivaResult ? stagioneAttivaResult.stagione : null;
+  const stagioneAttiva = stagioneAttivaResult
+    ? stagioneAttivaResult.stagione
+    : null;
 
   const valide = stagioni.filter((s) => s.nome && s.inizio && s.fine);
 
   // Separa attiva dalle altre
-  const attive  = valide.filter((s) => stagioneAttiva && s.nome === stagioneAttiva.nome);
-  const nonAttive = valide.filter((s) => !stagioneAttiva || s.nome !== stagioneAttiva.nome);
+  const attive = valide.filter(
+    (s) => stagioneAttiva && s.nome === stagioneAttiva.nome,
+  );
+  const nonAttive = valide.filter(
+    (s) => !stagioneAttiva || s.nome !== stagioneAttiva.nome,
+  );
 
   const _riga = (s, isAttiva) => {
     let annoInizio, annoFine;
     if (isAttiva && stagioneAttivaResult) {
       annoInizio = stagioneAttivaResult.annoInizio;
-      annoFine   = stagioneAttivaResult.annoFine;
+      annoFine = stagioneAttivaResult.annoFine;
     } else {
       const prossima = _getProssimaIstanzaStagione(s, ref);
       annoInizio = prossima.annoInizio;
-      annoFine   = prossima.annoFine;
+      annoFine = prossima.annoFine;
     }
     const testo = _testoStagioneConAnni(s, annoInizio, annoFine);
     return `<div style="${isAttiva ? "font-weight:bold;" : "opacity:0.65;"}">${testo}</div>`;
