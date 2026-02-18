@@ -4,20 +4,42 @@
 // ============================================================
 
 // ── Testo descrittivo per una singola stagione ───────────────
-function _testoStagione(stagione) {
+// Risolve "auto-marzo"/"auto-ottobre" nella data reale DD/MM leggibile
+function _resolveDataLabel(ddmm, anno) {
+  if (!ddmm) return "";
+
+  // Supporta suffisso "-1" = giorno precedente (es. sabato prima della domenica)
+  const minusOne = ddmm.endsWith("-1");
+  const base = minusOne ? ddmm.slice(0, -2) : ddmm;
+
+  let d;
+  if (base === "auto-marzo") d = ultimaDomenica(anno, 3);
+  else if (base === "auto-ottobre") d = ultimaDomenica(anno, 10);
+  else return ddmm; // data fissa DD/MM, mostra così com'è
+
+  if (minusOne) d.setDate(d.getDate() - 1); // torna al sabato
+  return formatDateDM(d);
+}
+
+function _testoStagione(stagione, annoRif) {
+  const anno = annoRif || new Date().getFullYear();
   const nome = stagione.nome || "";
   let testo = `Orario ${nome}`;
-  if (stagione.inizio && stagione.fine)
-    testo += `: dal ${stagione.inizio} al ${stagione.fine}`;
-  else if (stagione.inizio) testo += `: dal ${stagione.inizio}`;
-  else if (stagione.fine) testo += `: fino al ${stagione.fine}`;
+  const inizio = _resolveDataLabel(stagione.inizio, anno);
+  const fine = _resolveDataLabel(stagione.fine, anno);
+  if (inizio && fine) testo += `: dal ${inizio} al ${fine}`;
+  else if (inizio) testo += `: dal ${inizio}`;
+  else if (fine) testo += `: fino al ${fine}`;
   return testo;
 }
 
-// ── Converte "DD/MM" in un numero ordinabile (mese * 100 + giorno) ──
+// ── Converte "DD/MM" (o "auto-marzo"/"auto-ottobre") in un numero ordinabile ──
 function _ddmmToSortKey(ddmm) {
   if (!ddmm) return 9999;
-  const [day, month] = ddmm.split("/").map(Number);
+  const base = ddmm.endsWith("-1") ? ddmm.slice(0, -2) : ddmm;
+  if (base === "auto-marzo") return 3 * 100 + 25;
+  if (base === "auto-ottobre") return 10 * 100 + 25;
+  const [day, month] = base.split("/").map(Number);
   return month * 100 + day;
 }
 
@@ -33,7 +55,10 @@ function getAllStagioniHTML(data, dataRiferimento) {
     .filter((s) => s.nome)
     .sort((a, b) => _ddmmToSortKey(a.inizio) - _ddmmToSortKey(b.inizio))
     .map((s) => {
-      const testo = _testoStagione(s);
+      const testo = _testoStagione(
+        s,
+        (dataRiferimento || new Date()).getFullYear(),
+      );
       const isAttiva = stagioneAttiva && stagioneAttiva.nome === s.nome;
       if (isAttiva) {
         return `<div style="font-weight:bold;">${testo}</div>`;

@@ -57,8 +57,48 @@ function getDatePasquali(anno) {
 }
 
 // ============================================================
+// Calcola l'ultima domenica di un dato mese e anno.
+// Usata per determinare automaticamente il cambio stagione
+// (come il cambio ora legale: ultima domenica di marzo/ottobre).
+// ============================================================
+function ultimaDomenica(anno, mese) {
+  // Parte dall'ultimo giorno del mese e va indietro fino alla domenica
+  const ultimo = new Date(anno, mese, 0, 0, 0, 0, 0); // giorno 0 = ultimo del mese precedente
+  while (ultimo.getDay() !== 0) {
+    ultimo.setDate(ultimo.getDate() - 1);
+  }
+  return ultimo;
+}
+
+// ============================================================
+// Risolve la data di inizio/fine di una stagione:
+// - Se nel JSON c'è "auto-marzo"  → ultima domenica di marzo dell'anno dato
+// - Se nel JSON c'è "auto-ottobre" → ultima domenica di ottobre dell'anno dato
+// - Altrimenti usa la data DD/MM dal JSON come prima
+// ============================================================
+function _resolveDataStagione(ddmm, anno) {
+  if (!ddmm) return null;
+
+  // Supporta suffisso "-1" per indicare il giorno precedente (sabato prima della domenica)
+  const minusOne = ddmm.endsWith("-1");
+  const base = minusOne ? ddmm.slice(0, -2) : ddmm;
+
+  let d;
+  if (base === "auto-marzo") d = ultimaDomenica(anno, 3);
+  else if (base === "auto-ottobre") d = ultimaDomenica(anno, 10);
+  else {
+    const [giorno, mese] = base.split("/").map(Number);
+    d = new Date(anno, mese - 1, giorno, 0, 0, 0, 0);
+  }
+
+  if (minusOne) d.setDate(d.getDate() - 1); // torna al sabato
+  return d;
+}
+
+// ============================================================
 // Determina la stagione attiva in base alla data fornita.
 // Gestisce correttamente i periodi a cavallo d'anno (es. 01/12 - 28/02).
+// Supporta "auto-marzo" e "auto-ottobre" come valori di inizio/fine.
 // Restituisce l'oggetto stagione attiva oppure null se nessuna è attiva.
 // ============================================================
 function getStagioneAttiva(data, dataRiferimento) {
@@ -68,12 +108,6 @@ function getStagioneAttiva(data, dataRiferimento) {
   const ref = dataRiferimento || new Date();
   const anno = ref.getFullYear();
 
-  // Converte "DD/MM" in un oggetto Date usando l'anno fornito
-  const parseDataStagione = (ddmm, y) => {
-    const [giorno, mese] = ddmm.split("/").map(Number);
-    return new Date(y, mese - 1, giorno, 0, 0, 0, 0);
-  };
-
   // Normalizza ref a mezzanotte per confronti corretti
   const oggi = new Date(ref);
   oggi.setHours(0, 0, 0, 0);
@@ -81,29 +115,26 @@ function getStagioneAttiva(data, dataRiferimento) {
   for (const stagione of stagioni) {
     if (!stagione.inizio || !stagione.fine || !stagione.orari) continue;
 
-    let dataInizio = parseDataStagione(stagione.inizio, anno);
-    let dataFine = parseDataStagione(stagione.fine, anno);
+    let dataInizio = _resolveDataStagione(stagione.inizio, anno);
+    let dataFine = _resolveDataStagione(stagione.fine, anno);
 
-    // Periodo a cavallo d'anno (es. 01/12 - 28/02)
+    // Periodo a cavallo d'anno (es. fine ottobre → fine marzo)
     if (dataInizio.getTime() > dataFine.getTime()) {
       // Caso 1: siamo nella parte finale dell'anno (dopo l'inizio)
-      // es. oggi = 15/12 → inizio=01/12 anno corrente, fine=28/02 anno prossimo
-      const dataFineAnnoSucc = parseDataStagione(stagione.fine, anno + 1);
-      if (oggi >= dataInizio) {
-        if (oggi <= dataFineAnnoSucc) return stagione;
-      }
+      // es. oggi = 15/11 → inizio=ultima-dom-ottobre anno corrente, fine=ultima-dom-marzo anno prossimo
+      const dataFineAnnoSucc = _resolveDataStagione(stagione.fine, anno + 1);
+      if (oggi >= dataInizio && oggi <= dataFineAnnoSucc) return stagione;
 
       // Caso 2: siamo nella parte iniziale dell'anno (prima della fine)
-      // es. oggi = 15/01 → inizio=01/12 anno precedente, fine=28/02 anno corrente
-      const dataInizioPrecAnno = parseDataStagione(stagione.inizio, anno - 1);
-      if (oggi <= dataFine && oggi >= dataInizioPrecAnno) {
-        return stagione;
-      }
+      // es. oggi = 15/02 → inizio=ultima-dom-ottobre anno precedente, fine=ultima-dom-marzo anno corrente
+      const dataInizioPrecAnno = _resolveDataStagione(
+        stagione.inizio,
+        anno - 1,
+      );
+      if (oggi <= dataFine && oggi >= dataInizioPrecAnno) return stagione;
     } else {
-      // Periodo normale nello stesso anno (es. 01/06 - 31/08)
-      if (oggi >= dataInizio && oggi <= dataFine) {
-        return stagione;
-      }
+      // Periodo normale nello stesso anno (es. ultima-dom-marzo → ultima-dom-ottobre)
+      if (oggi >= dataInizio && oggi <= dataFine) return stagione;
     }
   }
 

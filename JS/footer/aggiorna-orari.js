@@ -154,11 +154,25 @@ function aggiornaColoreOrari(data) {
     if (!stagioni.length || !stagioni.filter((s) => s.nome).length) {
       descEl.style.display = "none";
     } else {
+      const annoOggi = oggiReal.getFullYear();
       const _testo = (s) => {
+        const _label = (ddmm) => {
+          if (!ddmm) return "";
+          const minusOne = ddmm.endsWith("-1");
+          const base = minusOne ? ddmm.slice(0, -2) : ddmm;
+          let d;
+          if (base === "auto-marzo") d = ultimaDomenica(annoOggi, 3);
+          else if (base === "auto-ottobre") d = ultimaDomenica(annoOggi, 10);
+          else return ddmm;
+          if (minusOne) d.setDate(d.getDate() - 1);
+          return formatDateDM(d);
+        };
         let t = `Orario ${s.nome}`;
-        if (s.inizio && s.fine) t += `: dal ${s.inizio} al ${s.fine}`;
-        else if (s.inizio) t += `: dal ${s.inizio}`;
-        else if (s.fine) t += `: fino al ${s.fine}`;
+        const ini = _label(s.inizio);
+        const fin = _label(s.fine);
+        if (ini && fin) t += `: dal ${ini} al ${fin}`;
+        else if (ini) t += `: dal ${ini}`;
+        else if (fin) t += `: fino al ${fin}`;
         return t;
       };
       descEl.style.marginTop = "14px";
