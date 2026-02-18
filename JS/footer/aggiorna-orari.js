@@ -144,4 +144,31 @@ function aggiornaColoreOrari(data) {
         legenda.testo["in chiusura"] || "In chiusura";
     }
   }
+
+  // ── Aggiorna descrizione stagioni nella legenda ───────────
+  const descEl = document.getElementById("descrizione-stagione");
+  if (descEl) {
+    const stagioni = data.orariStagionali || [];
+    const stagioneAttiva = getStagioneAttiva(data, oggiReal);
+
+    if (!stagioni.length || !stagioni.filter(s => s.nome).length) {
+      descEl.style.display = "none";
+    } else {
+      const _testo = (s) => {
+        let t = `Orario ${s.nome}`;
+        if (s.inizio && s.fine) t += `: dal ${s.inizio} al ${s.fine}`;
+        else if (s.inizio) t += `: dal ${s.inizio}`;
+        else if (s.fine) t += `: fino al ${s.fine}`;
+        return t;
+      };
+      descEl.innerHTML = stagioni
+        .filter(s => s.nome)
+        .map(s => {
+          const isAttiva = stagioneAttiva && stagioneAttiva.nome === s.nome;
+          return `<div style="${isAttiva ? "font-weight:bold;" : "opacity:0.65;"}">${_testo(s)}</div>`;
+        })
+        .join("");
+      descEl.style.display = "";
+    }
+  }
 }

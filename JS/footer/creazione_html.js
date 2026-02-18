@@ -3,6 +3,38 @@
 // Dipende da: date-utils.js, Gestisci_chiusure.js, gestisci_apertura.js
 // ============================================================
 
+// ── Testo descrittivo per una singola stagione ───────────────
+function _testoStagione(stagione) {
+  const nome = stagione.nome || "";
+  let testo = `Orario ${nome}`;
+  if (stagione.inizio && stagione.fine) testo += `: dal ${stagione.inizio} al ${stagione.fine}`;
+  else if (stagione.inizio) testo += `: dal ${stagione.inizio}`;
+  else if (stagione.fine) testo += `: fino al ${stagione.fine}`;
+  return testo;
+}
+
+// ── HTML con tutte le stagioni (quella attiva in grassetto) ──
+function getAllStagioniHTML(data, dataRiferimento) {
+  const stagioni = data.orariStagionali || [];
+  if (!stagioni.length) return `<div id="descrizione-stagione" style="display:none;"></div>`;
+
+  const stagioneAttiva = getStagioneAttiva(data, dataRiferimento);
+
+  const righe = stagioni
+    .filter(s => s.nome)
+    .map(s => {
+      const testo = _testoStagione(s);
+      const isAttiva = stagioneAttiva && stagioneAttiva.nome === s.nome;
+      if (isAttiva) {
+        return `<div style="font-weight:bold;">${testo}</div>`;
+      }
+      return `<div style="opacity:0.65;">${testo}</div>`;
+    })
+    .join("");
+
+  return `<div id="descrizione-stagione" style="margin-top:8px;font-size:0.85em;">${righe}</div>`;
+}
+
 function createFooterHTML(data, giornoPartenza) {
   const oggiReal = giornoPartenza || new Date();
   const oggi = new Date(oggiReal);
@@ -22,6 +54,9 @@ function createFooterHTML(data, giornoPartenza) {
 
   // Titolo sezione orari: "Orario Estivo" / "Orario Invernale" / "Orari"
   const titoloOrari = nomeStagione ? `Orario ${nomeStagione}` : "Orari";
+
+  // HTML con tutte le stagioni per la legenda
+  const stagioniHTML = getAllStagioniHTML(data, oggiReal);
 
   const unifiedFerieDates = getUnifiedFerieDates(data, oggi.getFullYear());
   const unifiedFerieDatesNextYear = getUnifiedFerieDates(
@@ -204,6 +239,7 @@ function createFooterHTML(data, giornoPartenza) {
             };margin-right:8px;border-radius:50%;display:inline-block;"></span>${
               legenda.testo.chiuso || "Chiuso"
             }</div>
+            ${stagioniHTML}
           </div>
         </div>
       </div>
