@@ -33,17 +33,24 @@ function _testoStagioneConAnni(stagione, annoInizio, annoFine) {
 }
 
 // Risolve la data e aggiunge l'anno se la data è dinamica (auto-marzo/auto-ottobre)
-// Per date fisse "DD/MM" non aggiunge l'anno perché è già implicito
+// Restituisce la data formattata con il mese scritto per esteso, senza anno
+// Es: "26 ottobre", "29 marzo"
 function _resolveDataLabelConAnno(ddmm, anno) {
   if (!ddmm) return "";
+  const nomiMesi = ["gennaio","febbraio","marzo","aprile","maggio","giugno",
+                    "luglio","agosto","settembre","ottobre","novembre","dicembre"];
   const minusOne = ddmm.endsWith("-1");
   const base = minusOne ? ddmm.slice(0, -2) : ddmm;
   let d;
   if (base === "auto-marzo") d = ultimaDomenica(anno, 3);
   else if (base === "auto-ottobre") d = ultimaDomenica(anno, 10);
-  else return ddmm; // data fissa: mostra senza anno
+  else {
+    // Data fissa DD/MM: scrivi mese per esteso
+    const [gg, mm] = ddmm.split("/").map(Number);
+    return `${gg} ${nomiMesi[mm - 1]}`;
+  }
   if (minusOne) d.setDate(d.getDate() - 1);
-  return `${formatDateDM(d)}/${anno}`;
+  return `${d.getDate()} ${nomiMesi[d.getMonth()]}`;
 }
 
 // Compatibilità con chiamate vecchie che passano solo un anno
