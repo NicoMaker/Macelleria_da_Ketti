@@ -7,7 +7,8 @@
 function _testoStagione(stagione) {
   const nome = stagione.nome || "";
   let testo = `Orario ${nome}`;
-  if (stagione.inizio && stagione.fine) testo += `: dal ${stagione.inizio} al ${stagione.fine}`;
+  if (stagione.inizio && stagione.fine)
+    testo += `: dal ${stagione.inizio} al ${stagione.fine}`;
   else if (stagione.inizio) testo += `: dal ${stagione.inizio}`;
   else if (stagione.fine) testo += `: fino al ${stagione.fine}`;
   return testo;
@@ -16,13 +17,14 @@ function _testoStagione(stagione) {
 // ── HTML con tutte le stagioni (quella attiva in grassetto) ──
 function getAllStagioniHTML(data, dataRiferimento) {
   const stagioni = data.orariStagionali || [];
-  if (!stagioni.length) return `<div id="descrizione-stagione" style="display:none;"></div>`;
+  if (!stagioni.length)
+    return `<div id="descrizione-stagione" style="display:none;"></div>`;
 
   const stagioneAttiva = getStagioneAttiva(data, dataRiferimento);
 
   const righe = stagioni
-    .filter(s => s.nome)
-    .map(s => {
+    .filter((s) => s.nome)
+    .map((s) => {
       const testo = _testoStagione(s);
       const isAttiva = stagioneAttiva && stagioneAttiva.nome === s.nome;
       if (isAttiva) {
@@ -32,7 +34,7 @@ function getAllStagioniHTML(data, dataRiferimento) {
     })
     .join("");
 
-  return `<div id="descrizione-stagione" style="margin-top:8px;font-size:0.85em;">${righe}</div>`;
+  return `<div id="descrizione-stagione" style="margin-top:14px;font-size:0.85em;">${righe}</div>`;
 }
 
 function createFooterHTML(data, giornoPartenza) {
