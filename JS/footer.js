@@ -1,296 +1,240 @@
+// ============================================================
 // Footer dynamic content and map initialization
-// Variabili globali per tracciare lo stato della mappa
-let currentMapCoordinates = null;
+// ============================================================
 
-function formatPhoneNumber(phoneNumber) {
-  // Remove all existing spaces
-  const cleaned = phoneNumber.replace(/\s/g, "");
-
-  // Check if it's an Italian number (+39)
-  if (cleaned.startsWith("+39")) {
-    const prefix = "+39";
-    const rest = cleaned.substring(3);
-
-    // Format based on number length
-    if (rest.length === 10) {
-      // Format: +39 XXX XXX XXXX
-      return `${prefix} ${rest.substring(0, 3)} ${rest.substring(
-        3,
-        6
-      )} ${rest.substring(6)}`;
-    } else if (rest.length === 9) {
-      // Format: +39 XXX XXXX XXX (for older formats)
-      return `${prefix} ${rest.substring(0, 3)} ${rest.substring(
-        3,
-        7
-      )} ${rest.substring(7)}`;
-    }
+// ============================================================
+// DateUtils — utility statiche pure
+// ============================================================
+class DateUtils {
+  static formatDM(date) {
+    const giorno = String(date.getDate()).padStart(2, "0");
+    const mese = String(date.getMonth() + 1).padStart(2, "0");
+    return `${giorno}/${mese}`;
   }
 
-  // Return original if format doesn't match
-  return phoneNumber;
-}
-
-document.addEventListener("DOMContentLoaded", () => {
-  const footer = document.getElementById("Contatti");
-  if (!footer) return;
-
-  const jsonPath = window.location.pathname.includes("/Projects/")
-    ? "../JSON/footer.json"
-    : "JSON/footer.json";
-
-  fetch(jsonPath)
-    .then((response) => response.json())
-    .then((data) => {
-      footer.innerHTML = createFooterHTML(data);
-
-      setTimeout(() => {
-        // Inizializza la mappa solo se necessario
-        if (data.mappa && data.mappa.latitudine && data.mappa.longitudine) {
-          initMap(data.mappa.latitudine, data.mappa.longitudine);
-        }
-
-        document.dispatchEvent(new CustomEvent("footerLoaded"));
-
-        const now = new Date();
-        const secondsToNextMinute = 60 - now.getSeconds();
-
-        setTimeout(() => {
-          aggiornaColoreOrari(data);
-          setInterval(() => aggiornaColoreOrari(data), 60000);
-        }, secondsToNextMinute * 1000);
-
-        aggiornaColoreOrari(data);
-
-        // Schedula il refresh intelligente a mezzanotte
-        scheduleFooterRefreshAtMidnight(data);
-      }, 100);
-    })
-    .catch((error) => {
-      console.error("Errore nel caricamento dei dati del footer:", error);
-      footer.innerHTML = `<p style="text-align:center; color: white;">Impossibile caricare le informazioni del footer.</p>`;
-    });
-});
-
-const formatDateDM = (date) => {
-  const giorno = String(date.getDate()).padStart(2, "0");
-  const mese = String(date.getMonth() + 1).padStart(2, "0");
-  return `${giorno}/${mese}`;
-};
-
-function getUnifiedFerieDates(data, year) {
-  const unifiedDates = new Set();
-  const giorniExtraFerie =
-    (data.giorniChiusuraExtra && data.giorniChiusuraExtra.ferie) || [];
-
-  giorniExtraFerie.forEach((date) => unifiedDates.add(date));
-
-  const parseDate = (dateStr, y) => {
+  static parseDate(dateStr, year) {
     const [day, month] = dateStr.split("/").map(Number);
-    return new Date(y, month - 1, day, 0, 0, 0, 0);
-  };
+    return new Date(year, month - 1, day, 0, 0, 0, 0);
+  }
 
-  const feriePeriods = data.ferie || [];
-  for (const period of feriePeriods) {
-    if (!period.inizio || !period.fine) continue;
+  static formatPhone(phoneNumber) {
+    const cleaned = phoneNumber.replace(/\s/g, "");
+    if (cleaned.startsWith("+39")) {
+      const prefix = "+39";
+      const rest = cleaned.substring(3);
+      if (rest.length === 10)
+        return `${prefix} ${rest.substring(0, 3)} ${rest.substring(3, 6)} ${rest.substring(6)}`;
+      if (rest.length === 9)
+        return `${prefix} ${rest.substring(0, 3)} ${rest.substring(3, 7)} ${rest.substring(7)}`;
+    }
+    return phoneNumber;
+  }
 
-    const dataInizio = parseDate(period.inizio, year);
-    let dataFine = parseDate(period.fine, year);
+  static calcolaPasqua(anno) {
+    const a = anno % 19;
+    const b = Math.floor(anno / 100);
+    const c = anno % 100;
+    const d = Math.floor(b / 4);
+    const e = b % 4;
+    const f = Math.floor((b + 8) / 25);
+    const g = Math.floor((b - f + 1) / 3);
+    const h = (19 * a + b - d - g + 15) % 30;
+    const i = Math.floor(c / 4);
+    const k = c % 4;
+    const l = (32 + 2 * e + 2 * i - h - k) % 7;
+    const m = Math.floor((a + 11 * h + 22 * l) / 451);
+    const mese = Math.floor((h + l - 7 * m + 114) / 31);
+    const giorno = ((h + l - 7 * m + 114) % 31) + 1;
+    return new Date(anno, mese - 1, giorno);
+  }
 
-    if (dataInizio.getTime() > dataFine.getTime()) {
-      dataFine = parseDate(period.fine, year + 1);
+  static getDatePasquali(anno) {
+    const pasqua = DateUtils.calcolaPasqua(anno);
+    const pasquetta = new Date(pasqua);
+    pasquetta.setDate(pasquetta.getDate() + 1);
+    return {
+      pasqua: DateUtils.formatDM(pasqua),
+      pasquetta: DateUtils.formatDM(pasquetta),
+    };
+  }
+}
+
+// ============================================================
+// ChiusuraManager — logica chiusure (ferie, festività, extra)
+// ============================================================
+class ChiusuraManager {
+  constructor(data) {
+    this.data = data;
+  }
+
+  getUnifiedFerieDates(year) {
+    const unifiedDates = new Set();
+    const giorniExtraFerie =
+      (this.data.giorniChiusuraExtra && this.data.giorniChiusuraExtra.ferie) ||
+      [];
+
+    giorniExtraFerie.forEach((date) => unifiedDates.add(date));
+
+    const feriePeriods = this.data.ferie || [];
+    for (const period of feriePeriods) {
+      if (!period.inizio || !period.fine) continue;
+
+      const dataInizio = DateUtils.parseDate(period.inizio, year);
+      let dataFine = DateUtils.parseDate(period.fine, year);
+
+      if (dataInizio.getTime() > dataFine.getTime()) {
+        dataFine = DateUtils.parseDate(period.fine, year + 1);
+      }
+
+      const currentDate = new Date(dataInizio);
+      while (currentDate.getTime() <= dataFine.getTime()) {
+        unifiedDates.add(DateUtils.formatDM(currentDate));
+        currentDate.setDate(currentDate.getDate() + 1);
+      }
     }
 
-    const currentDate = new Date(dataInizio);
-    while (currentDate.getTime() <= dataFine.getTime()) {
-      unifiedDates.add(formatDateDM(currentDate));
+    return unifiedDates;
+  }
+
+  findConsecutiveClosureEnd(startDate, unifiedFerieDates) {
+    const startDateDM = DateUtils.formatDM(startDate);
+
+    if (!unifiedFerieDates.has(startDateDM)) {
+      return startDateDM;
+    }
+
+    const currentDate = new Date(startDate);
+    let endDate = new Date(startDate);
+
+    while (true) {
       currentDate.setDate(currentDate.getDate() + 1);
+      const nextDateDM = DateUtils.formatDM(currentDate);
+
+      if (!unifiedFerieDates.has(nextDateDM)) {
+        return DateUtils.formatDM(endDate);
+      }
+
+      endDate = new Date(currentDate);
     }
   }
 
-  return unifiedDates;
-}
+  getMotivoExtraForDate(dataFormattata) {
+    const motiviExtra = this.data.giorniChiusuraExtra?.["motivi-extra"] || [];
 
-function findConsecutiveClosureEnd(startDate, unifiedFerieDates) {
-  const startDateDM = formatDateDM(startDate);
-
-  if (!unifiedFerieDates.has(startDateDM)) {
-    return startDateDM;
-  }
-
-  const currentDate = new Date(startDate);
-  let endDate = new Date(startDate);
-
-  while (true) {
-    currentDate.setDate(currentDate.getDate() + 1);
-    const nextDateDM = formatDateDM(currentDate);
-
-    if (!unifiedFerieDates.has(nextDateDM)) {
-      return formatDateDM(endDate);
+    for (const item of motiviExtra) {
+      if (item.giorno === dataFormattata && item.giorno !== "") {
+        return item.motivo || "Motivi Extra";
+      }
     }
-
-    endDate = new Date(currentDate);
+    return null;
   }
-}
 
-function getMotivoExtraForDate(data, dataFormattata) {
-  const motiviExtra = data.giorniChiusuraExtra?.["motivi-extra"] || [];
+  getOrariExtraForDate(dataFormattata, dayOfWeek) {
+    const orariExtra = this.data.orariExtra || [];
+    const nomiGiorni = this.data.nomiGiorni;
 
-  for (const item of motiviExtra) {
-    if (item.giorno === dataFormattata && item.giorno !== "") {
-      return item.motivo || "Motivi Extra";
+    for (const item of orariExtra) {
+      if (item.giorno === dataFormattata && item.orari) {
+        const nomeGiorno = nomiGiorni[dayOfWeek];
+        return `${nomeGiorno}: ${item.orari} (${item.motivo})`;
+      }
     }
-  }
-  return null;
-}
-
-function getOrariExtraForDate(data, dataFormattata, dayOfWeek) {
-  const orariExtra = data.orariExtra || [];
-  const nomiGiorni = data.nomiGiorni;
-
-  for (const item of orariExtra) {
-    if (item.giorno === dataFormattata && item.orari) {
-      const nomeGiorno = nomiGiorni[dayOfWeek];
-      return `${nomeGiorno}: ${item.orari} (${item.motivo})`;
-    }
-  }
-  return null;
-}
-
-function getSingleDayClosureReason(
-  checkDate,
-  data,
-  unifiedFerieDates,
-  unifiedFerieDatesNextYear = null
-) {
-  const festivita = data.festivita || [];
-  
-  // *** AGGIUNTA: Calcola le date pasquali per l'anno corrente e successivo ***
-  const annoCorrente = checkDate.getFullYear();
-  const datePasqualiCorrente = getDatePasquali(annoCorrente);
-  
-  // *** AGGIUNTA: Crea un array con tutte le festività incluse Pasqua e Pasquetta ***
-  const festivitaComplete = [
-    ...festivita,
-    datePasqualiCorrente.pasqua,
-    datePasqualiCorrente.pasquetta,
-  ];
-
-  const dateToCheck = new Date(checkDate);
-  const dataFormattata = formatDateDM(dateToCheck);
-
-  // *** MODIFICA: Usa festivitaComplete invece di festivita ***
-  if (festivitaComplete.includes(dataFormattata)) {
-    return { reason: "festivita", dataChiusura: dataFormattata };
+    return null;
   }
 
-  if (unifiedFerieDates.has(dataFormattata)) {
-    const fineChiusura = findConsecutiveClosureEnd(
-      dateToCheck,
-      unifiedFerieDates
-    );
-    return {
-      reason: "ferie",
-      dataChiusura: fineChiusura,
-    };
-  }
-
-  if (
-    unifiedFerieDatesNextYear &&
-    unifiedFerieDatesNextYear.has(dataFormattata)
-  ) {
-    const fineChiusura = findConsecutiveClosureEnd(
-      dateToCheck,
-      unifiedFerieDatesNextYear
-    );
-    return {
-      reason: "ferie",
-      dataChiusura: fineChiusura,
-    };
-  }
-
-  const motivoExtra = getMotivoExtraForDate(data, dataFormattata);
-  if (motivoExtra) {
-    return {
-      reason: "motivi-extra",
-      dataChiusura: dataFormattata,
-      motivoSpecifico: motivoExtra,
-    };
-  }
-
-  return null;
-}
-
-// Funzione principale per creare il footer dinamico
-// Funzione principale per creare il footer dinamico
-function createFooterHTML(data, giornoPartenza) {
-  const oggiReal = giornoPartenza || new Date();
-  const oggi = new Date(oggiReal);
-  oggi.setHours(0, 0, 0, 0);
-
-  const giornoSettimana = oggiReal.getDay();
-  const oraCorrente = oggiReal.getHours() * 100 + oggiReal.getMinutes();
-  const indiceGiornoCorrente = giornoSettimana === 0 ? 6 : giornoSettimana - 1;
-
-  const info = data.info || {};
-  const contatti = data.contatti || {};
-  const orari = data.orari || [];
-  const social = data.social || {};
-  const legenda = data.legendaOrari || { colori: {}, testo: {} };
-
-  const unifiedFerieDates = getUnifiedFerieDates(data, oggi.getFullYear());
-  const unifiedFerieDatesNextYear = getUnifiedFerieDates(
-    data,
-    oggi.getFullYear() + 1
-  );
-
-  const dataOggiFormattata = formatDateDM(oggiReal);
-  const orariExtraOggi = getOrariExtraForDate(
-    data,
-    dataOggiFormattata,
-    giornoSettimana
-  );
-
-  const singleDayClosure = getSingleDayClosureReason(
-    oggiReal,
-    data,
+  getSingleDayClosureReason(
+    checkDate,
     unifiedFerieDates,
-    unifiedFerieDatesNextYear
-  );
-  const isFestivita =
-    singleDayClosure && singleDayClosure.reason === "festivita";
-  const eFerieOggi = singleDayClosure && singleDayClosure.reason === "ferie";
-  const isMotivoExtra =
-    singleDayClosure && singleDayClosure.reason === "motivi-extra";
+    unifiedFerieDatesNextYear = null,
+  ) {
+    const festivita = this.data.festivita || [];
 
-  let eChiusoOggi = isFestivita || eFerieOggi || isMotivoExtra;
+    // Calcola le date pasquali per l'anno corrente
+    const annoCorrente = checkDate.getFullYear();
+    const datePasqualiCorrente = DateUtils.getDatePasquali(annoCorrente);
 
-  function checkStatoApertura(orariString) {
-    if (eChiusoOggi && !orariExtraOggi)
+    // Crea un array con tutte le festività incluse Pasqua e Pasquetta
+    const festivitaComplete = [
+      ...festivita,
+      datePasqualiCorrente.pasqua,
+      datePasqualiCorrente.pasquetta,
+    ];
+
+    const dateToCheck = new Date(checkDate);
+    const dataFormattata = DateUtils.formatDM(dateToCheck);
+
+    if (festivitaComplete.includes(dataFormattata)) {
+      return { reason: "festivita", dataChiusura: dataFormattata };
+    }
+
+    if (unifiedFerieDates.has(dataFormattata)) {
+      const fineChiusura = this.findConsecutiveClosureEnd(
+        dateToCheck,
+        unifiedFerieDates,
+      );
+      return { reason: "ferie", dataChiusura: fineChiusura };
+    }
+
+    if (
+      unifiedFerieDatesNextYear &&
+      unifiedFerieDatesNextYear.has(dataFormattata)
+    ) {
+      const fineChiusura = this.findConsecutiveClosureEnd(
+        dateToCheck,
+        unifiedFerieDatesNextYear,
+      );
+      return { reason: "ferie", dataChiusura: fineChiusura };
+    }
+
+    const motivoExtra = this.getMotivoExtraForDate(dataFormattata);
+    if (motivoExtra) {
+      return {
+        reason: "motivi-extra",
+        dataChiusura: dataFormattata,
+        motivoSpecifico: motivoExtra,
+      };
+    }
+
+    return null;
+  }
+}
+
+// ============================================================
+// AperturaChecker — determina lo stato aperto/chiuso/in-chiusura
+// ============================================================
+class AperturaChecker {
+  constructor(data, eChiusoOggi, orariExtraOggi) {
+    this.data = data;
+    this.eChiusoOggi = eChiusoOggi;
+    this.orariExtraOggi = orariExtraOggi;
+  }
+
+  static parseTime(t) {
+    const [ore, minuti] = t.split(":");
+    return Number.parseInt(ore) * 100 + Number.parseInt(minuti);
+  }
+
+  check(orariString, oraCorrente) {
+    if (this.eChiusoOggi && !this.orariExtraOggi)
       return { stato: "chiuso", minutiAllaChiusura: 0 };
 
     if (!orariString || orariString.toLowerCase().includes("chiuso"))
       return { stato: "chiuso", minutiAllaChiusura: 0 };
 
     const orariMatch = orariString.match(
-      /(\d{1,2}:\d{2}\s*-\s*\d{1,2}:\d{2})/g
+      /(\d{1,2}:\d{2}\s*-\s*\d{1,2}:\d{2})/g,
     );
     if (!orariMatch) return { stato: "chiuso", minutiAllaChiusura: 0 };
 
-    const parseTime = (t) => {
-      const [ore, minuti] = t.split(":");
-      return Number.parseInt(ore) * 100 + Number.parseInt(minuti);
-    };
-
     for (const range of orariMatch) {
       const [inizio, fine] = range.split("-").map((s) => s.trim());
-      const inizioTime = parseTime(inizio);
-      const fineTime = parseTime(fine);
+      const inizioTime = AperturaChecker.parseTime(inizio);
+      const fineTime = AperturaChecker.parseTime(fine);
 
-      let fineMinuti = fineTime % 100;
+      let fineMinuti = Math.floor(fineTime % 100);
       let fineOre = Math.floor(fineTime / 100);
 
-      const minutiPrimaChiusura = data.minutiInChiusura || 30;
+      const minutiPrimaChiusura = this.data.minutiInChiusura || 30;
       fineMinuti -= minutiPrimaChiusura;
       if (fineMinuti < 0) {
         fineMinuti += 60;
@@ -307,7 +251,6 @@ function createFooterHTML(data, giornoPartenza) {
           const minutiTotaliCorrente = oreCorr * 60 + minCorr;
           const minutiTotaliFine = oreFine * 60 + minFine;
           const minutiMancanti = minutiTotaliFine - minutiTotaliCorrente;
-
           return { stato: "in-chiusura", minutiAllaChiusura: minutiMancanti };
         }
         return { stato: "aperto", minutiAllaChiusura: 0 };
@@ -316,88 +259,213 @@ function createFooterHTML(data, giornoPartenza) {
 
     return { stato: "chiuso", minutiAllaChiusura: 0 };
   }
+}
 
-  const orariDaUsareOggi = orariExtraOggi || orari[indiceGiornoCorrente];
-  if (orariExtraOggi) eChiusoOggi = false;
-
-  const statoApertura = checkStatoApertura(orariDaUsareOggi);
-
-  // Genera i prossimi 7 giorni partendo dal giorno reale
-  const giorniDaVisualizzare = [];
-  for (let i = 0; i < 7; i++) {
-    const dataDelGiorno = new Date(oggi);
-    dataDelGiorno.setDate(oggi.getDate() + i);
-    giorniDaVisualizzare.push(dataDelGiorno);
+// ============================================================
+// MapManager — gestione iframe OpenStreetMap
+// ============================================================
+class MapManager {
+  constructor(containerId = "map") {
+    this.containerId = containerId;
+    this.currentMapCoordinates = null;
   }
 
-  // Costruzione HTML degli orari
-  const orariHtml = giorniDaVisualizzare
-    .map((dataDelGiorno, i) => {
-      let colore = "";
-      let peso = "";
-      let testoExtra = "";
+  init(lat, lon) {
+    const mapContainer = document.getElementById(this.containerId);
+    if (!mapContainer) return;
 
-      const dayOfWeek = dataDelGiorno.getDay();
-      const orariIndex = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
-      const dataFormattata = formatDateDM(dataDelGiorno);
-      const orariExtraGiorno = getOrariExtraForDate(
-        data,
-        dataFormattata,
-        dayOfWeek
+    // Verifica se le coordinate sono cambiate
+    const newCoordinates = `${lat},${lon}`;
+    if (this.currentMapCoordinates === newCoordinates) {
+      console.log("Coordinate invariate - mappa non ricaricata");
+      return;
+    }
+
+    // Aggiorna le coordinate correnti
+    this.currentMapCoordinates = newCoordinates;
+
+    // Svuota il contenitore prima di creare una nuova mappa
+    mapContainer.innerHTML = "";
+
+    const iframe = document.createElement("iframe");
+    iframe.width = "100%";
+    iframe.height = "100%";
+    iframe.frameBorder = "0";
+    iframe.style.border = "none";
+
+    const zoomLevel = 0.0005;
+    iframe.src = `https://www.openstreetmap.org/export/embed.html?bbox=${
+      lon - zoomLevel
+    },${lat - zoomLevel},${lon + zoomLevel},${
+      lat + zoomLevel
+    }&layer=mapnik&marker=${lat},${lon}`;
+    iframe.loading = "lazy";
+
+    mapContainer.appendChild(iframe);
+    console.log("Mappa inizializzata con coordinate:", newCoordinates);
+  }
+}
+
+// ============================================================
+// FooterRenderer — costruisce e aggiorna l'HTML del footer
+// ============================================================
+class FooterRenderer {
+  constructor(data, chiusuraManager) {
+    this.data = data;
+    this.cm = chiusuraManager;
+  }
+
+  // Costruisce il contesto condiviso (stato apertura, ferie, ecc.)
+  buildContext(giornoPartenza) {
+    const oggiReal = giornoPartenza || new Date();
+    const oggi = new Date(oggiReal);
+    oggi.setHours(0, 0, 0, 0);
+
+    const giornoSettimana = oggiReal.getDay();
+    const oraCorrente = oggiReal.getHours() * 100 + oggiReal.getMinutes();
+    const indiceGiornoCorrente =
+      giornoSettimana === 0 ? 6 : giornoSettimana - 1;
+
+    const unifiedFerieDates = this.cm.getUnifiedFerieDates(oggi.getFullYear());
+    const unifiedFerieDatesNextYear = this.cm.getUnifiedFerieDates(
+      oggi.getFullYear() + 1,
+    );
+
+    const dataOggiFormattata = DateUtils.formatDM(oggiReal);
+    const orariExtraOggi = this.cm.getOrariExtraForDate(
+      dataOggiFormattata,
+      giornoSettimana,
+    );
+
+    const singleDayClosure = this.cm.getSingleDayClosureReason(
+      oggiReal,
+      unifiedFerieDates,
+      unifiedFerieDatesNextYear,
+    );
+
+    const isFestivita =
+      singleDayClosure && singleDayClosure.reason === "festivita";
+    const eFerieOggi = singleDayClosure && singleDayClosure.reason === "ferie";
+    const isMotivoExtra =
+      singleDayClosure && singleDayClosure.reason === "motivi-extra";
+
+    let eChiusoOggi = isFestivita || eFerieOggi || isMotivoExtra;
+
+    const orariDaUsareOggi =
+      orariExtraOggi || this.data.orari[indiceGiornoCorrente];
+    if (orariExtraOggi) eChiusoOggi = false;
+
+    const checker = new AperturaChecker(this.data, eChiusoOggi, orariExtraOggi);
+    const statoApertura = checker.check(orariDaUsareOggi, oraCorrente);
+
+    return {
+      oggiReal,
+      oggi,
+      giornoSettimana,
+      oraCorrente,
+      indiceGiornoCorrente,
+      unifiedFerieDates,
+      unifiedFerieDatesNextYear,
+      orariExtraOggi,
+      eChiusoOggi,
+      statoApertura,
+    };
+  }
+
+  // Costruisce l'HTML di un singolo giorno nella lista orari
+  buildGiornoHTML(dataDelGiorno, i, ctx) {
+    const {
+      unifiedFerieDates,
+      unifiedFerieDatesNextYear,
+      eChiusoOggi,
+      statoApertura,
+    } = ctx;
+    const legenda = this.data.legendaOrari || { colori: {}, testo: {} };
+    const orari = this.data.orari || [];
+
+    const dayOfWeek = dataDelGiorno.getDay();
+    const orariIndex = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
+    const dataFormattata = DateUtils.formatDM(dataDelGiorno);
+    const orariExtraGiorno = this.cm.getOrariExtraForDate(
+      dataFormattata,
+      dayOfWeek,
+    );
+    const nomeGiorno = this.data.nomiGiorni[dayOfWeek];
+
+    let testoOrario;
+    let colore = "";
+    let peso = "";
+    let testoExtra = "";
+
+    if (orariExtraGiorno) {
+      testoOrario = orariExtraGiorno;
+    } else {
+      testoOrario = orari[orariIndex];
+      const closureCheck = this.cm.getSingleDayClosureReason(
+        dataDelGiorno,
+        unifiedFerieDates,
+        unifiedFerieDatesNextYear,
       );
-
-      let testoOrario;
-      const nomeGiorno = data.nomiGiorni[dayOfWeek];
-
-      if (orariExtraGiorno) {
-        testoOrario = orariExtraGiorno;
-      } else {
-        testoOrario = orari[orariIndex];
-        const closureCheck = getSingleDayClosureReason(
-          dataDelGiorno,
-          data,
-          unifiedFerieDates,
-          unifiedFerieDatesNextYear
-        );
-        if (closureCheck && closureCheck.reason === "festivita") {
-          testoOrario = `${nomeGiorno}: Chiuso (Festività)`;
-        } else if (closureCheck && closureCheck.reason === "ferie") {
-          testoOrario = `${nomeGiorno}: Chiuso (Ferie fino al ${closureCheck.dataChiusura})`;
-        } else if (closureCheck && closureCheck.reason === "motivi-extra") {
-          testoOrario = `${nomeGiorno}: Chiuso (${closureCheck.motivoSpecifico})`;
-        }
+      if (closureCheck && closureCheck.reason === "festivita") {
+        testoOrario = `${nomeGiorno}: Chiuso (Festività)`;
+      } else if (closureCheck && closureCheck.reason === "ferie") {
+        testoOrario = `${nomeGiorno}: Chiuso (Ferie fino al ${closureCheck.dataChiusura})`;
+      } else if (closureCheck && closureCheck.reason === "motivi-extra") {
+        testoOrario = `${nomeGiorno}: Chiuso (${closureCheck.motivoSpecifico})`;
       }
+    }
 
-      if (i === 0) {
-        peso = "font-weight:bold;";
-        if (eChiusoOggi || statoApertura.stato === "chiuso") {
-          colore = legenda.colori.chiuso || "orange";
-        } else if (statoApertura.stato === "in-chiusura") {
-          colore = legenda.colori["in chiusura"] || "#FFD700";
-          const minuti = statoApertura.minutiAllaChiusura;
-          const testoMinuti = minuti === 1 ? "minuto" : "minuti";
-          testoOrario = `${testoOrario} (${minuti} ${testoMinuti})`;
-          testoExtra = "";
-        } else {
-          colore = legenda.colori.aperto || "#00FF7F";
-        }
-      } else {
+    if (i === 0) {
+      peso = "font-weight:bold;";
+      if (eChiusoOggi || statoApertura.stato === "chiuso") {
         colore = legenda.colori.chiuso || "orange";
+      } else if (statoApertura.stato === "in-chiusura") {
+        colore = legenda.colori["in chiusura"] || "#FFD700";
+        const minuti = statoApertura.minutiAllaChiusura;
+        const testoMinuti = minuti === 1 ? "minuto" : "minuti";
+        testoOrario = `${testoOrario} (${minuti} ${testoMinuti})`;
+        testoExtra = "";
+      } else {
+        colore = legenda.colori.aperto || "#00FF7F";
       }
+    }
 
-      return `<li class="footer-item" style="color:${colore};${peso}">${testoOrario}${testoExtra}</li>`;
-    })
-    .join("");
+    return `<li class="footer-item" style="color:${colore};${peso}">${testoOrario}${testoExtra}</li>`;
+  }
 
-  const testoInChiusuraSpan =
-    statoApertura.stato === "in-chiusura"
-      ? `In chiusura tra ${statoApertura.minutiAllaChiusura} ${
-          statoApertura.minutiAllaChiusura === 1 ? "minuto" : "minuti"
-        }`
-      : legenda.testo["in chiusura"] || "In chiusura";
+  // Costruisce l'HTML completo della lista orari (7 giorni)
+  buildOrariHTML(ctx) {
+    const { oggi } = ctx;
+    const giorni = Array.from({ length: 7 }, (_, i) => {
+      const d = new Date(oggi);
+      d.setDate(oggi.getDate() + i);
+      return d;
+    });
+    return giorni.map((d, i) => this.buildGiornoHTML(d, i, ctx)).join("");
+  }
 
-  // Restituisci l'HTML completo del footer
-  return `
+  // Crea l'HTML completo del footer (identico all'originale)
+  createHTML(giornoPartenza) {
+    const ctx = this.buildContext(giornoPartenza);
+    const { oggiReal, statoApertura } = ctx;
+
+    const data = this.data;
+    const info = data.info || {};
+    const contatti = data.contatti || {};
+    const orari = data.orari || [];
+    const social = data.social || {};
+    const legenda = data.legendaOrari || { colori: {}, testo: {} };
+
+    const orariHtml = this.buildOrariHTML(ctx);
+
+    const testoInChiusuraSpan =
+      statoApertura.stato === "in-chiusura"
+        ? `In chiusura tra ${statoApertura.minutiAllaChiusura} ${
+            statoApertura.minutiAllaChiusura === 1 ? "minuto" : "minuti"
+          }`
+        : legenda.testo["in chiusura"] || "In chiusura";
+
+    return `
     <div class="footer-content">
       <!-- Sezioni info+contatti, orari e social -->
       <div class="footer-grid">
@@ -412,8 +480,8 @@ function createFooterHTML(data, giornoPartenza) {
             contatti.telefono
               ? `<li class="footer-item"><span class="material-icons">phone</span> <a href="tel:${contatti.telefono.replace(
                   /\s/g,
-                  ""
-                )}">${formatPhoneNumber(contatti.telefono)}</a></li>`
+                  "",
+                )}">${DateUtils.formatPhone(contatti.telefono)}</a></li>`
               : ""
           }
           ${
@@ -461,16 +529,16 @@ function createFooterHTML(data, giornoPartenza) {
             <div><span style="height:12px;width:12px;background-color:${
               legenda.colori.aperto || "#00FF7F"
             };margin-right:8px;border-radius:50%;display:inline-block;"></span>${
-    legenda.testo.aperto || "Aperto"
-  }</div>
+              legenda.testo.aperto || "Aperto"
+            }</div>
             <div><span style="height:12px;width:12px;background-color:${
               legenda.colori["in chiusura"] || "#FFD700"
             };margin-right:8px;border-radius:50%;display:inline-block;"></span><span id="testo-in-chiusura">${testoInChiusuraSpan}</span></div>
             <div><span style="height:12px;width:12px;background-color:${
               legenda.colori.chiuso || "orange"
             };margin-right:8px;border-radius:50%;display:inline-block;"></span>${
-    legenda.testo.chiuso || "Chiuso"
-  }</div>
+              legenda.testo.chiuso || "Chiuso"
+            }</div>
           </div>
         </div>
       </div>
@@ -479,300 +547,146 @@ function createFooterHTML(data, giornoPartenza) {
     </div>
     <div class="footer-bottom">
       <p>© ${oggiReal.getFullYear()} ${
-    info.titolo || ""
-  }. Tutti i diritti riservati.${info.p_iva ? ` - P.IVA ${info.p_iva}` : ""}</p>
+        info.titolo || ""
+      }. Tutti i diritti riservati.${info.p_iva ? ` - P.IVA ${info.p_iva}` : ""}</p>
     </div>
     `;
-}
-
-function aggiornaColoreOrari(data) {
-  const orari = data.orari || [];
-  const legenda = data.legendaOrari || { colori: {}, testo: {} };
-
-  if (!orari.length) return;
-
-  // USA SEMPRE LA DATA REALE DEL MOMENTO
-  const oggiReal = new Date();
-  const oggi = new Date(oggiReal);
-  oggi.setHours(0, 0, 0, 0);
-  const giornoSettimana = oggiReal.getDay();
-  const oraCorrente = oggiReal.getHours() * 100 + oggiReal.getMinutes();
-
-  const indiceGiornoCorrente = giornoSettimana === 0 ? 6 : giornoSettimana - 1;
-
-  const unifiedFerieDates = getUnifiedFerieDates(data, oggi.getFullYear());
-  const unifiedFerieDatesNextYear = getUnifiedFerieDates(
-    data,
-    oggi.getFullYear() + 1
-  );
-
-  const dataOggiFormattata = formatDateDM(oggiReal);
-  const orariExtraOggi = getOrariExtraForDate(
-    data,
-    dataOggiFormattata,
-    giornoSettimana
-  );
-
-  const singleDayClosure = getSingleDayClosureReason(
-    oggiReal,
-    data,
-    unifiedFerieDates,
-    unifiedFerieDatesNextYear
-  );
-  const isFestivita =
-    singleDayClosure && singleDayClosure.reason === "festivita";
-  const eFerieOggi = singleDayClosure && singleDayClosure.reason === "ferie";
-  const isMotivoExtra =
-    singleDayClosure && singleDayClosure.reason === "motivi-extra";
-
-  let eChiusoOggi = isFestivita || eFerieOggi || isMotivoExtra;
-
-  function checkStatoApertura(orariString) {
-    if (eChiusoOggi && !orariExtraOggi)
-      return { stato: "chiuso", minutiAllaChiusura: 0 };
-
-    if (!orariString || orariString.toLowerCase().includes("chiuso"))
-      return { stato: "chiuso", minutiAllaChiusura: 0 };
-
-    const orariMatch = orariString.match(
-      /(\d{1,2}:\d{2}\s*-\s*\d{1,2}:\d{2})/g
-    );
-    if (!orariMatch) return { stato: "chiuso", minutiAllaChiusura: 0 };
-
-    const parseTime = (t) => {
-      const [ore, minuti] = t.split(":");
-      return Number.parseInt(ore) * 100 + Number.parseInt(minuti);
-    };
-
-    for (const range of orariMatch) {
-      const [inizio, fine] = range.split("-").map((s) => s.trim());
-      const inizioTime = parseTime(inizio);
-      const fineTime = parseTime(fine);
-
-      let fineMinuti = Math.floor(fineTime % 100);
-      let fineOre = Math.floor(fineTime / 100);
-
-      const minutiPrimaChiusura = data.minutiInChiusura || 30;
-      fineMinuti -= minutiPrimaChiusura;
-      if (fineMinuti < 0) {
-        fineMinuti += 60;
-        fineOre -= 1;
-      }
-      const inChiusuraTime = fineOre * 100 + fineMinuti;
-
-      if (oraCorrente >= inizioTime && oraCorrente < fineTime) {
-        if (oraCorrente >= inChiusuraTime) {
-          const oreCorr = Math.floor(oraCorrente / 100);
-          const minCorr = oraCorrente % 100;
-          const oreFine = Math.floor(fineTime / 100);
-          const minFine = fineTime % 100;
-
-          const minutiTotaliCorrente = oreCorr * 60 + minCorr;
-          const minutiTotaliFine = oreFine * 60 + minFine;
-          const minutiMancanti = minutiTotaliFine - minutiTotaliCorrente;
-
-          return { stato: "in-chiusura", minutiAllaChiusura: minutiMancanti };
-        }
-        return { stato: "aperto", minutiAllaChiusura: 0 };
-      }
-    }
-
-    return { stato: "chiuso", minutiAllaChiusura: 0 };
   }
 
-  const orariDaUsareOggi = orariExtraOggi || orari[indiceGiornoCorrente];
+  // Aggiorna SOLO la lista orari nel DOM (senza ricostruire tutto il footer)
+  updateOrariDOM(ctx) {
+    const { statoApertura } = ctx;
+    const legenda = this.data.legendaOrari || { colori: {}, testo: {} };
 
-  if (orariExtraOggi) {
-    eChiusoOggi = false;
-  }
+    const lista = document.querySelector("#orari-footer");
+    if (!lista) return;
 
-  const statoApertura = checkStatoApertura(orariDaUsareOggi);
+    lista.innerHTML = this.buildOrariHTML(ctx);
 
-  // Genera i prossimi 7 giorni partendo da OGGI (data reale)
-  const giorniDaVisualizzare = [];
-  for (let i = 0; i < 7; i++) {
-    const dataDelGiorno = new Date(oggi);
-    dataDelGiorno.setDate(oggi.getDate() + i);
-    dataDelGiorno.setHours(0, 0, 0, 0);
-    giorniDaVisualizzare.push(dataDelGiorno);
-  }
-
-  const lista = document.querySelector("#orari-footer");
-  if (!lista) return;
-
-  lista.innerHTML = giorniDaVisualizzare
-    .map((dataDelGiorno, i) => {
-      let colore = "";
-      let peso = "";
-      let testoExtra = "";
-
-      const dayOfWeek = dataDelGiorno.getDay();
-      const orariIndex = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
-
-      const dataFormattata = formatDateDM(dataDelGiorno);
-      const orariExtraGiorno = getOrariExtraForDate(
-        data,
-        dataFormattata,
-        dayOfWeek
-      );
-
-      let testoOrario;
-      const nomeGiorno = data.nomiGiorni[dayOfWeek];
-
-      if (orariExtraGiorno) {
-        testoOrario = orariExtraGiorno;
+    const testoInChiusuraSpan = document.getElementById("testo-in-chiusura");
+    if (testoInChiusuraSpan) {
+      if (statoApertura.stato === "in-chiusura") {
+        const minuti = statoApertura.minutiAllaChiusura;
+        const testoMinuti = minuti === 1 ? "minuto" : "minuti";
+        testoInChiusuraSpan.textContent = `In chiusura tra ${minuti} ${testoMinuti}`;
       } else {
-        testoOrario = orari[orariIndex];
-        const closureCheck = getSingleDayClosureReason(
-          dataDelGiorno,
-          data,
-          unifiedFerieDates,
-          unifiedFerieDatesNextYear
-        );
-        if (closureCheck && closureCheck.reason === "festivita") {
-          testoOrario = `${nomeGiorno}: Chiuso (Festività)`;
-        } else if (closureCheck && closureCheck.reason === "ferie") {
-          testoOrario = `${nomeGiorno}: Chiuso (Ferie fino al ${closureCheck.dataChiusura})`;
-        } else if (closureCheck && closureCheck.reason === "motivi-extra") {
-          testoOrario = `${nomeGiorno}: Chiuso (${closureCheck.motivoSpecifico})`;
-        }
+        testoInChiusuraSpan.textContent =
+          legenda.testo["in chiusura"] || "In chiusura";
       }
-
-      if (i === 0) {
-        peso = "font-weight:bold;";
-
-        if (eChiusoOggi || statoApertura.stato === "chiuso") {
-          colore = legenda.colori.chiuso || "orange";
-        } else if (statoApertura.stato === "in-chiusura") {
-          colore = legenda.colori["in chiusura"] || "#FFD700";
-          const minuti = statoApertura.minutiAllaChiusura;
-          const testoMinuti = minuti === 1 ? "minuto" : "minuti";
-
-          testoOrario = `${testoOrario} (${minuti} ${testoMinuti})`;
-          testoExtra = "";
-        } else {
-          colore = legenda.colori.aperto || "#00FF7F";
-        }
-      }
-
-      return `<li class="footer-item" style="color:${colore};${peso}">${testoOrario}${testoExtra}</li>`;
-    })
-    .join("");
-
-  const testoInChiusuraSpan = document.getElementById("testo-in-chiusura");
-  if (testoInChiusuraSpan) {
-    if (statoApertura.stato === "in-chiusura") {
-      const minuti = statoApertura.minutiAllaChiusura;
-      const testoMinuti = minuti === 1 ? "minuto" : "minuti";
-      testoInChiusuraSpan.textContent = `In chiusura tra ${minuti} ${testoMinuti}`;
-    } else {
-      testoInChiusuraSpan.textContent =
-        legenda.testo["in chiusura"] || "In chiusura";
     }
   }
 }
 
-function initMap(lat, lon) {
-  const mapContainer = document.getElementById("map");
-  if (!mapContainer) return;
-
-  // Verifica se le coordinate sono cambiate
-  const newCoordinates = `${lat},${lon}`;
-  if (currentMapCoordinates === newCoordinates) {
-    console.log("Coordinate invariate - mappa non ricaricata");
-    return;
+// ============================================================
+// FooterManager — orchestratore principale
+// ============================================================
+class FooterManager {
+  constructor(footerId = "Contatti") {
+    this.footerId = footerId;
+    this.data = null;
+    this.map = new MapManager("map");
+    this.chiusuraManager = null;
+    this.renderer = null;
+    this._orariInterval = null;
   }
 
-  // Aggiorna le coordinate correnti
-  currentMapCoordinates = newCoordinates;
+  get footerEl() {
+    return document.getElementById(this.footerId);
+  }
 
-  // Svuota il contenitore prima di creare una nuova mappa
-  mapContainer.innerHTML = "";
+  async init() {
+    if (!this.footerEl) return;
 
-  const iframe = document.createElement("iframe");
-  iframe.width = "100%";
-  iframe.height = "100%";
-  iframe.frameBorder = "0";
-  iframe.style.border = "none";
+    const jsonPath = window.location.pathname.includes("/Projects/")
+      ? "../JSON/footer.json"
+      : "JSON/footer.json";
 
-  const zoomLevel = 0.0005;
-  iframe.src = `https://www.openstreetmap.org/export/embed.html?bbox=${
-    lon - zoomLevel
-  },${lat - zoomLevel},${lon + zoomLevel},${
-    lat + zoomLevel
-  }&layer=mapnik&marker=${lat},${lon}`;
-  iframe.loading = "lazy";
+    try {
+      const response = await fetch(jsonPath);
+      this.data = await response.json();
+      this.chiusuraManager = new ChiusuraManager(this.data);
+      this.renderer = new FooterRenderer(this.data, this.chiusuraManager);
 
-  mapContainer.appendChild(iframe);
-  console.log("Mappa inizializzata con coordinate:", newCoordinates);
-}
+      this.render();
+      this.scheduleFooterRefreshAtMidnight();
+    } catch (error) {
+      console.error("Errore nel caricamento dei dati del footer:", error);
+      this.footerEl.innerHTML = `<p style="text-align:center; color: white;">Impossibile caricare le informazioni del footer.</p>`;
+    }
+  }
 
-// Funzione per aggiornare completamente il footer a mezzanotte
-function scheduleFooterRefreshAtMidnight(data) {
-  const now = new Date();
-  const tomorrow = new Date(now);
-  tomorrow.setDate(tomorrow.getDate() + 1);
-  tomorrow.setHours(0, 0, 0, 0);
+  render(giornoPartenza) {
+    if (!this.footerEl || !this.renderer) return;
 
-  const msUntilMidnight = tomorrow.getTime() - now.getTime();
+    this.footerEl.innerHTML = this.renderer.createHTML(giornoPartenza);
 
-  console.log(
-    `Prossimo aggiornamento footer schedulato tra ${Math.round(
-      msUntilMidnight / 1000 / 60
-    )} minuti`
-  );
+    setTimeout(() => {
+      const mappa = this.data?.mappa;
+      if (mappa?.latitudine && mappa?.longitudine) {
+        this.map.init(mappa.latitudine, mappa.longitudine);
+      }
 
-  setTimeout(() => {
-    // Usa la data reale al momento dell'esecuzione
-    const footer = document.getElementById("Contatti");
-    if (footer && data) {
-      // Passa come giorno di partenza il nuovo giorno reale
-      footer.innerHTML = createFooterHTML(data, new Date());
+      document.dispatchEvent(new CustomEvent("footerLoaded"));
+      this.scheduleOrariUpdates();
+    }, 100);
+  }
 
-      setTimeout(() => {
-        // Inizializza la mappa SOLO se le coordinate sono cambiate
-        if (data.mappa && data.mappa.latitudine && data.mappa.longitudine) {
-          initMap(data.mappa.latitudine, data.mappa.longitudine);
-        }
+  scheduleOrariUpdates() {
+    if (this._orariInterval) clearInterval(this._orariInterval);
 
-        aggiornaColoreOrari(data);
-        setInterval(() => aggiornaColoreOrari(data), 60000);
+    const now = new Date();
+    const secondsToNextMinute = 60 - now.getSeconds();
+
+    setTimeout(() => {
+      this.aggiornaColoreOrari();
+      this._orariInterval = setInterval(
+        () => this.aggiornaColoreOrari(),
+        60000,
+      );
+    }, secondsToNextMinute * 1000);
+
+    this.aggiornaColoreOrari();
+  }
+
+  aggiornaColoreOrari() {
+    if (!this.renderer || !this.chiusuraManager) return;
+    if (!this.data.orari?.length) return;
+
+    const ctx = this.renderer.buildContext(new Date());
+    this.renderer.updateOrariDOM(ctx);
+  }
+
+  scheduleFooterRefreshAtMidnight() {
+    const now = new Date();
+    const tomorrow = new Date(now);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    tomorrow.setHours(0, 0, 0, 0);
+
+    const msUntilMidnight = tomorrow.getTime() - now.getTime();
+
+    console.log(
+      `Prossimo aggiornamento footer schedulato tra ${Math.round(
+        msUntilMidnight / 1000 / 60,
+      )} minuti`,
+    );
+
+    setTimeout(() => {
+      // Usa la data reale al momento dell'esecuzione
+      if (this.footerEl && this.data) {
+        // Passa come giorno di partenza il nuovo giorno reale
+        this.render(new Date());
 
         // Riprogramma il refresh per la prossima mezzanotte
-        scheduleFooterRefreshAtMidnight(data);
-      }, 100);
-    }
-  }, msUntilMidnight);
+        this.scheduleFooterRefreshAtMidnight();
+      }
+    }, msUntilMidnight);
+  }
 }
 
-// Funzione per calcolare la data di Pasqua (algoritmo di Gauss)
-function calcolaPasqua(anno) {
-  const a = anno % 19;
-  const b = Math.floor(anno / 100);
-  const c = anno % 100;
-  const d = Math.floor(b / 4);
-  const e = b % 4;
-  const f = Math.floor((b + 8) / 25);
-  const g = Math.floor((b - f + 1) / 3);
-  const h = (19 * a + b - d - g + 15) % 30;
-  const i = Math.floor(c / 4);
-  const k = c % 4;
-  const l = (32 + 2 * e + 2 * i - h - k) % 7;
-  const m = Math.floor((a + 11 * h + 22 * l) / 451);
-  const mese = Math.floor((h + l - 7 * m + 114) / 31);
-  const giorno = ((h + l - 7 * m + 114) % 31) + 1;
-  
-  return new Date(anno, mese - 1, giorno);
-}
-
-// Funzione per ottenere le date di Pasqua e Pasquetta formattate
-function getDatePasquali(anno) {
-  const pasqua = calcolaPasqua(anno);
-  const pasquetta = new Date(pasqua);
-  pasquetta.setDate(pasquetta.getDate() + 1);
-  
-  return {
-    pasqua: formatDateDM(pasqua),
-    pasquetta: formatDateDM(pasquetta)
-  };
-}
+// ============================================================
+// Bootstrap
+// ============================================================
+document.addEventListener("DOMContentLoaded", () => {
+  const footer = new FooterManager("Contatti");
+  footer.init();
+});
