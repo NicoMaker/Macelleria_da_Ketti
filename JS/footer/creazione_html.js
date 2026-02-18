@@ -54,8 +54,8 @@ function createFooterHTML(data, giornoPartenza) {
   // Orari attivi: stagionali se presenti, altrimenti base
   const { orari, nomeStagione } = getOrariAttiviOggi(data, oggiReal);
 
-  // Titolo sezione orari: "Orario Estivo" / "Orario Invernale" / "Orari"
-  const titoloOrari = nomeStagione ? `Orario ${nomeStagione}` : "Orari";
+  // Titolo sezione orari: "Orario Estivo" / "Orario Invernale" / "Oraro"
+  const titoloOrari = nomeStagione ? `Orario ${nomeStagione}` : "Orario";
 
   // HTML con tutte le stagioni per la legenda
   const stagioniHTML = getAllStagioniHTML(data, oggiReal);
