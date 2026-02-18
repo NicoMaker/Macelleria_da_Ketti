@@ -14,7 +14,14 @@ function _testoStagione(stagione) {
   return testo;
 }
 
-// ── HTML con tutte le stagioni (quella attiva in grassetto) ──
+// ── Converte "DD/MM" in un numero ordinabile (mese * 100 + giorno) ──
+function _ddmmToSortKey(ddmm) {
+  if (!ddmm) return 9999;
+  const [day, month] = ddmm.split("/").map(Number);
+  return month * 100 + day;
+}
+
+// ── HTML con tutte le stagioni ordinate per data inizio (quella attiva in grassetto) ──
 function getAllStagioniHTML(data, dataRiferimento) {
   const stagioni = data.orariStagionali || [];
   if (!stagioni.length)
@@ -22,8 +29,9 @@ function getAllStagioniHTML(data, dataRiferimento) {
 
   const stagioneAttiva = getStagioneAttiva(data, dataRiferimento);
 
-  const righe = stagioni
+  const righe = [...stagioni]
     .filter((s) => s.nome)
+    .sort((a, b) => _ddmmToSortKey(a.inizio) - _ddmmToSortKey(b.inizio))
     .map((s) => {
       const testo = _testoStagione(s);
       const isAttiva = stagioneAttiva && stagioneAttiva.nome === s.nome;

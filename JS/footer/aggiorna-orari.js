@@ -162,8 +162,9 @@ function aggiornaColoreOrari(data) {
         return t;
       };
       descEl.style.marginTop = "14px";
-      descEl.innerHTML = stagioni
+      descEl.innerHTML = [...stagioni]
         .filter((s) => s.nome)
+        .sort((a, b) => _ddmmToSortKey(a.inizio) - _ddmmToSortKey(b.inizio))
         .map((s) => {
           const isAttiva = stagioneAttiva && stagioneAttiva.nome === s.nome;
           return `<div style="${isAttiva ? "font-weight:bold;" : "opacity:0.65;"}">${_testo(s)}</div>`;
