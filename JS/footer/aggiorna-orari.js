@@ -130,7 +130,7 @@ function aggiornaColoreOrari(data) {
   // "Orario Estivo" / "Orario Invernale" / "Orari"
   const titoloEl = document.getElementById("titolo-orari");
   if (titoloEl) {
-    titoloEl.textContent = nomeStagione ? `Orario ${nomeStagione}` : "Orari";
+    titoloEl.textContent = nomeStagione ? `Orario ${nomeStagione}` : "Orario";
   }
 
   // ── Aggiorna testo in-chiusura nella legenda ─────────────
