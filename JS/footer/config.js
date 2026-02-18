@@ -54,8 +54,8 @@ function scheduleFooterRefreshAtMidnight(data) {
 
   console.log(
     `Prossimo aggiornamento footer schedulato tra ${Math.round(
-      msUntilMidnight / 1000 / 60
-    )} minuti`
+      msUntilMidnight / 1000 / 60,
+    )} minuti`,
   );
 
   setTimeout(() => {

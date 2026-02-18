@@ -3,7 +3,13 @@
 // Dipende da: (nessuna dipendenza esterna, riceve tutto come parametri)
 // ============================================================
 
-function checkStatoApertura(orariString, oraCorrente, eChiusoOggi, orariExtraOggi, minutiInChiusura) {
+function checkStatoApertura(
+  orariString,
+  oraCorrente,
+  eChiusoOggi,
+  orariExtraOggi,
+  minutiInChiusura,
+) {
   if (eChiusoOggi && !orariExtraOggi)
     return { stato: "chiuso", minutiAllaChiusura: 0 };
 

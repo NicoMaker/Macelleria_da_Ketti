@@ -26,7 +26,7 @@ function _parseDDMM(ddmm, year) {
 
 function _espandiPeriodo(inizio, fine, year, targetSet) {
   let dataInizio = _parseDDMM(inizio, year);
-  let dataFine   = _parseDDMM(fine, year);
+  let dataFine = _parseDDMM(fine, year);
 
   // Periodo a cavallo d'anno (es. 24/12 → 06/01)
   if (dataInizio.getTime() > dataFine.getTime()) {
@@ -42,13 +42,13 @@ function _espandiPeriodo(inizio, fine, year, targetSet) {
 
 // Normalizza il motivo: vuoto → "Ferie"
 function _motivo(voce) {
-  return (voce.motivo && voce.motivo.trim()) ? voce.motivo.trim() : "Ferie";
+  return voce.motivo && voce.motivo.trim() ? voce.motivo.trim() : "Ferie";
 }
 
 // ── Costruisce Set date + Map data→motivo da "chiusure" ──────
 
 function _buildChiusureMap(data, year) {
-  const dateSet   = new Set();
+  const dateSet = new Set();
   const motiviMap = new Map(); // DD/MM → motivo
 
   const chiusure = data.chiusure || [];
@@ -60,11 +60,12 @@ function _buildChiusureMap(data, year) {
       const d = voce.data.trim();
       dateSet.add(d);
       motiviMap.set(d, _motivo(voce));
-
     } else if (
       voce.tipo === "periodo" &&
-      voce.inizio && voce.inizio.trim() &&
-      voce.fine   && voce.fine.trim()
+      voce.inizio &&
+      voce.inizio.trim() &&
+      voce.fine &&
+      voce.fine.trim()
     ) {
       const tmpSet = new Set();
       _espandiPeriodo(voce.inizio.trim(), voce.fine.trim(), year, tmpSet);
@@ -114,13 +115,13 @@ function getOrariExtraForDate(data, dataFormattata, dayOfWeek) {
 // ── Fine chiusura consecutiva (si ferma se cambia il motivo) ─
 
 function findConsecutiveClosureEnd(startDate, unifiedFerieDates, motiviMap) {
-  const startDateDM  = formatDateDM(startDate);
+  const startDateDM = formatDateDM(startDate);
   const motivoInizio = motiviMap ? motiviMap.get(startDateDM) : null;
 
   if (!unifiedFerieDates.has(startDateDM)) return startDateDM;
 
   const cur = new Date(startDate);
-  let end   = new Date(startDate);
+  let end = new Date(startDate);
 
   while (true) {
     cur.setDate(cur.getDate() + 1);
@@ -145,16 +146,12 @@ function getSingleDayClosureReason(
   checkDate,
   data,
   unifiedFerieDates,
-  unifiedFerieDatesNextYear = null
+  unifiedFerieDatesNextYear = null,
 ) {
   const annoCorrente = checkDate.getFullYear();
   const { pasqua, pasquetta } = getDatePasquali(annoCorrente);
 
-  const festivitaComplete = [
-    ...(data.festivita || []),
-    pasqua,
-    pasquetta,
-  ];
+  const festivitaComplete = [...(data.festivita || []), pasqua, pasquetta];
 
   const dataFormattata = formatDateDM(new Date(checkDate));
 
@@ -166,8 +163,12 @@ function getSingleDayClosureReason(
   // 2. Chiusure anno corrente
   if (unifiedFerieDates.has(dataFormattata)) {
     const { motiviMap } = _buildChiusureMap(data, annoCorrente);
-    const fineChiusura  = findConsecutiveClosureEnd(new Date(checkDate), unifiedFerieDates, motiviMap);
-    const motivo        = motiviMap.get(dataFormattata) || "Ferie";
+    const fineChiusura = findConsecutiveClosureEnd(
+      new Date(checkDate),
+      unifiedFerieDates,
+      motiviMap,
+    );
+    const motivo = motiviMap.get(dataFormattata) || "Ferie";
     return {
       reason: "ferie",
       dataChiusura: fineChiusura,
@@ -176,10 +177,17 @@ function getSingleDayClosureReason(
   }
 
   // 3. Chiusure anno successivo (periodi a cavallo d'anno)
-  if (unifiedFerieDatesNextYear && unifiedFerieDatesNextYear.has(dataFormattata)) {
+  if (
+    unifiedFerieDatesNextYear &&
+    unifiedFerieDatesNextYear.has(dataFormattata)
+  ) {
     const { motiviMap } = _buildChiusureMap(data, annoCorrente + 1);
-    const fineChiusura  = findConsecutiveClosureEnd(new Date(checkDate), unifiedFerieDatesNextYear, motiviMap);
-    const motivo        = motiviMap.get(dataFormattata) || "Ferie";
+    const fineChiusura = findConsecutiveClosureEnd(
+      new Date(checkDate),
+      unifiedFerieDatesNextYear,
+      motiviMap,
+    );
+    const motivo = motiviMap.get(dataFormattata) || "Ferie";
     return {
       reason: "ferie",
       dataChiusura: fineChiusura,
