@@ -96,49 +96,90 @@ function _resolveDataStagione(ddmm, anno) {
 }
 
 // ============================================================
-// Determina la stagione attiva in base alla data fornita.
-// Gestisce correttamente i periodi a cavallo d'anno (es. 01/12 - 28/02).
-// Supporta "auto-marzo" e "auto-ottobre" come valori di inizio/fine.
-// Restituisce l'oggetto stagione attiva oppure null se nessuna è attiva.
+// Determina la stagione attiva in base alla data fornita e
+// restituisce anche le date REALI dell'istanza corrente del ciclo.
+//
+// Esempio:
+//   Estivo:   inizio=auto-marzo,  fine=auto-ottobre-1
+//   Invernale: inizio=auto-ottobre, fine=auto-marzo-1
+//
+// Se oggi=25/10/2025, l'Invernale è attivo dal 26/10/2025 al 29/03/2026.
+// L'anno del ciclo viene calcolato qui e restituito insieme alla stagione
+// così le descrizioni nel footer possono mostrare le date corrette.
+//
+// Restituisce: { stagione, annoInizio, annoFine } oppure null.
 // ============================================================
-function getStagioneAttiva(data, dataRiferimento) {
+function getStagioneAttivaConDate(data, dataRiferimento) {
   const stagioni = data.orariStagionali || [];
   if (!stagioni.length) return null;
 
   const ref = dataRiferimento || new Date();
   const anno = ref.getFullYear();
 
-  // Normalizza ref a mezzanotte per confronti corretti
   const oggi = new Date(ref);
   oggi.setHours(0, 0, 0, 0);
 
   for (const stagione of stagioni) {
     if (!stagione.inizio || !stagione.fine || !stagione.orari) continue;
 
-    let dataInizio = _resolveDataStagione(stagione.inizio, anno);
-    let dataFine = _resolveDataStagione(stagione.fine, anno);
+    const dataInizio = _resolveDataStagione(stagione.inizio, anno);
+    const dataFine = _resolveDataStagione(stagione.fine, anno);
 
-    // Periodo a cavallo d'anno (es. fine ottobre → fine marzo)
+    // Periodo a cavallo d'anno (fine < inizio nello stesso anno)
     if (dataInizio.getTime() > dataFine.getTime()) {
-      // Caso 1: siamo nella parte finale dell'anno (dopo l'inizio)
-      // es. oggi = 15/11 → inizio=ultima-dom-ottobre anno corrente, fine=ultima-dom-marzo anno prossimo
-      const dataFineAnnoSucc = _resolveDataStagione(stagione.fine, anno + 1);
-      if (oggi >= dataInizio && oggi <= dataFineAnnoSucc) return stagione;
-
-      // Caso 2: siamo nella parte iniziale dell'anno (prima della fine)
-      // es. oggi = 15/02 → inizio=ultima-dom-ottobre anno precedente, fine=ultima-dom-marzo anno corrente
-      const dataInizioPrecAnno = _resolveDataStagione(
-        stagione.inizio,
-        anno - 1,
-      );
-      if (oggi <= dataFine && oggi >= dataInizioPrecAnno) return stagione;
+      // Caso 1: parte finale dell'anno → inizio=anno corrente, fine=anno+1
+      const dataFineSucc = _resolveDataStagione(stagione.fine, anno + 1);
+      if (oggi >= dataInizio && oggi <= dataFineSucc) {
+        return { stagione, annoInizio: anno, annoFine: anno + 1 };
+      }
+      // Caso 2: parte iniziale dell'anno → inizio=anno-1, fine=anno corrente
+      const dataInizioPrec = _resolveDataStagione(stagione.inizio, anno - 1);
+      if (oggi <= dataFine && oggi >= dataInizioPrec) {
+        return { stagione, annoInizio: anno - 1, annoFine: anno };
+      }
     } else {
-      // Periodo normale nello stesso anno (es. ultima-dom-marzo → ultima-dom-ottobre)
-      if (oggi >= dataInizio && oggi <= dataFine) return stagione;
+      // Periodo nello stesso anno
+      if (oggi >= dataInizio && oggi <= dataFine) {
+        return { stagione, annoInizio: anno, annoFine: anno };
+      }
     }
   }
 
-  return null;
+  // ── Fallback ciclico: nessun match esatto (gap di transizione) ──
+  // Usa la stagione il cui inizio è più recente prima di oggi.
+  const valide = stagioni.filter((s) => s.inizio && s.fine && s.orari);
+  if (!valide.length) return null;
+
+  let best = null;
+  let bestDelta = Infinity;
+
+  for (const stagione of valide) {
+    for (const offset of [-1, 0, 1]) {
+      const dataInizio = _resolveDataStagione(stagione.inizio, anno + offset);
+      if (!dataInizio) continue;
+      const delta = oggi.getTime() - dataInizio.getTime();
+      if (delta >= 0 && delta < bestDelta) {
+        bestDelta = delta;
+        // Calcola annoFine: se inizio > fine nello stesso anno → fine è anno+offset+1
+        const dataFine = _resolveDataStagione(stagione.fine, anno + offset);
+        const annoFine =
+          dataFine && dataInizio.getTime() > dataFine.getTime()
+            ? anno + offset + 1
+            : anno + offset;
+        best = { stagione, annoInizio: anno + offset, annoFine };
+      }
+    }
+  }
+
+  return best;
+}
+
+// ============================================================
+// Wrapper per compatibilità: restituisce solo la stagione
+// ============================================================
+function getStagioneAttiva(data, dataRiferimento) {
+  const result = getStagioneAttivaConDate(data, dataRiferimento);
+  return result ? result.stagione : null;
 }
 
 // ============================================================
@@ -146,9 +187,9 @@ function getStagioneAttiva(data, dataRiferimento) {
 // orariExtra > stagione attiva > orari base
 // ============================================================
 function getOrariAttiviOggi(data, dataRiferimento) {
-  const stagione = getStagioneAttiva(data, dataRiferimento);
+  const result = getStagioneAttivaConDate(data, dataRiferimento);
   return {
-    orari: stagione ? stagione.orari : data.orari || [],
-    nomeStagione: stagione ? stagione.nome : null,
+    orari: result ? result.stagione.orari : data.orari || [],
+    nomeStagione: result ? result.stagione.nome : null,
   };
 }

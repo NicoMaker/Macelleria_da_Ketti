@@ -149,41 +149,36 @@ function aggiornaColoreOrari(data) {
   const descEl = document.getElementById("descrizione-stagione");
   if (descEl) {
     const stagioni = data.orariStagionali || [];
-    const stagioneAttiva = getStagioneAttiva(data, oggiReal);
+    const stagioneAttivaResult = getStagioneAttivaConDate(data, oggiReal);
+    const stagioneAttiva = stagioneAttivaResult ? stagioneAttivaResult.stagione : null;
 
-    if (!stagioni.length || !stagioni.filter((s) => s.nome).length) {
+    const valide = stagioni.filter((s) => s.nome && s.inizio && s.fine);
+
+    if (!valide.length) {
       descEl.style.display = "none";
     } else {
-      const annoOggi = oggiReal.getFullYear();
-      const _testo = (s) => {
-        const _label = (ddmm) => {
-          if (!ddmm) return "";
-          const minusOne = ddmm.endsWith("-1");
-          const base = minusOne ? ddmm.slice(0, -2) : ddmm;
-          let d;
-          if (base === "auto-marzo") d = ultimaDomenica(annoOggi, 3);
-          else if (base === "auto-ottobre") d = ultimaDomenica(annoOggi, 10);
-          else return ddmm;
-          if (minusOne) d.setDate(d.getDate() - 1);
-          return formatDateDM(d);
-        };
-        let t = `Orario ${s.nome}`;
-        const ini = _label(s.inizio);
-        const fin = _label(s.fine);
-        if (ini && fin) t += `: dal ${ini} al ${fin}`;
-        else if (ini) t += `: dal ${ini}`;
-        else if (fin) t += `: fino al ${fin}`;
-        return t;
+      const attive    = valide.filter((s) => stagioneAttiva && s.nome === stagioneAttiva.nome);
+      const nonAttive = valide.filter((s) => !stagioneAttiva || s.nome !== stagioneAttiva.nome);
+
+      const _riga = (s, isAttiva) => {
+        let annoInizio, annoFine;
+        if (isAttiva && stagioneAttivaResult) {
+          annoInizio = stagioneAttivaResult.annoInizio;
+          annoFine   = stagioneAttivaResult.annoFine;
+        } else {
+          const prossima = _getProssimaIstanzaStagione(s, oggiReal);
+          annoInizio = prossima.annoInizio;
+          annoFine   = prossima.annoFine;
+        }
+        const testo = _testoStagioneConAnni(s, annoInizio, annoFine);
+        return `<div style="${isAttiva ? "font-weight:bold;" : "opacity:0.65;"}">${testo}</div>`;
       };
+
       descEl.style.marginTop = "14px";
-      descEl.innerHTML = [...stagioni]
-        .filter((s) => s.nome)
-        .sort((a, b) => _ddmmToSortKey(a.inizio) - _ddmmToSortKey(b.inizio))
-        .map((s) => {
-          const isAttiva = stagioneAttiva && stagioneAttiva.nome === s.nome;
-          return `<div style="${isAttiva ? "font-weight:bold;" : "opacity:0.65;"}">${_testo(s)}</div>`;
-        })
-        .join("");
+      descEl.innerHTML = [
+        ...attive.map((s) => _riga(s, true)),
+        ...nonAttive.map((s) => _riga(s, false)),
+      ].join("");
       descEl.style.display = "";
     }
   }

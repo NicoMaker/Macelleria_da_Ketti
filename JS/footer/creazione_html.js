@@ -7,30 +7,71 @@
 // Risolve "auto-marzo"/"auto-ottobre" nella data reale DD/MM leggibile
 function _resolveDataLabel(ddmm, anno) {
   if (!ddmm) return "";
-
-  // Supporta suffisso "-1" = giorno precedente (es. sabato prima della domenica)
   const minusOne = ddmm.endsWith("-1");
   const base = minusOne ? ddmm.slice(0, -2) : ddmm;
-
   let d;
   if (base === "auto-marzo") d = ultimaDomenica(anno, 3);
   else if (base === "auto-ottobre") d = ultimaDomenica(anno, 10);
-  else return ddmm; // data fissa DD/MM, mostra così com'è
-
-  if (minusOne) d.setDate(d.getDate() - 1); // torna al sabato
+  else return ddmm;
+  if (minusOne) d.setDate(d.getDate() - 1);
   return formatDateDM(d);
 }
 
-function _testoStagione(stagione, annoRif) {
-  const anno = annoRif || new Date().getFullYear();
+// ── Testo con anni reali del ciclo (es. "dal 26/10/2025 al 29/03/2026") ──
+// annoInizio = anno dell'inizio stagione, annoFine = anno della fine
+function _testoStagioneConAnni(stagione, annoInizio, annoFine) {
   const nome = stagione.nome || "";
   let testo = `Orario ${nome}`;
-  const inizio = _resolveDataLabel(stagione.inizio, anno);
-  const fine = _resolveDataLabel(stagione.fine, anno);
-  if (inizio && fine) testo += `: dal ${inizio} al ${fine}`;
-  else if (inizio) testo += `: dal ${inizio}`;
-  else if (fine) testo += `: fino al ${fine}`;
+
+  const strIni = _resolveDataLabelConAnno(stagione.inizio, annoInizio);
+  const strFin = _resolveDataLabelConAnno(stagione.fine,   annoFine);
+
+  if (strIni && strFin) testo += `: dal ${strIni} al ${strFin}`;
+  else if (strIni)      testo += `: dal ${strIni}`;
+  else if (strFin)      testo += `: fino al ${strFin}`;
   return testo;
+}
+
+// Risolve la data e aggiunge l'anno se la data è dinamica (auto-marzo/auto-ottobre)
+// Per date fisse "DD/MM" non aggiunge l'anno perché è già implicito
+function _resolveDataLabelConAnno(ddmm, anno) {
+  if (!ddmm) return "";
+  const minusOne = ddmm.endsWith("-1");
+  const base = minusOne ? ddmm.slice(0, -2) : ddmm;
+  let d;
+  if (base === "auto-marzo") d = ultimaDomenica(anno, 3);
+  else if (base === "auto-ottobre") d = ultimaDomenica(anno, 10);
+  else return ddmm; // data fissa: mostra senza anno
+  if (minusOne) d.setDate(d.getDate() - 1);
+  return `${formatDateDM(d)}/${anno}`;
+}
+
+// Compatibilità con chiamate vecchie che passano solo un anno
+function _testoStagione(stagione, annoRif) {
+  const anno = annoRif || new Date().getFullYear();
+  return _testoStagioneConAnni(stagione, anno, anno);
+}
+
+// ── Calcola la prossima istanza futura di una stagione ───────
+// Usata per le stagioni non attive: mostra quando ricominceranno
+function _getProssimaIstanzaStagione(stagione, dataRiferimento) {
+  const ref = dataRiferimento || new Date();
+  const oggi = new Date(ref);
+  oggi.setHours(0, 0, 0, 0);
+  const anno = oggi.getFullYear();
+
+  for (const offset of [0, 1]) {
+    const dataInizio = _resolveDataStagione(stagione.inizio, anno + offset);
+    if (!dataInizio) continue;
+    if (dataInizio.getTime() >= oggi.getTime()) {
+      const dataFine = _resolveDataStagione(stagione.fine, anno + offset);
+      const annoFine = dataFine && dataInizio.getTime() > dataFine.getTime()
+        ? anno + offset + 1
+        : anno + offset;
+      return { annoInizio: anno + offset, annoFine };
+    }
+  }
+  return { annoInizio: anno + 1, annoFine: anno + 1 };
 }
 
 // ── Converte "DD/MM" (o "auto-marzo"/"auto-ottobre") in un numero ordinabile ──
@@ -43,29 +84,43 @@ function _ddmmToSortKey(ddmm) {
   return month * 100 + day;
 }
 
-// ── HTML con tutte le stagioni ordinate per data inizio (quella attiva in grassetto) ──
+// ── HTML stagioni: attiva PRIMA (grassetto), le altre dopo (opache) ──
+// Le date sono quelle dell'istanza CORRENTE del ciclo.
+// Es: ottobre 2025 → "Orario Invernale: dal 26/10/2025 al 29/03/2026" (in cima)
+//                  → "Orario Estivo: dal 30/03/2026 al 26/10/2026" (sotto)
 function getAllStagioniHTML(data, dataRiferimento) {
   const stagioni = data.orariStagionali || [];
   if (!stagioni.length)
     return `<div id="descrizione-stagione" style="display:none;"></div>`;
 
-  const stagioneAttiva = getStagioneAttiva(data, dataRiferimento);
+  const ref = dataRiferimento || new Date();
+  const stagioneAttivaResult = getStagioneAttivaConDate(data, ref);
+  const stagioneAttiva = stagioneAttivaResult ? stagioneAttivaResult.stagione : null;
 
-  const righe = [...stagioni]
-    .filter((s) => s.nome)
-    .sort((a, b) => _ddmmToSortKey(a.inizio) - _ddmmToSortKey(b.inizio))
-    .map((s) => {
-      const testo = _testoStagione(
-        s,
-        (dataRiferimento || new Date()).getFullYear(),
-      );
-      const isAttiva = stagioneAttiva && stagioneAttiva.nome === s.nome;
-      if (isAttiva) {
-        return `<div style="font-weight:bold;">${testo}</div>`;
-      }
-      return `<div style="opacity:0.65;">${testo}</div>`;
-    })
-    .join("");
+  const valide = stagioni.filter((s) => s.nome && s.inizio && s.fine);
+
+  // Separa attiva dalle altre
+  const attive  = valide.filter((s) => stagioneAttiva && s.nome === stagioneAttiva.nome);
+  const nonAttive = valide.filter((s) => !stagioneAttiva || s.nome !== stagioneAttiva.nome);
+
+  const _riga = (s, isAttiva) => {
+    let annoInizio, annoFine;
+    if (isAttiva && stagioneAttivaResult) {
+      annoInizio = stagioneAttivaResult.annoInizio;
+      annoFine   = stagioneAttivaResult.annoFine;
+    } else {
+      const prossima = _getProssimaIstanzaStagione(s, ref);
+      annoInizio = prossima.annoInizio;
+      annoFine   = prossima.annoFine;
+    }
+    const testo = _testoStagioneConAnni(s, annoInizio, annoFine);
+    return `<div style="${isAttiva ? "font-weight:bold;" : "opacity:0.65;"}">${testo}</div>`;
+  };
+
+  const righe = [
+    ...attive.map((s) => _riga(s, true)),
+    ...nonAttive.map((s) => _riga(s, false)),
+  ].join("");
 
   return `<div id="descrizione-stagione" style="margin-top:14px;font-size:0.85em;">${righe}</div>`;
 }
