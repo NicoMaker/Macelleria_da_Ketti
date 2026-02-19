@@ -1,13 +1,11 @@
 // ============================================================
 // aggiorna-orari.js — Aggiornamento live della lista orari
 // Dipende da: date-utils.js, Gestisci_chiusure.js, gestisci_apertura.js
+// Le date di cambio stagione sono gestite in date-utils.js
 // ============================================================
 
 function aggiornaColoreOrari(data) {
-  const orari = data.orari || [];
   const legenda = data.legendaOrari || { colori: {}, testo: {} };
-
-  if (!orari.length) return;
 
   const oggiReal = new Date();
   const oggi = new Date(oggiReal);
@@ -16,30 +14,29 @@ function aggiornaColoreOrari(data) {
   const oraCorrente = oggiReal.getHours() * 100 + oggiReal.getMinutes();
   const indiceGiornoCorrente = giornoSettimana === 0 ? 6 : giornoSettimana - 1;
 
-  // Orari attivi: stagionali se presenti, altrimenti base
   const { orari: orariAttivi, nomeStagione } = getOrariAttiviOggi(
     data,
-    oggiReal,
+    oggiReal
   );
 
   const unifiedFerieDates = getUnifiedFerieDates(data, oggi.getFullYear());
   const unifiedFerieDatesNextYear = getUnifiedFerieDates(
     data,
-    oggi.getFullYear() + 1,
+    oggi.getFullYear() + 1
   );
 
   const dataOggiFormattata = formatDateDM(oggiReal);
   const orariExtraOggi = getOrariExtraForDate(
     data,
     dataOggiFormattata,
-    giornoSettimana,
+    giornoSettimana
   );
 
   const singleDayClosure = getSingleDayClosureReason(
     oggiReal,
     data,
     unifiedFerieDates,
-    unifiedFerieDatesNextYear,
+    unifiedFerieDatesNextYear
   );
   const isFestivita =
     singleDayClosure && singleDayClosure.reason === "festivita";
@@ -57,10 +54,9 @@ function aggiornaColoreOrari(data) {
     oraCorrente,
     eChiusoOggi,
     orariExtraOggi,
-    data.minutiInChiusura,
+    data.minutiInChiusura
   );
 
-  // Prossimi 7 giorni
   const giorniDaVisualizzare = [];
   for (let i = 0; i < 7; i++) {
     const d = new Date(oggi);
@@ -69,7 +65,7 @@ function aggiornaColoreOrari(data) {
     giorniDaVisualizzare.push(d);
   }
 
-  // ── Aggiorna lista orari ─────────────────────────────────
+  // ── Aggiorna lista orari ────────────────────────────────────
   const lista = document.querySelector("#orari-footer");
   if (!lista) return;
 
@@ -84,7 +80,6 @@ function aggiornaColoreOrari(data) {
       const nomeGiorno = data.nomiGiorni[dayOfWeek];
       const orariExtraGiorno = getOrariExtraForDate(data, dataFmt, dayOfWeek);
 
-      // Per ogni giorno usa la stagione corretta
       const { orari: orariGiorno } = getOrariAttiviOggi(data, dataDelGiorno);
 
       let testoOrario;
@@ -97,7 +92,7 @@ function aggiornaColoreOrari(data) {
           dataDelGiorno,
           data,
           unifiedFerieDates,
-          unifiedFerieDatesNextYear,
+          unifiedFerieDatesNextYear
         );
         if (closureCheck && closureCheck.reason === "festivita") {
           testoOrario = `${nomeGiorno}: Chiuso (Festività)`;
@@ -126,14 +121,13 @@ function aggiornaColoreOrari(data) {
     })
     .join("");
 
-  // ── Aggiorna titolo orari ────────────────────────────────
-  // "Orario Estivo" / "Orario Invernale" / "Orari"
+  // ── Aggiorna titolo orari ───────────────────────────────────
   const titoloEl = document.getElementById("titolo-orari");
   if (titoloEl) {
     titoloEl.textContent = nomeStagione ? `Orario ${nomeStagione}` : "Orario";
   }
 
-  // ── Aggiorna testo in-chiusura nella legenda ─────────────
+  // ── Aggiorna testo in-chiusura nella legenda ────────────────
   const testoInChiusuraSpan = document.getElementById("testo-in-chiusura");
   if (testoInChiusuraSpan) {
     if (statoApertura.stato === "in-chiusura") {
@@ -145,7 +139,7 @@ function aggiornaColoreOrari(data) {
     }
   }
 
-  // ── Aggiorna descrizione stagioni nella legenda ───────────
+  // ── Aggiorna descrizione stagioni nella legenda ─────────────
   const descEl = document.getElementById("descrizione-stagione");
   if (descEl) {
     const stagioni = data.orariStagionali || [];
@@ -154,16 +148,16 @@ function aggiornaColoreOrari(data) {
       ? stagioneAttivaResult.stagione
       : null;
 
-    const valide = stagioni.filter((s) => s.nome && s.inizio && s.fine);
+    const valide = stagioni.filter((s) => s.nome && s.orari);
 
     if (!valide.length) {
       descEl.style.display = "none";
     } else {
       const attive = valide.filter(
-        (s) => stagioneAttiva && s.nome === stagioneAttiva.nome,
+        (s) => stagioneAttiva && s.nome === stagioneAttiva.nome
       );
       const nonAttive = valide.filter(
-        (s) => !stagioneAttiva || s.nome !== stagioneAttiva.nome,
+        (s) => !stagioneAttiva || s.nome !== stagioneAttiva.nome
       );
 
       const _riga = (s, isAttiva) => {

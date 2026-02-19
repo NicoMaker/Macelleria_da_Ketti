@@ -42,8 +42,6 @@
   "orariStagionali": [
     {
       "nome": "Estivo",
-      "inizio": "auto-marzo",
-      "fine": "auto-ottobre-1",
       "orari": [
         "Lunedì: 8:00 - 13:00",
         "Martedì: 8:00 - 13:00 / 15:30 - 19:30",
@@ -56,8 +54,6 @@
     },
     {
       "nome": "Invernale",
-      "inizio": "auto-ottobre",
-      "fine": "auto-marzo-1",
       "orari": [
         "Lunedì: 8:00 - 13:00",
         "Martedì: 8:00 - 13:00 / 15:00 - 19:00",

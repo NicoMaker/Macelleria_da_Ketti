@@ -1,5 +1,8 @@
 // ============================================================
 // date-utils.js — Utility per date, formattazione e stagioni
+// Le date di cambio stagione sono gestite qui, NON nel JSON.
+// Estivo:   dall'ultima domenica di marzo → al sabato prima dell'ultima domenica di ottobre
+// Invernale: dall'ultima domenica di ottobre → al sabato prima dell'ultima domenica di marzo
 // ============================================================
 
 const formatDateDM = (date) => {
@@ -58,12 +61,9 @@ function getDatePasquali(anno) {
 
 // ============================================================
 // Calcola l'ultima domenica di un dato mese e anno.
-// Usata per determinare automaticamente il cambio stagione
-// (come il cambio ora legale: ultima domenica di marzo/ottobre).
 // ============================================================
 function ultimaDomenica(anno, mese) {
-  // Parte dall'ultimo giorno del mese e va indietro fino alla domenica
-  const ultimo = new Date(anno, mese, 0, 0, 0, 0, 0); // giorno 0 = ultimo del mese precedente
+  const ultimo = new Date(anno, mese, 0, 0, 0, 0, 0);
   while (ultimo.getDay() !== 0) {
     ultimo.setDate(ultimo.getDate() - 1);
   }
@@ -71,42 +71,33 @@ function ultimaDomenica(anno, mese) {
 }
 
 // ============================================================
-// Risolve la data di inizio/fine di una stagione:
-// - Se nel JSON c'è "auto-marzo"  → ultima domenica di marzo dell'anno dato
-// - Se nel JSON c'è "auto-ottobre" → ultima domenica di ottobre dell'anno dato
-// - Altrimenti usa la data DD/MM dal JSON come prima
+// Date di cambio stagione per un dato anno:
+//   inizioEstivo   = ultima domenica di marzo
+//   fineEstivo     = sabato prima dell'ultima domenica di ottobre
+//   inizioInvernale = ultima domenica di ottobre
+//   fineInvernale  = sabato prima dell'ultima domenica di marzo
 // ============================================================
-function _resolveDataStagione(ddmm, anno) {
-  if (!ddmm) return null;
+function getDateCambioStagione(anno) {
+  const ultimaDomMarzo = ultimaDomenica(anno, 3);
+  const ultimaDomOttobre = ultimaDomenica(anno, 10);
 
-  // Supporta suffisso "-1" per indicare il giorno precedente (sabato prima della domenica)
-  const minusOne = ddmm.endsWith("-1");
-  const base = minusOne ? ddmm.slice(0, -2) : ddmm;
+  const fineEstivo = new Date(ultimaDomOttobre);
+  fineEstivo.setDate(fineEstivo.getDate() - 1); // sabato prima
 
-  let d;
-  if (base === "auto-marzo") d = ultimaDomenica(anno, 3);
-  else if (base === "auto-ottobre") d = ultimaDomenica(anno, 10);
-  else {
-    const [giorno, mese] = base.split("/").map(Number);
-    d = new Date(anno, mese - 1, giorno, 0, 0, 0, 0);
-  }
+  const fineInvernale = new Date(ultimaDomMarzo);
+  fineInvernale.setDate(fineInvernale.getDate() - 1); // sabato prima
 
-  if (minusOne) d.setDate(d.getDate() - 1); // torna al sabato
-  return d;
+  return {
+    inizioEstivo: ultimaDomMarzo,
+    fineEstivo: fineEstivo,
+    inizioInvernale: ultimaDomOttobre,
+    fineInvernale: fineInvernale,
+  };
 }
 
 // ============================================================
-// Determina la stagione attiva in base alla data fornita e
-// restituisce anche le date REALI dell'istanza corrente del ciclo.
-//
-// Esempio:
-//   Estivo:   inizio=auto-marzo,  fine=auto-ottobre-1
-//   Invernale: inizio=auto-ottobre, fine=auto-marzo-1
-//
-// Se oggi=25/10/2025, l'Invernale è attivo dal 26/10/2025 al 29/03/2026.
-// L'anno del ciclo viene calcolato qui e restituito insieme alla stagione
-// così le descrizioni nel footer possono mostrare le date corrette.
-//
+// Determina la stagione attiva in base alla data fornita.
+// Cerca tra le stagioni del JSON abbinando per nome "Estivo"/"Invernale".
 // Restituisce: { stagione, annoInizio, annoFine } oppure null.
 // ============================================================
 function getStagioneAttivaConDate(data, dataRiferimento) {
@@ -114,59 +105,67 @@ function getStagioneAttivaConDate(data, dataRiferimento) {
   if (!stagioni.length) return null;
 
   const ref = dataRiferimento || new Date();
-  const anno = ref.getFullYear();
-
   const oggi = new Date(ref);
   oggi.setHours(0, 0, 0, 0);
+  const anno = oggi.getFullYear();
 
-  for (const stagione of stagioni) {
-    if (!stagione.inizio || !stagione.fine || !stagione.orari) continue;
+  // Controlla anni corrente e adiacenti per gestire cavallo d'anno
+  for (const offset of [-1, 0, 1]) {
+    const a = anno + offset;
+    const date = getDateCambioStagione(a);
 
-    const dataInizio = _resolveDataStagione(stagione.inizio, anno);
-    const dataFine = _resolveDataStagione(stagione.fine, anno);
-
-    // Periodo a cavallo d'anno (fine < inizio nello stesso anno)
-    if (dataInizio.getTime() > dataFine.getTime()) {
-      // Caso 1: parte finale dell'anno → inizio=anno corrente, fine=anno+1
-      const dataFineSucc = _resolveDataStagione(stagione.fine, anno + 1);
-      if (oggi >= dataInizio && oggi <= dataFineSucc) {
-        return { stagione, annoInizio: anno, annoFine: anno + 1 };
+    // Stagione Estiva: inizioEstivo(a) → fineEstivo(a)
+    const stagEstiva = stagioni.find(
+      (s) => s.nome && s.nome.toLowerCase() === "estivo"
+    );
+    if (stagEstiva) {
+      const ini = new Date(date.inizioEstivo);
+      ini.setHours(0, 0, 0, 0);
+      const fin = new Date(date.fineEstivo);
+      fin.setHours(0, 0, 0, 0);
+      if (oggi >= ini && oggi <= fin) {
+        return { stagione: stagEstiva, annoInizio: a, annoFine: a };
       }
-      // Caso 2: parte iniziale dell'anno → inizio=anno-1, fine=anno corrente
-      const dataInizioPrec = _resolveDataStagione(stagione.inizio, anno - 1);
-      if (oggi <= dataFine && oggi >= dataInizioPrec) {
-        return { stagione, annoInizio: anno - 1, annoFine: anno };
-      }
-    } else {
-      // Periodo nello stesso anno
-      if (oggi >= dataInizio && oggi <= dataFine) {
-        return { stagione, annoInizio: anno, annoFine: anno };
+    }
+
+    // Stagione Invernale: inizioInvernale(a) → fineInvernale(a+1)
+    const stagInvernale = stagioni.find(
+      (s) => s.nome && s.nome.toLowerCase() === "invernale"
+    );
+    if (stagInvernale) {
+      const ini = new Date(date.inizioInvernale);
+      ini.setHours(0, 0, 0, 0);
+      const dateNext = getDateCambioStagione(a + 1);
+      const fin = new Date(dateNext.fineInvernale);
+      fin.setHours(0, 0, 0, 0);
+      if (oggi >= ini && oggi <= fin) {
+        return { stagione: stagInvernale, annoInizio: a, annoFine: a + 1 };
       }
     }
   }
 
-  // ── Fallback ciclico: nessun match esatto (gap di transizione) ──
-  // Usa la stagione il cui inizio è più recente prima di oggi.
-  const valide = stagioni.filter((s) => s.inizio && s.fine && s.orari);
+  // Fallback: nessun match (non dovrebbe succedere con Estivo+Invernale completi)
+  // Usa la stagione il cui inizio è più recente prima di oggi
+  const valide = stagioni.filter((s) => s.orari);
   if (!valide.length) return null;
 
+  // Prova a trovare quella più vicina
   let best = null;
   let bestDelta = Infinity;
 
   for (const stagione of valide) {
+    const isEstivo = stagione.nome && stagione.nome.toLowerCase() === "estivo";
     for (const offset of [-1, 0, 1]) {
-      const dataInizio = _resolveDataStagione(stagione.inizio, anno + offset);
-      if (!dataInizio) continue;
+      const a = anno + offset;
+      const date = getDateCambioStagione(a);
+      const ini = isEstivo ? date.inizioEstivo : date.inizioInvernale;
+      const dataInizio = new Date(ini);
+      dataInizio.setHours(0, 0, 0, 0);
       const delta = oggi.getTime() - dataInizio.getTime();
       if (delta >= 0 && delta < bestDelta) {
         bestDelta = delta;
-        // Calcola annoFine: se inizio > fine nello stesso anno → fine è anno+offset+1
-        const dataFine = _resolveDataStagione(stagione.fine, anno + offset);
-        const annoFine =
-          dataFine && dataInizio.getTime() > dataFine.getTime()
-            ? anno + offset + 1
-            : anno + offset;
-        best = { stagione, annoInizio: anno + offset, annoFine };
+        const annoFine = isEstivo ? a : a + 1;
+        best = { stagione, annoInizio: a, annoFine };
       }
     }
   }
@@ -184,7 +183,7 @@ function getStagioneAttiva(data, dataRiferimento) {
 
 // ============================================================
 // Restituisce gli orari da usare oggi:
-// orariExtra > stagione attiva > orari base
+// stagione attiva > orari base
 // ============================================================
 function getOrariAttiviOggi(data, dataRiferimento) {
   const result = getStagioneAttivaConDate(data, dataRiferimento);
@@ -192,4 +191,56 @@ function getOrariAttiviOggi(data, dataRiferimento) {
     orari: result ? result.stagione.orari : data.orari || [],
     nomeStagione: result ? result.stagione.nome : null,
   };
+}
+
+// ============================================================
+// Calcola il testo descrittivo di una stagione con le date reali
+// Es: "Orario Estivo: dal 30/03/2025 al 25/10/2025"
+// ============================================================
+function _testoStagioneConAnni(stagione, annoInizio, annoFine) {
+  const nome = stagione.nome || "";
+  const isEstivo = nome.toLowerCase() === "estivo";
+
+  const dateIni = getDateCambioStagione(annoInizio);
+  const dateFin = getDateCambioStagione(annoFine);
+
+  let dataInizio, dataFine;
+  if (isEstivo) {
+    dataInizio = dateIni.inizioEstivo;
+    dataFine = dateFin.fineEstivo;
+  } else {
+    dataInizio = dateIni.inizioInvernale;
+    dataFine = dateFin.fineInvernale;
+  }
+
+  const strIni = `${formatDateDM(dataInizio)}/${annoInizio}`;
+  const strFin = `${formatDateDM(dataFine)}/${annoFine}`;
+
+  return `Orario ${nome}: dal ${strIni} al ${strFin}`;
+}
+
+// ============================================================
+// Calcola la prossima istanza futura di una stagione
+// Usata per le stagioni non attive
+// ============================================================
+function _getProssimaIstanzaStagione(stagione, dataRiferimento) {
+  const ref = dataRiferimento || new Date();
+  const oggi = new Date(ref);
+  oggi.setHours(0, 0, 0, 0);
+  const anno = oggi.getFullYear();
+  const isEstivo =
+    stagione.nome && stagione.nome.toLowerCase() === "estivo";
+
+  for (const offset of [0, 1, 2]) {
+    const a = anno + offset;
+    const date = getDateCambioStagione(a);
+    const ini = new Date(isEstivo ? date.inizioEstivo : date.inizioInvernale);
+    ini.setHours(0, 0, 0, 0);
+    if (ini.getTime() >= oggi.getTime()) {
+      const annoFine = isEstivo ? a : a + 1;
+      return { annoInizio: a, annoFine };
+    }
+  }
+
+  return { annoInizio: anno + 1, annoFine: anno + 1 };
 }

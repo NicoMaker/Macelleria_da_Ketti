@@ -1,94 +1,10 @@
 // ============================================================
 // creazione_html.js — Costruzione HTML del footer
 // Dipende da: date-utils.js, Gestisci_chiusure.js, gestisci_apertura.js
+// Le date di cambio stagione sono gestite in date-utils.js
 // ============================================================
 
-// ── Testo descrittivo per una singola stagione ───────────────
-// Risolve "auto-marzo"/"auto-ottobre" nella data reale DD/MM leggibile
-function _resolveDataLabel(ddmm, anno) {
-  if (!ddmm) return "";
-  const minusOne = ddmm.endsWith("-1");
-  const base = minusOne ? ddmm.slice(0, -2) : ddmm;
-  let d;
-  if (base === "auto-marzo") d = ultimaDomenica(anno, 3);
-  else if (base === "auto-ottobre") d = ultimaDomenica(anno, 10);
-  else return ddmm;
-  if (minusOne) d.setDate(d.getDate() - 1);
-  return formatDateDM(d);
-}
-
-// ── Testo con anni reali del ciclo (es. "dal 26/10/2025 al 29/03/2026") ──
-// annoInizio = anno dell'inizio stagione, annoFine = anno della fine
-function _testoStagioneConAnni(stagione, annoInizio, annoFine) {
-  const nome = stagione.nome || "";
-  let testo = `Orario ${nome}`;
-
-  const strIni = _resolveDataLabelConAnno(stagione.inizio, annoInizio);
-  const strFin = _resolveDataLabelConAnno(stagione.fine, annoFine);
-
-  if (strIni && strFin) testo += `: dal ${strIni} al ${strFin}`;
-  else if (strIni) testo += `: dal ${strIni}`;
-  else if (strFin) testo += `: fino al ${strFin}`;
-  return testo;
-}
-
-// Risolve la data e aggiunge l'anno se la data è dinamica (auto-marzo/auto-ottobre)
-// Per date fisse "DD/MM" non aggiunge l'anno perché è già implicito
-function _resolveDataLabelConAnno(ddmm, anno) {
-  if (!ddmm) return "";
-  const minusOne = ddmm.endsWith("-1");
-  const base = minusOne ? ddmm.slice(0, -2) : ddmm;
-  let d;
-  if (base === "auto-marzo") d = ultimaDomenica(anno, 3);
-  else if (base === "auto-ottobre") d = ultimaDomenica(anno, 10);
-  else return ddmm; // data fissa: mostra senza anno
-  if (minusOne) d.setDate(d.getDate() - 1);
-  return `${formatDateDM(d)}/${anno}`;
-}
-
-// Compatibilità con chiamate vecchie che passano solo un anno
-function _testoStagione(stagione, annoRif) {
-  const anno = annoRif || new Date().getFullYear();
-  return _testoStagioneConAnni(stagione, anno, anno);
-}
-
-// ── Calcola la prossima istanza futura di una stagione ───────
-// Usata per le stagioni non attive: mostra quando ricominceranno
-function _getProssimaIstanzaStagione(stagione, dataRiferimento) {
-  const ref = dataRiferimento || new Date();
-  const oggi = new Date(ref);
-  oggi.setHours(0, 0, 0, 0);
-  const anno = oggi.getFullYear();
-
-  for (const offset of [0, 1]) {
-    const dataInizio = _resolveDataStagione(stagione.inizio, anno + offset);
-    if (!dataInizio) continue;
-    if (dataInizio.getTime() >= oggi.getTime()) {
-      const dataFine = _resolveDataStagione(stagione.fine, anno + offset);
-      const annoFine =
-        dataFine && dataInizio.getTime() > dataFine.getTime()
-          ? anno + offset + 1
-          : anno + offset;
-      return { annoInizio: anno + offset, annoFine };
-    }
-  }
-  return { annoInizio: anno + 1, annoFine: anno + 1 };
-}
-
-// ── Converte "DD/MM" (o "auto-marzo"/"auto-ottobre") in un numero ordinabile ──
-function _ddmmToSortKey(ddmm) {
-  if (!ddmm) return 9999;
-  const base = ddmm.endsWith("-1") ? ddmm.slice(0, -2) : ddmm;
-  if (base === "auto-marzo") return 3 * 100 + 25;
-  if (base === "auto-ottobre") return 10 * 100 + 25;
-  const [day, month] = base.split("/").map(Number);
-  return month * 100 + day;
-}
-
 // ── HTML stagioni: attiva PRIMA (grassetto), le altre dopo (opache) ──
-// Le date sono quelle dell'istanza CORRENTE del ciclo.
-// Es: ottobre 2025 → "Orario Invernale: dal 26/10/2025 al 29/03/2026" (in cima)
-//                  → "Orario Estivo: dal 30/03/2026 al 26/10/2026" (sotto)
 function getAllStagioniHTML(data, dataRiferimento) {
   const stagioni = data.orariStagionali || [];
   if (!stagioni.length)
@@ -100,14 +16,13 @@ function getAllStagioniHTML(data, dataRiferimento) {
     ? stagioneAttivaResult.stagione
     : null;
 
-  const valide = stagioni.filter((s) => s.nome && s.inizio && s.fine);
+  const valide = stagioni.filter((s) => s.nome && s.orari);
 
-  // Separa attiva dalle altre
   const attive = valide.filter(
-    (s) => stagioneAttiva && s.nome === stagioneAttiva.nome,
+    (s) => stagioneAttiva && s.nome === stagioneAttiva.nome
   );
   const nonAttive = valide.filter(
-    (s) => !stagioneAttiva || s.nome !== stagioneAttiva.nome,
+    (s) => !stagioneAttiva || s.nome !== stagioneAttiva.nome
   );
 
   const _riga = (s, isAttiva) => {
@@ -146,33 +61,28 @@ function createFooterHTML(data, giornoPartenza) {
   const social = data.social || {};
   const legenda = data.legendaOrari || { colori: {}, testo: {} };
 
-  // Orari attivi: stagionali se presenti, altrimenti base
   const { orari, nomeStagione } = getOrariAttiviOggi(data, oggiReal);
-
-  // Titolo sezione orari: "Orario Estivo" / "Orario Invernale" / "Oraro"
   const titoloOrari = nomeStagione ? `Orario ${nomeStagione}` : "Orario";
-
-  // HTML con tutte le stagioni per la legenda
   const stagioniHTML = getAllStagioniHTML(data, oggiReal);
 
   const unifiedFerieDates = getUnifiedFerieDates(data, oggi.getFullYear());
   const unifiedFerieDatesNextYear = getUnifiedFerieDates(
     data,
-    oggi.getFullYear() + 1,
+    oggi.getFullYear() + 1
   );
 
   const dataOggiFormattata = formatDateDM(oggiReal);
   const orariExtraOggi = getOrariExtraForDate(
     data,
     dataOggiFormattata,
-    giornoSettimana,
+    giornoSettimana
   );
 
   const singleDayClosure = getSingleDayClosureReason(
     oggiReal,
     data,
     unifiedFerieDates,
-    unifiedFerieDatesNextYear,
+    unifiedFerieDatesNextYear
   );
   const isFestivita =
     singleDayClosure && singleDayClosure.reason === "festivita";
@@ -190,10 +100,9 @@ function createFooterHTML(data, giornoPartenza) {
     oraCorrente,
     eChiusoOggi,
     orariExtraOggi,
-    data.minutiInChiusura,
+    data.minutiInChiusura
   );
 
-  // Prossimi 7 giorni
   const giorniDaVisualizzare = [];
   for (let i = 0; i < 7; i++) {
     const d = new Date(oggi);
@@ -201,7 +110,6 @@ function createFooterHTML(data, giornoPartenza) {
     giorniDaVisualizzare.push(d);
   }
 
-  // Costruzione HTML degli orari
   const orariHtml = giorniDaVisualizzare
     .map((dataDelGiorno, i) => {
       let colore = "";
@@ -213,7 +121,6 @@ function createFooterHTML(data, giornoPartenza) {
       const nomeGiorno = data.nomiGiorni[dayOfWeek];
       const orariExtraGiorno = getOrariExtraForDate(data, dataFmt, dayOfWeek);
 
-      // Per ogni giorno usa la stagione corretta (potrebbe cambiare a cavallo)
       const { orari: orariGiorno } = getOrariAttiviOggi(data, dataDelGiorno);
 
       let testoOrario;
@@ -226,7 +133,7 @@ function createFooterHTML(data, giornoPartenza) {
           dataDelGiorno,
           data,
           unifiedFerieDates,
-          unifiedFerieDatesNextYear,
+          unifiedFerieDatesNextYear
         );
         if (closureCheck && closureCheck.reason === "festivita") {
           testoOrario = `${nomeGiorno}: Chiuso (Festività)`;
@@ -264,36 +171,34 @@ function createFooterHTML(data, giornoPartenza) {
 
   return `
     <div class="footer-content">
-      <!-- Sezioni info+contatti, orari e social -->
       <div class="footer-grid">
-       <!-- Tradizione e qualità + Contatti -->
-      <div class="footer-section footer-section-tradizione-contatti">
-        <h3 class="footer-title">${info.titolo || ""}</h3>
-        <p class="footer-text">${info.testo || ""}</p>
+        <!-- Tradizione e qualità + Contatti -->
+        <div class="footer-section footer-section-tradizione-contatti">
+          <h3 class="footer-title">${info.titolo || ""}</h3>
+          <p class="footer-text">${info.testo || ""}</p>
 
-        <h4 class="footer-subtitle">Contatti</h4>
-        <ul class="footer-list">
-          ${
-            contatti.telefono
-              ? `<li class="footer-item"><span class="material-icons">phone</span> <a href="tel:${contatti.telefono.replace(
-                  /\s/g,
-                  "",
-                )}">${formatPhoneNumber(contatti.telefono)}</a></li>`
-              : ""
-          }
-          ${
-            contatti.email
-              ? `<li class="footer-item"><span class="material-icons">email</span> <a href="mailto:${contatti.email}">${contatti.email}</a></li>`
-              : ""
-          }
-          ${
-            contatti.indirizzo
-              ? `<li class="footer-item"><span class="material-icons">location_on</span> <a href="${contatti.indirizzo}" target="_blank">${contatti.indirizzo_visuale}</a></li>`
-              : ""
-          }
-        </ul>
-      </div>
-
+          <h4 class="footer-subtitle">Contatti</h4>
+          <ul class="footer-list">
+            ${
+              contatti.telefono
+                ? `<li class="footer-item"><span class="material-icons">phone</span> <a href="tel:${contatti.telefono.replace(
+                    /\s/g,
+                    ""
+                  )}">${formatPhoneNumber(contatti.telefono)}</a></li>`
+                : ""
+            }
+            ${
+              contatti.email
+                ? `<li class="footer-item"><span class="material-icons">email</span> <a href="mailto:${contatti.email}">${contatti.email}</a></li>`
+                : ""
+            }
+            ${
+              contatti.indirizzo
+                ? `<li class="footer-item"><span class="material-icons">location_on</span> <a href="${contatti.indirizzo}" target="_blank">${contatti.indirizzo_visuale}</a></li>`
+                : ""
+            }
+          </ul>
+        </div>
 
         <!-- Orari -->
         <div class="footer-section">
@@ -348,5 +253,5 @@ function createFooterHTML(data, giornoPartenza) {
         info.titolo || ""
       }. Tutti i diritti riservati.${info.p_iva ? ` - P.IVA ${info.p_iva}` : ""}</p>
     </div>
-    `;
+  `;
 }
