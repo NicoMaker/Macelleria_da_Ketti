@@ -1,48 +1,47 @@
+// ─────────────────────────────────────────────────────────────────────────────
+// progetti.js — Ascolta l'evento "prodottiCaricati" emesso da main.js.
+//               Non fa nessun fetch diretto al JSON.
+// ─────────────────────────────────────────────────────────────────────────────
+
 document.addEventListener("DOMContentLoaded", () => {
   const progettiContainer = document.querySelector(".progetti-container");
   const filterContainer = document.querySelector(".filter-container");
   const searchInput = document.getElementById("search-progetti");
 
+  if (!progettiContainer) return;
+
   let allProducts = [];
-  let currentFilter = "Tutti"; // Filtro predefinito
-  let currentSearchTerm = ""; // Termine di ricerca predefinito
+  let currentFilter = CONFIG.defaultFilter;
+  let currentSearchTerm = "";
 
-  // Funzione per recuperare i prodotti e inizializzare la sezione
-  function initProgetti() {
-    fetch("JSON/progetti.json")
-      .then((response) => response.json())
-      .then((data) => {
-        allProducts = data.Prodotti;
-        populateFilters();
-        loadStateFromStorage(); // Carica lo stato (filtro/ricerca) da localStorage
-        applyFiltersAndSearch(); // Applica i filtri e la ricerca
-        updateFilterButtons(); // Aggiorna lo stato visivo dei pulsanti dopo aver caricato lo stato
-      })
-      .catch((error) => {
-        console.error("Errore nel caricamento dei prodotti:", error);
-        progettiContainer.innerHTML =
-          "<p class='no-results'>Errore nel caricamento dei prodotti.</p>";
-      })
-      .finally(() => {
-        // Se l'URL contiene #Prodotti, scorri fino alla sezione.
-        // Utile quando si torna da una pagina di dettaglio prodotto.
-        if (window.location.hash === "#Prodotti") {
-          const prodottiSection = document.getElementById("Prodotti");
-          if (prodottiSection) {
-            prodottiSection.scrollIntoView({ behavior: "smooth" });
-          }
-        }
-      });
-  }
+  // Ascolta i dati provenienti da main.js
+  document.addEventListener("prodottiCaricati", (e) => {
+    allProducts = e.detail.prodotti;
+    populateFilters();
+    loadStateFromStorage();
+    applyFiltersAndSearch();
+    updateFilterButtons();
 
-  // Funzione per popolare i pulsanti di filtro
+    if (window.location.hash === "#Prodotti") {
+      const section = document.getElementById("Prodotti");
+      if (section) section.scrollIntoView({ behavior: "smooth" });
+    }
+  });
+
+  document.addEventListener("prodottiErrore", () => {
+    progettiContainer.innerHTML =
+      "<p class='no-results'>Errore nel caricamento dei prodotti.</p>";
+  });
+
+  // ── Filtri ──────────────────────────────────────────────────────────────────
+
   function populateFilters() {
-    const categories = new Set(["Tutti"]); // Inizia con 'Tutti'
-    allProducts.forEach((product) => {
-      product.categorie.forEach((cat) => categories.add(cat));
-    });
+    if (!filterContainer) return;
 
-    filterContainer.innerHTML = ""; // Pulisci i pulsanti esistenti
+    const categories = new Set([CONFIG.defaultFilter]);
+    allProducts.forEach((p) => p.categorie.forEach((c) => categories.add(c)));
+
+    filterContainer.innerHTML = "";
     categories.forEach((category) => {
       const button = document.createElement("button");
       button.classList.add("filter-button");
@@ -50,78 +49,62 @@ document.addEventListener("DOMContentLoaded", () => {
       button.dataset.category = category;
       button.addEventListener("click", () => {
         currentFilter = category;
-        saveStateToLocalStorage(); // Salva il filtro in localStorage
+        saveStateToLocalStorage();
         applyFiltersAndSearch();
-        updateFilterButtons(); // Aggiorna lo stato attivo dei pulsanti
-        scrollToProductGrid(); // Scrolla all'inizio della griglia dei prodotti
+        updateFilterButtons();
+        scrollToProductGrid();
       });
       filterContainer.appendChild(button);
     });
   }
 
-  // Funzione per aggiornare lo stato attivo dei pulsanti di filtro
   function updateFilterButtons() {
-    document.querySelectorAll(".filter-button").forEach((button) => {
-      if (button.dataset.category === currentFilter) {
-        button.classList.add("active");
-      } else {
-        button.classList.remove("active");
-      }
+    document.querySelectorAll(".filter-button").forEach((btn) => {
+      btn.classList.toggle("active", btn.dataset.category === currentFilter);
     });
   }
 
-  // Funzione per scorrere all'inizio della griglia dei prodotti
   function scrollToProductGrid() {
     const grid = document.querySelector(".progetti-container");
-    if (grid) {
-      // Calcoliamo l'offset necessario per tenere conto dell'header e dei controlli sticky.
-      const header = document.querySelector('.site-header');
-      const controls = document.getElementById('product-controls-sticky');
+    if (!grid) return;
 
-      const headerHeight = header ? header.offsetHeight : 0;
-      const controlsHeight = controls ? controls.offsetHeight : 0;
+    const header = document.querySelector(".site-header");
+    const controls = document.getElementById("product-controls-sticky");
+    const totalOffset =
+      (header ? header.offsetHeight : 0) +
+      (controls ? controls.offsetHeight : 0) +
+      CONFIG.scrollMargin;
 
-      // L'offset totale è la somma delle altezze, con un piccolo margine extra.
-      const totalOffset = headerHeight + controlsHeight + 20; // 20px di margine
-
-      const elementPosition = grid.getBoundingClientRect().top + window.pageYOffset;
-      const offsetPosition = elementPosition - totalOffset;
-
-      window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
-    }
+    const offsetPosition =
+      grid.getBoundingClientRect().top + window.pageYOffset - totalOffset;
+    window.scrollTo({ top: offsetPosition, behavior: "smooth" });
   }
 
-  // Funzione per applicare filtri e ricerca
+  // ── Ricerca e visualizzazione ───────────────────────────────────────────────
+
   function applyFiltersAndSearch() {
-    let filteredProducts = allProducts;
+    let filtered = allProducts;
 
-    // Applica il filtro per categoria
-    if (currentFilter !== "Tutti") {
-      filteredProducts = filteredProducts.filter((product) =>
-        product.categorie.includes(currentFilter)
-      );
+    if (currentFilter !== CONFIG.defaultFilter) {
+      filtered = filtered.filter((p) => p.categorie.includes(currentFilter));
     }
 
-    // Applica il filtro per termine di ricerca
     if (currentSearchTerm) {
-      const lowerCaseSearchTerm = currentSearchTerm.toLowerCase();
-      filteredProducts = filteredProducts.filter(
-        (product) =>
-          product.nome.toLowerCase().includes(lowerCaseSearchTerm) ||
-          product.descrizione.toLowerCase().includes(lowerCaseSearchTerm) ||
-          product.categorie.some((cat) =>
-            cat.toLowerCase().includes(lowerCaseSearchTerm)
-          )
+      const term = currentSearchTerm.toLowerCase();
+      filtered = filtered.filter(
+        (p) =>
+          p.nome.toLowerCase().includes(term) ||
+          p.descrizione.toLowerCase().includes(term) ||
+          p.categorie.some((c) => c.toLowerCase().includes(term)),
       );
     }
 
-    displayProducts(filteredProducts);
-    updateFilterButtons(); // Assicura che i bottoni siano sempre aggiornati
+    displayProducts(filtered);
+    updateFilterButtons();
   }
 
-  // Funzione per visualizzare i prodotti
   function displayProducts(products) {
-    progettiContainer.innerHTML = ""; // Pulisci i prodotti esistenti
+    progettiContainer.innerHTML = "";
 
     if (products.length === 0) {
       progettiContainer.innerHTML =
@@ -129,30 +112,23 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    products.forEach((product) => {
-      const card = createProductCard(product);
-      progettiContainer.appendChild(card);
-    });
+    products.forEach((p) =>
+      progettiContainer.appendChild(createProductCard(p)),
+    );
   }
 
-  // Funzione per creare una singola card prodotto
   function createProductCard(item) {
     const card = document.createElement("div");
     card.className = "Progetti-card";
     card.addEventListener("click", () => {
-      // IMPORTANTE: Salva lo stato prima di navigare
       saveStateToLocalStorage();
-      if (item.link && item.link !== "#") {
-        window.location.href = item.link;
-      }
+      if (item.link && item.link !== "#") window.location.href = item.link;
     });
 
-    // Assicurati che item.categorie sia un array, altrimenti usa un array vuoto
     const categories = item.categorie || [];
     let categoriaHtml = "";
 
-    // Mostra la categoria solo se il filtro è "Tutti" e il prodotto ha effettivamente delle categorie
-    if (currentFilter === "Tutti" && Array.isArray(categories) && categories.length > 0) {
+    if (currentFilter === CONFIG.defaultFilter && categories.length > 0) {
       const prefix = categories.length > 1 ? "Categorie" : "Categoria";
       categoriaHtml = `<p class="descrizione categoria">${prefix}: ${categories.join(", ")}</p>`;
     }
@@ -170,78 +146,70 @@ document.addEventListener("DOMContentLoaded", () => {
     return card;
   }
 
-  // Funzione per salvare il filtro corrente e il termine di ricerca in localStorage
+  // ── Stato (localStorage) ────────────────────────────────────────────────────
+
   function saveStateToLocalStorage() {
     try {
-      localStorage.setItem("macelleriaSelectedCategory", currentFilter);
-      localStorage.setItem("macelleriaSearchTerm", currentSearchTerm);
-      console.log("Stato salvato:", { filtro: currentFilter, ricerca: currentSearchTerm });
+      localStorage.setItem(CONFIG.storageKeyCategory, currentFilter);
+      localStorage.setItem(CONFIG.storageKeySearch, currentSearchTerm);
+      console.log("Stato salvato:", {
+        filtro: currentFilter,
+        ricerca: currentSearchTerm,
+      });
     } catch (e) {
       console.error("Impossibile salvare lo stato nel localStorage:", e);
     }
   }
 
-  // Funzione per caricare il filtro e il termine di ricerca da localStorage
   function loadStateFromStorage() {
     try {
-      const storedCategory = localStorage.getItem("macelleriaSelectedCategory");
-      const storedSearchTerm = localStorage.getItem("macelleriaSearchTerm");
+      const storedCategory = localStorage.getItem(CONFIG.storageKeyCategory);
+      const storedSearchTerm = localStorage.getItem(CONFIG.storageKeySearch);
 
       console.log("Stato caricato dal localStorage:", {
         filtro: storedCategory,
-        ricerca: storedSearchTerm
+        ricerca: storedSearchTerm,
       });
 
-      if (storedCategory && storedCategory !== "null") {
+      if (storedCategory && storedCategory !== "null")
         currentFilter = storedCategory;
-      }
 
       if (storedSearchTerm && storedSearchTerm !== "null") {
         currentSearchTerm = storedSearchTerm;
-        if (searchInput) {
-          searchInput.value = storedSearchTerm; // Imposta il valore dell'input di ricerca
-        }
+        if (searchInput) searchInput.value = storedSearchTerm;
       }
     } catch (e) {
       console.error("Impossibile caricare lo stato dal localStorage:", e);
     }
   }
 
-  // Listener per l'input di ricerca
+  // ── Listener ricerca ────────────────────────────────────────────────────────
+
   if (searchInput) {
     searchInput.addEventListener("input", () => {
       currentSearchTerm = searchInput.value;
-      saveStateToLocalStorage(); // Salva il termine di ricerca in localStorage
+      saveStateToLocalStorage();
       applyFiltersAndSearch();
-      scrollToProductGrid(); // Scrolla all'inizio della griglia dei prodotti
+      scrollToProductGrid();
     });
   }
 
-  // Inizializza la sezione prodotti
-  initProgetti();
+  // ── Listener navigazione (bfcache / ritorno da pagina prodotto) ─────────────
 
-  // Aggiungi un listener per l'evento 'pageshow' per gestire il ripristino dello stato
-  // quando si torna indietro nella cronologia del browser.
-  window.addEventListener('pageshow', function (event) {
+  window.addEventListener("pageshow", (event) => {
     console.log("Evento pageshow rilevato, persisted:", event.persisted);
-    // 'persisted' è true se la pagina è stata caricata dalla cache del browser (bfcache)
     if (event.persisted) {
       loadStateFromStorage();
       applyFiltersAndSearch();
       updateFilterButtons();
-      // Non è necessario lo scroll qui perché il browser gestisce la posizione
     }
   });
 
-  // Listener aggiuntivo per gestire il ritorno dalla pagina prodotto
-  window.addEventListener('focus', function () {
+  window.addEventListener("focus", () => {
     console.log("Finestra tornata in focus");
     loadStateFromStorage();
-    if (searchInput) {
-      searchInput.value = currentSearchTerm;
-    }
+    if (searchInput) searchInput.value = currentSearchTerm;
     applyFiltersAndSearch();
     updateFilterButtons();
-    // Non è necessario lo scroll qui per non essere troppo aggressivo
   });
 });
