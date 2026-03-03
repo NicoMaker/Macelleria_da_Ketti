@@ -208,8 +208,9 @@ document.addEventListener("DOMContentLoaded", () => {
         scrollToHash(hash);
       }
     } else {
-      console.log("🏠 Nessun hash, imposto Home");
+      console.log("🏠 Nessun hash, imposto #Home");
       updateActiveLink("Home");
+      history.replaceState(null, null, "#Home");
       
       setTimeout(() => {
         preventHashUpdate = false;
