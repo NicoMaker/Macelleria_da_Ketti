@@ -3,8 +3,7 @@
 // Dipende da: tutti gli altri file footer-*.js
 // ============================================================
 
-const TEST_DATE = new Date("2026-03-25T10:30:00") // Esempio: new Date("2024-12-25T10:30:00") per testare il 25 dicembre alle 10:30
-
+const TEST_DATE = null; // Esempio: new Date("2024-12-25T10:30:00") per testare il 25 dicembre alle 10:30
 const getNow = () => TEST_DATE ?? new Date();
 
 document.addEventListener("DOMContentLoaded", () => {
