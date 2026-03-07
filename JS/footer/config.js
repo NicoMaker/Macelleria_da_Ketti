@@ -3,8 +3,9 @@
 // Dipende da: tutti gli altri file footer-*.js
 // ============================================================
 
-const TEST_DATE = null; // Esempio: new Date("2024-12-25T10:30:00") per testare il 25 dicembre alle 10:30
-const getNow = () => TEST_DATE ?? new Date();
+// Per testare una data specifica, decommentare la riga sotto:
+// const TEST_DATE = new Date("2024-12-25T10:30:00");
+const getNow = () => typeof TEST_DATE !== "undefined" ? TEST_DATE : new Date();
 
 document.addEventListener("DOMContentLoaded", () => {
   const footer = document.getElementById("Contatti");
@@ -61,14 +62,11 @@ function scheduleFooterRefreshAtMidnight(data) {
   );
 
   setTimeout(() => {
-    // Usa la data reale al momento dell'esecuzione
     const footer = document.getElementById("Contatti");
     if (footer && data) {
-      // Passa come giorno di partenza il nuovo giorno reale
       footer.innerHTML = createFooterHTML(data, getNow());
 
       setTimeout(() => {
-        // Inizializza la mappa SOLO se le coordinate sono cambiate
         if (data.mappa && data.mappa.latitudine && data.mappa.longitudine) {
           initMap(data.mappa.latitudine, data.mappa.longitudine);
         }
