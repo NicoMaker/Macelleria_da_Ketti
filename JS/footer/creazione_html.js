@@ -82,10 +82,10 @@ function _getCountdownHTML(transizione) {
     </div>
 
     <!-- Label cambio stagione -->
-    <div style="font-size:0.72em;letter-spacing:0.1em;text-transform:uppercase;opacity:0.55;text-align:center;margin-bottom:4px;">Cambio stagione tra</div>
+    <div style="font-size:0.72em;letter-spacing:0.1em;text-transform:uppercase;opacity:0.55;text-align:left;margin-bottom:4px;padding-left:13px;">Cambio stagione tra</div>
 
     <!-- Countdown grande -->
-    <div style="font-size:1.45em;font-weight:700;letter-spacing:0.04em;line-height:1;text-align:center;">
+    <div style="font-size:1.45em;font-weight:700;letter-spacing:0.04em;line-height:1;text-align:left;padding-left:13px;">
       <span id="countdown-testo">${preview}</span>
     </div>
 
