@@ -185,7 +185,7 @@ function aggiornaColoreOrari(data) {
   if (titoloEl) {
     const transizione = getRilevaTransizioneStagione(data, oggiReal);
     if (transizione && !transizione.eCambioOggi) {
-      titoloEl.textContent = `Orario ${transizione.da}/${transizione.a}`;
+      titoloEl.innerHTML = `Orario <span style="font-weight:900;">${transizione.da}</span><span style="font-weight:400;opacity:0.6;">/${transizione.a}</span>`;
     } else {
       titoloEl.textContent = nomeStagione ? `Orario ${nomeStagione}` : "Orario";
     }
