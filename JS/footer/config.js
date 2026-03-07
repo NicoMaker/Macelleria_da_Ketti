@@ -3,6 +3,9 @@
 // Dipende da: tutti gli altri file footer-*.js
 // ============================================================
 
+const TEST_DATE = null; // null = usa la data e ora reale
+const getNow = () => TEST_DATE ?? new Date();
+
 document.addEventListener("DOMContentLoaded", () => {
   const footer = document.getElementById("Contatti");
   if (!footer) return;
@@ -14,17 +17,16 @@ document.addEventListener("DOMContentLoaded", () => {
   fetch(jsonPath)
     .then((response) => response.json())
     .then((data) => {
-      footer.innerHTML = createFooterHTML(data);
+      footer.innerHTML = createFooterHTML(data, getNow());
 
       setTimeout(() => {
-        // Inizializza la mappa solo se necessario
         if (data.mappa && data.mappa.latitudine && data.mappa.longitudine) {
           initMap(data.mappa.latitudine, data.mappa.longitudine);
         }
 
         document.dispatchEvent(new CustomEvent("footerLoaded"));
 
-        const now = new Date();
+        const now = getNow();
         const secondsToNextMinute = 60 - now.getSeconds();
 
         setTimeout(() => {
@@ -63,7 +65,7 @@ function scheduleFooterRefreshAtMidnight(data) {
     const footer = document.getElementById("Contatti");
     if (footer && data) {
       // Passa come giorno di partenza il nuovo giorno reale
-      footer.innerHTML = createFooterHTML(data, new Date());
+      footer.innerHTML = createFooterHTML(data, getNow());
 
       setTimeout(() => {
         // Inizializza la mappa SOLO se le coordinate sono cambiate

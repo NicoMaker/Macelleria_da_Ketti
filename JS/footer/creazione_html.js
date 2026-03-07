@@ -61,8 +61,15 @@ function createFooterHTML(data, giornoPartenza) {
   const social = data.social || {};
   const legenda = data.legendaOrari || { colori: {}, testo: {} };
 
+  configuraCambioStagione(data);
+
   const { orari, nomeStagione } = getOrariAttiviOggi(data, oggiReal);
-  const titoloOrari = nomeStagione ? `Orario ${nomeStagione}` : "Orario";
+  const transizione = getRilevaTransizioneStagione(data, oggiReal);
+  const titoloOrari = transizione
+    ? `Orario ${transizione.da}/${transizione.a}`
+    : nomeStagione
+    ? `Orario ${nomeStagione}`
+    : "Orario";
   const stagioniHTML = getAllStagioniHTML(data, oggiReal);
 
   const unifiedFerieDates = getUnifiedFerieDates(data, oggi.getFullYear());

@@ -7,12 +7,14 @@
 function aggiornaColoreOrari(data) {
   const legenda = data.legendaOrari || { colori: {}, testo: {} };
 
-  const oggiReal = new Date();
+  const oggiReal = getNow();
   const oggi = new Date(oggiReal);
   oggi.setHours(0, 0, 0, 0);
   const giornoSettimana = oggiReal.getDay();
   const oraCorrente = oggiReal.getHours() * 100 + oggiReal.getMinutes();
   const indiceGiornoCorrente = giornoSettimana === 0 ? 6 : giornoSettimana - 1;
+
+  configuraCambioStagione(data);
 
   const { orari: orariAttivi, nomeStagione } = getOrariAttiviOggi(
     data,
@@ -124,7 +126,13 @@ function aggiornaColoreOrari(data) {
   // ── Aggiorna titolo orari ───────────────────────────────────
   const titoloEl = document.getElementById("titolo-orari");
   if (titoloEl) {
-    titoloEl.textContent = nomeStagione ? `Orario ${nomeStagione}` : "Orario";
+    const transizione = getRilevaTransizioneStagione(data, oggiReal);
+    const titoloOrari = transizione
+      ? `Orario ${transizione.da}/${transizione.a}`
+      : nomeStagione
+      ? `Orario ${nomeStagione}`
+      : "Orario";
+    titoloEl.textContent = titoloOrari;
   }
 
   // ── Aggiorna testo in-chiusura nella legenda ────────────────

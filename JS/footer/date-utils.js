@@ -71,15 +71,33 @@ function ultimaDomenica(anno, mese) {
 }
 
 // ============================================================
-// Date di cambio stagione per un dato anno:
-//   inizioEstivo   = ultima domenica di marzo
-//   fineEstivo     = sabato prima dell'ultima domenica di ottobre
-//   inizioInvernale = ultima domenica di ottobre
-//   fineInvernale  = sabato prima dell'ultima domenica di marzo
+// Date di cambio stagione per un dato anno.
+// I mesi di cambio si leggono da data.cambioStagione nel JSON:
+//   { "meseEstivo": 3, "meseInvernale": 10 }
+// Se assenti, si usano i valori di default (marzo=3, ottobre=10).
+//
+//   inizioEstivo    = ultima domenica del mese estivo
+//   fineEstivo      = sabato prima dell'ultima domenica del mese invernale
+//   inizioInvernale = ultima domenica del mese invernale
+//   fineInvernale   = sabato prima dell'ultima domenica del mese estivo
 // ============================================================
+
+// Cache globale dei mesi (viene popolata al primo uso)
+let _meseEstivo = 3;
+let _meseInvernale = 10;
+
+function configuraCambioStagione(data) {
+  if (data && data.cambioStagione) {
+    _meseEstivo = data.cambioStagione.meseEstivo || 3;
+    _meseInvernale = data.cambioStagione.meseInvernale || 10;
+  }
+}
+
 function getDateCambioStagione(anno) {
-  const ultimaDomMarzo = ultimaDomenica(anno, 3);
-  const ultimaDomOttobre = ultimaDomenica(anno, 10);
+  const ultimaDomEstivo = ultimaDomenica(anno, _meseEstivo);
+  const ultimaDomInvernale = ultimaDomenica(anno, _meseInvernale);
+  const ultimaDomMarzo = ultimaDomEstivo;
+  const ultimaDomOttobre = ultimaDomInvernale;
 
   const fineEstivo = new Date(ultimaDomOttobre);
   fineEstivo.setDate(fineEstivo.getDate() - 1); // sabato prima
@@ -243,4 +261,48 @@ function _getProssimaIstanzaStagione(stagione, dataRiferimento) {
   }
 
   return { annoInizio: anno + 1, annoFine: anno + 1 };
+}
+
+// ============================================================
+// Rileva se nei prossimi 7 giorni a partire da dataRiferimento
+// avviene un cambio stagione, e se sì quale.
+//
+// Restituisce:
+//   null → nessun cambio nella settimana
+//   { da: "Invernale", a: "Estivo" }   → cambio verso estivo
+//   { da: "Estivo",    a: "Invernale" } → cambio verso invernale
+// ============================================================
+function getRilevaTransizioneStagione(data, dataRiferimento) {
+  const stagioni = data.orariStagionali || [];
+  if (stagioni.length < 2) return null;
+
+  const ref = dataRiferimento || new Date();
+  const oggi = new Date(ref);
+  oggi.setHours(0, 0, 0, 0);
+  const anno = oggi.getFullYear();
+
+  const fine7gg = new Date(oggi);
+  fine7gg.setDate(fine7gg.getDate() + 6);
+  fine7gg.setHours(0, 0, 0, 0);
+
+  for (const offset of [-1, 0, 1]) {
+    const a = anno + offset;
+    const date = getDateCambioStagione(a);
+
+    // Cambio verso Estivo: inizioEstivo cade nei 7 giorni?
+    const iniEst = new Date(date.inizioEstivo);
+    iniEst.setHours(0, 0, 0, 0);
+    if (iniEst >= oggi && iniEst <= fine7gg) {
+      return { da: "Invernale", a: "Estivo" };
+    }
+
+    // Cambio verso Invernale: inizioInvernale cade nei 7 giorni?
+    const iniInv = new Date(date.inizioInvernale);
+    iniInv.setHours(0, 0, 0, 0);
+    if (iniInv >= oggi && iniInv <= fine7gg) {
+      return { da: "Estivo", a: "Invernale" };
+    }
+  }
+
+  return null;
 }

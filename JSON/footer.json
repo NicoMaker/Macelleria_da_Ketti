@@ -68,6 +68,11 @@
 
   "minutiInChiusura": 30,
 
+  "cambioStagione": {
+    "meseEstivo": 3,
+    "meseInvernale": 10
+  },
+
   "legendaOrari": {
     "titolo": "Legenda",
     "colori": {
