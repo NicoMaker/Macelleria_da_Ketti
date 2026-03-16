@@ -1,0 +1,95 @@
+/* ─────────────────────────────────────────────────────────────────────────────
+   category-colors.css — Badge categorie colorati + override bottoni filtro
+───────────────────────────────────────────────────────────────────────────── */
+
+/* ── Badge nelle card (prodotti e novità) ───────────────────────────────── */
+
+.categoria-badges-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;   /* centrato nella card */
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: auto;          /* spinge verso il fondo della card */
+  padding-top: var(--spacing-sm);
+  padding-bottom: 2px;
+}
+
+.categoria-label {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  font-weight: 500;
+  margin-right: 2px;
+  white-space: nowrap;
+}
+
+.categoria-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 16px;
+  border-radius: 20px;
+  font-size: 0.95rem;        /* più grande */
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  line-height: 1.4;
+  transition: opacity var(--transition-fast), transform var(--transition-fast);
+  /* bg, text e border vengono iniettati inline da category-colors.js */
+}
+
+.Progetti-card:hover .categoria-badge,
+.novita-card:hover .categoria-badge {
+  opacity: 0.85;
+  transform: scale(0.97);
+}
+
+/* ── Badge nella pagina prodotto ────────────────────────────────────────── */
+
+.product-info .product-category {
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: inherit;
+  color: inherit;
+}
+
+.product-info .categoria-badges-wrapper {
+  justify-content: flex-start;  /* allineato a sinistra nella pagina dettaglio */
+  margin-bottom: var(--spacing-lg);
+  margin-top: 0;
+  padding-top: 0;
+}
+
+/* ── Override bottoni filtro ─────────────────────────────────────────────── */
+
+.filter-button {
+  transition: background-color var(--transition-fast),
+              color var(--transition-fast),
+              border-color var(--transition-fast),
+              transform var(--transition-fast),
+              box-shadow var(--transition-fast) !important;
+  font-size: 0.95rem;
+  font-weight: 700;
+  border-radius: var(--radius-button);
+  padding: var(--spacing-sm) var(--spacing-lg);
+  cursor: pointer;
+}
+
+/* Annulla il marrone fisso dell'active per permettere i colori per categoria */
+.filter-button.active,
+.filter-button.active:hover {
+  background-color: unset !important;
+  color: unset !important;
+  transform: none !important;
+  /* Un bordo più spesso segnala visivamente il filtro attivo */
+  outline: 3px solid currentColor;
+  outline-offset: 2px;
+}
+
+/* ── Responsive ──────────────────────────────────────────────────────────── */
+@media (max-width: 480px) {
+  .categoria-badge {
+    font-size: 0.85rem;
+    padding: 5px 12px;
+  }
+}

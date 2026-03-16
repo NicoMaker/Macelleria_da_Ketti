@@ -47,6 +47,7 @@ document.addEventListener("DOMContentLoaded", () => {
       button.classList.add("filter-button");
       button.textContent = category;
       button.dataset.category = category;
+      CategoryColors.applyFilterButtonStyle(button, category, false);
       button.addEventListener("click", () => {
         currentFilter = category;
         saveStateToLocalStorage();
@@ -60,7 +61,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function updateFilterButtons() {
     document.querySelectorAll(".filter-button").forEach((btn) => {
-      btn.classList.toggle("active", btn.dataset.category === currentFilter);
+      const isActive = btn.dataset.category === currentFilter;
+      btn.classList.toggle("active", isActive);
+      CategoryColors.applyFilterButtonStyle(btn, btn.dataset.category, isActive);
     });
   }
 
@@ -128,9 +131,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const categories = item.categorie || [];
     let categoriaHtml = "";
 
-    if (currentFilter === CONFIG.defaultFilter && categories.length > 0) {
-      const prefix = categories.length > 1 ? "Categorie" : "Categoria";
-      categoriaHtml = `<p class="descrizione categoria">${prefix}: ${categories.join(", ")}</p>`;
+    if (categories.length > 0) {
+      categoriaHtml = CategoryColors.getBadgesHTML(categories);
     }
 
     card.innerHTML = `

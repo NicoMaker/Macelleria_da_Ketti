@@ -39,10 +39,9 @@ document.addEventListener("DOMContentLoaded", () => {
       if (item.link && item.link !== "#") window.location.href = item.link;
     });
 
-    const categoriaHtml =
-      item.categorie && item.categorie.length > 0
-        ? `<p class="categoria">${item.categorie.length > 1 ? "Categorie" : "Categoria"}: ${item.categorie.join(", ")}</p>`
-        : "";
+    const categoriaHtml = item.categorie && item.categorie.length > 0
+      ? CategoryColors.getBadgesHTML(item.categorie)
+      : "";
 
     card.innerHTML = `
       <div class="container-immagine">
