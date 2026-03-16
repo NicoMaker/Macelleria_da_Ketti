@@ -7,10 +7,10 @@
 .categoria-badges-wrapper {
   display: flex;
   align-items: center;
-  justify-content: center;   /* centrato nella card */
+  justify-content: center; /* centrato nella card */
   flex-wrap: wrap;
   gap: 8px;
-  margin-top: auto;          /* spinge verso il fondo della card */
+  margin-top: auto; /* spinge verso il fondo della card */
   padding-top: var(--spacing-sm);
   padding-bottom: 2px;
 }
@@ -28,12 +28,14 @@
   align-items: center;
   padding: 6px 16px;
   border-radius: 20px;
-  font-size: 0.95rem;        /* più grande */
+  font-size: 0.95rem; /* più grande */
   font-weight: 700;
   letter-spacing: 0.02em;
   white-space: nowrap;
   line-height: 1.4;
-  transition: opacity var(--transition-fast), transform var(--transition-fast);
+  transition:
+    opacity var(--transition-fast),
+    transform var(--transition-fast);
   /* bg, text e border vengono iniettati inline da category-colors.js */
 }
 
@@ -54,20 +56,21 @@
 }
 
 .product-info .categoria-badges-wrapper {
-  justify-content: flex-start;  /* allineato a sinistra nella pagina dettaglio */
-  margin-bottom: var(--spacing-lg);
-  margin-top: 0;
+  justify-content: flex-start; /* allineato a sinistra nella pagina dettaglio */
+  margin-bottom: var(--spacing-sm);
+  margin-top: var(--spacing-xs);
   padding-top: 0;
 }
 
 /* ── Override bottoni filtro ─────────────────────────────────────────────── */
 
 .filter-button {
-  transition: background-color var(--transition-fast),
-              color var(--transition-fast),
-              border-color var(--transition-fast),
-              transform var(--transition-fast),
-              box-shadow var(--transition-fast) !important;
+  transition:
+    background-color var(--transition-fast),
+    color var(--transition-fast),
+    border-color var(--transition-fast),
+    transform var(--transition-fast),
+    box-shadow var(--transition-fast) !important;
   font-size: 0.95rem;
   font-weight: 700;
   border-radius: var(--radius-button);
