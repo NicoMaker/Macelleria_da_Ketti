@@ -131,7 +131,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const categories = item.categorie || [];
     let categoriaHtml = "";
 
-    if (categories.length > 0) {
+    // Mostra i badge solo quando il filtro è "Tutti" —
+    // se è già selezionata una categoria specifica è ridondante mostrarla.
+    if (categories.length > 0 && currentFilter === CONFIG.defaultFilter) {
       categoriaHtml = CategoryColors.getBadgesHTML(categories);
     }
 
