@@ -55,14 +55,6 @@
       "categorie": ["Suino", "Preparati"],
       "isNovita": true,
       "link": "#"
-    },
-        {
-      "nome": "Spiedini del Macellaio",
-      "descrizione": "Spiedini misti preparati con cura, alternando salsiccia, lonza di suino, peperoni e cipolle. Perfetti per una grigliata in compagnia.",
-      "immagine": "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=600&h=400&fit=crop",
-      "categorie": ["Prova"],
-      "isNovita": true,
-      "link": "#"
     }
   ]
 }
