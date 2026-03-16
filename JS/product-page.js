@@ -25,6 +25,7 @@ document.addEventListener("DOMContentLoaded", () => {
       });
 
       if (prodotto && prodotto.categorie && prodotto.categorie.length > 0) {
+        // Mostra solo la prima categoria
         badgesEl.innerHTML = CategoryColors.getBadgesHTML(prodotto.categorie);
       } else {
         // Nasconde il contenitore se non trovato

@@ -56,7 +56,11 @@
 }
 
 .product-info .categoria-badges-wrapper {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
   justify-content: flex-start; /* allineato a sinistra nella pagina dettaglio */
+  gap: 8px;
   margin-bottom: var(--spacing-sm);
   margin-top: var(--spacing-xs);
   padding-top: 0;
