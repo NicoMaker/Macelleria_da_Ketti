@@ -15,9 +15,7 @@ const JsonData = (() => {
 
   // Hook “decrypt/transform”: per ora è identity.
   // Se in futuro cifri i JSON, modifichi SOLO qui.
-  function _decryptOrTransform(payload, keyOrFilename) {
-    return payload;
-  }
+  const _decryptOrTransform = (payload, keyOrFilename) => payload;
 
   function _normalizeKey(keyOrFilename) {
     if (!keyOrFilename) throw new Error("JsonData.load: chiave mancante");
@@ -72,4 +70,3 @@ const JsonData = (() => {
 
   return { load, clearCache };
 })();
-
