@@ -1,13 +1,14 @@
 // ─────────────────────────────────────────────────────────────────────────────
-// novita.js — Ascolta l'evento "prodottiCaricati" emesso da main.js.
-//             Non fa nessun fetch diretto al JSON.
+// novita.js — Ascolta l'evento "prodottiCaricati" emesso da products-loader.js.
+// Non fa nessun fetch diretto al JSON.
+// Dipende da: category-colors.js
 // ─────────────────────────────────────────────────────────────────────────────
 
 document.addEventListener("DOMContentLoaded", () => {
   const container = document.querySelector(".novita-container");
   if (!container) return;
 
-  // Ascolta i dati provenienti da main.js
+  // Ascolta i dati provenienti da products-loader.js
   document.addEventListener("prodottiCaricati", (e) => {
     const novitaItems = e.detail.prodotti.filter((item) => item.isNovita);
     displayNovita(novitaItems);
@@ -39,9 +40,10 @@ document.addEventListener("DOMContentLoaded", () => {
       if (item.link && item.link !== "#") window.location.href = item.link;
     });
 
-    const categoriaHtml = item.categorie && item.categorie.length > 0
-      ? CategoryColors.getBadgesHTML(item.categorie)
-      : "";
+    const categoriaHtml =
+      item.categorie && item.categorie.length > 0
+        ? CategoryColors.getBadgesHTML(item.categorie)
+        : "";
 
     card.innerHTML = `
       <div class="container-immagine">
@@ -57,3 +59,4 @@ document.addEventListener("DOMContentLoaded", () => {
     return card;
   }
 });
+

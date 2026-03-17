@@ -1,6 +1,7 @@
 // ─────────────────────────────────────────────────────────────────────────────
-// progetti.js — Ascolta l'evento "prodottiCaricati" emesso da main.js.
-//               Non fa nessun fetch diretto al JSON.
+// progetti.js — Ascolta l'evento "prodottiCaricati" emesso da products-loader.js.
+// Non fa nessun fetch diretto al JSON.
+// Dipende da: products-section-config.js (CONFIG globale), category-colors.js
 // ─────────────────────────────────────────────────────────────────────────────
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -14,7 +15,7 @@ document.addEventListener("DOMContentLoaded", () => {
   let currentFilter = CONFIG.defaultFilter;
   let currentSearchTerm = "";
 
-  // Ascolta i dati provenienti da main.js
+  // Ascolta i dati provenienti da products-loader.js
   document.addEventListener("prodottiCaricati", (e) => {
     allProducts = e.detail.prodotti;
     populateFilters();
@@ -115,9 +116,7 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    products.forEach((p) =>
-      progettiContainer.appendChild(createProductCard(p)),
-    );
+    products.forEach((p) => progettiContainer.appendChild(createProductCard(p)));
   }
 
   function createProductCard(item) {
@@ -175,8 +174,7 @@ document.addEventListener("DOMContentLoaded", () => {
         ricerca: storedSearchTerm,
       });
 
-      if (storedCategory && storedCategory !== "null")
-        currentFilter = storedCategory;
+      if (storedCategory && storedCategory !== "null") currentFilter = storedCategory;
 
       if (storedSearchTerm && storedSearchTerm !== "null") {
         currentSearchTerm = storedSearchTerm;
@@ -217,3 +215,4 @@ document.addEventListener("DOMContentLoaded", () => {
     updateFilterButtons();
   });
 });
+

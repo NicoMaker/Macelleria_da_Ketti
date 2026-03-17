@@ -17,22 +17,22 @@ document.addEventListener("DOMContentLoaded", () => {
     let currentSectionId = "";
 
     // Crea un array di sezioni con le loro posizioni
-    const sectionPositions = Array.from(sections).map(section => ({
+    const sectionPositions = Array.from(sections).map((section) => ({
       id: section.getAttribute("id"),
       top: section.offsetTop,
-      bottom: section.offsetTop + section.offsetHeight
+      bottom: section.offsetTop + section.offsetHeight,
     }));
 
     // Controlla se siamo alla fine della pagina (Contatti)
     const windowBottom = scrollY + window.innerHeight;
     const documentHeight = document.documentElement.scrollHeight;
-    
+
     if (windowBottom >= documentHeight - 50) {
       currentSectionId = "Contatti";
     } else {
       // Trova la sezione corrente basandosi sulla posizione di scroll
       // Usa un offset per l'header
-      const header = document.querySelector('.site-header');
+      const header = document.querySelector(".site-header");
       const headerHeight = header ? header.offsetHeight : 80;
       const scrollPosition = scrollY + headerHeight + 100; // Aggiungi un margine
 
@@ -91,14 +91,18 @@ document.addEventListener("DOMContentLoaded", () => {
     link.addEventListener("click", (event) => {
       event.preventDefault();
       const targetId = link.getAttribute("href").substring(1);
-      
-      if (targetId === 'Contatti' && !document.getElementById('Contatti')) {
-        document.addEventListener('footerLoaded', () => {
-          scrollToSection(targetId);
-        }, { once: true });
+
+      if (targetId === "Contatti" && !document.getElementById("Contatti")) {
+        document.addEventListener(
+          "footerLoaded",
+          () => {
+            scrollToSection(targetId);
+          },
+          { once: true },
+        );
         return;
       }
-      
+
       scrollToSection(targetId);
     });
   });
@@ -116,8 +120,8 @@ document.addEventListener("DOMContentLoaded", () => {
     updateActiveLink(targetId);
     history.replaceState(null, null, `#${targetId}`);
 
-    const header = document.querySelector('.site-header');
-    let totalOffset = header ? header.offsetHeight : 80;
+    const header = document.querySelector(".site-header");
+    const totalOffset = header ? header.offsetHeight : 80;
 
     const offsetPosition = targetElement.offsetTop - totalOffset;
     window.scrollTo({ top: offsetPosition, behavior: "smooth" });
@@ -147,23 +151,23 @@ document.addEventListener("DOMContentLoaded", () => {
       if (targetElement) {
         updateActiveLink(targetId);
 
-        const header = document.querySelector('.site-header');
+        const header = document.querySelector(".site-header");
         const headerHeight = header ? header.offsetHeight : 80;
-        
-        if (targetId === 'Prodotti') {
+
+        if (targetId === "Prodotti") {
           if (window.pageYOffset > 0) {
             const offsetPosition = targetElement.offsetTop - headerHeight;
             window.scrollTo({ top: offsetPosition, behavior: "auto" });
           }
-        } else if (targetId === 'Contatti') {
+        } else if (targetId === "Contatti") {
           console.log("⬇️ Scrolling verso Contatti (fine pagina)");
           setTimeout(() => {
-            window.scrollTo({ 
-              top: document.body.scrollHeight, 
-              behavior: "auto" 
+            window.scrollTo({
+              top: document.body.scrollHeight,
+              behavior: "auto",
             });
           }, 100);
-        } else if (targetId === 'Home') {
+        } else if (targetId === "Home") {
           console.log("🏠 Sezione Home, scroll non necessario.");
         } else {
           const offsetPosition = targetElement.offsetTop - headerHeight;
@@ -171,7 +175,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         preventHashUpdate = true;
-        
+
         setTimeout(() => {
           preventHashUpdate = false;
           isInitialLoad = false;
@@ -186,18 +190,24 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (hash) {
       console.log(`🎯 Hash rilevato al caricamento: #${hash}`);
-      
-      if (hash === 'Contatti') {
+
+      if (hash === "Contatti") {
         preventHashUpdate = true;
-        console.log("🔄 In attesa del caricamento del footer per sezione Contatti...");
-        
-        document.addEventListener('footerLoaded', () => {
-          console.log("✅ Footer caricato, scroll verso Contatti");
-          scrollToHash(hash);
-        }, { once: true });
-        
+        console.log(
+          "🔄 In attesa del caricamento del footer per sezione Contatti...",
+        );
+
+        document.addEventListener(
+          "footerLoaded",
+          () => {
+            console.log("✅ Footer caricato, scroll verso Contatti");
+            scrollToHash(hash);
+          },
+          { once: true },
+        );
+
         setTimeout(() => {
-          if (!document.getElementById('Contatti')) {
+          if (!document.getElementById("Contatti")) {
             console.warn("⚠️ Timeout: Footer non caricato entro 5 secondi");
             preventHashUpdate = false;
             isInitialLoad = false;
@@ -211,7 +221,7 @@ document.addEventListener("DOMContentLoaded", () => {
       console.log("🏠 Nessun hash, imposto #Home");
       updateActiveLink("Home");
       history.replaceState(null, null, "#Home");
-      
+
       setTimeout(() => {
         preventHashUpdate = false;
         isInitialLoad = false;
@@ -221,3 +231,4 @@ document.addEventListener("DOMContentLoaded", () => {
 
   initializePage();
 });
+

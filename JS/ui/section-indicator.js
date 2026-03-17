@@ -12,7 +12,7 @@ document.addEventListener("DOMContentLoaded", () => {
   function initializeObserver() {
     // Ottieni tutte le sezioni incluso il footer (che potrebbe essere caricato dinamicamente)
     const sections = document.querySelectorAll("section[id], footer[id]");
-    
+
     if (sections.length === 0) {
       console.warn("⚠️ Nessuna sezione trovata per section-indicator");
       return;
@@ -37,17 +37,17 @@ document.addEventListener("DOMContentLoaded", () => {
           const sectionName =
             entry.target.dataset.sectionName ||
             sectionId.charAt(0).toUpperCase() + sectionId.slice(1);
-          
+
           sectionIndicator.textContent = sectionName;
           sectionIndicator.style.opacity = "1";
 
           // Update the page title
-          if (sectionId.toLowerCase() === 'home') {
+          if (sectionId.toLowerCase() === "home") {
             document.title = baseTitle;
           } else {
             document.title = `${sectionName} - Macelleria da Ketti`;
           }
-          
+
           console.log(`📍 Sezione attiva: ${sectionName}`);
         }
       });
@@ -57,16 +57,19 @@ document.addEventListener("DOMContentLoaded", () => {
       observer.observe(section);
     });
 
-    console.log(`✅ Section indicator inizializzato per ${sections.length} sezioni`);
+    console.log(
+      `✅ Section indicator inizializzato per ${sections.length} sezioni`,
+    );
   }
 
   // Inizializza subito
   initializeObserver();
 
   // Re-inizializza quando il footer viene caricato
-  document.addEventListener('footerLoaded', () => {
+  document.addEventListener("footerLoaded", () => {
     console.log("🔄 Footer caricato, re-inizializzo section indicator");
     // Piccolo delay per assicurarsi che il DOM sia aggiornato
     setTimeout(initializeObserver, 200);
   });
 });
+

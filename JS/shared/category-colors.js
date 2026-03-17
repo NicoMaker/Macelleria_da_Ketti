@@ -7,15 +7,8 @@ const CategoryColors = (() => {
    * Inizializzazione asincrona: carica i dati dal JSON.
    */
   async function init() {
-    const isInSubfolder = window.location.pathname.includes("/Projects/");
-    const jsonPath = isInSubfolder
-      ? "../JSON/palette.json"
-      : "JSON/palette.json";
-
     try {
-      const response = await fetch(jsonPath);
-      if (!response.ok) throw new Error("File palette.json non trovato");
-      PALETTE = await response.json();
+      PALETTE = await JsonData.load(AppConfig.palette.jsonKey);
       isLoaded = true;
       console.log("Palette caricata:", PALETTE.length, "colori.");
     } catch (err) {
@@ -107,9 +100,7 @@ const CategoryColors = (() => {
 
   function getBadgesHTML(categories, prefix) {
     if (!categories || categories.length === 0) return "";
-    const prefixHtml = prefix
-      ? `<span class="categoria-label">${prefix}</span>`
-      : "";
+    const prefixHtml = prefix ? `<span class="categoria-label">${prefix}</span>` : "";
     const badgesHtml = categories
       .map(
         (cat) =>
@@ -131,3 +122,4 @@ const CategoryColors = (() => {
     applyFilterButtonStyle,
   };
 })();
+

@@ -11,12 +11,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const footer = document.getElementById("Contatti");
   if (!footer) return;
 
-  const jsonPath = window.location.pathname.includes("/Projects/")
-    ? "../JSON/footer.json"
-    : "JSON/footer.json";
-
-  fetch(jsonPath)
-    .then((response) => response.json())
+  JsonData.load(AppConfig.footer.jsonKey)
     .then((data) => {
       footer.innerHTML = createFooterHTML(data, getNow());
 

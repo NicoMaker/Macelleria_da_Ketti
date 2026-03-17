@@ -2,20 +2,22 @@
 // Gestisce il calcolo dinamico dell'altezza dell'header per i controlli sticky
 
 document.addEventListener("DOMContentLoaded", () => {
-  const siteHeader = document.querySelector('.site-header');
-  const stickyControls = document.getElementById('product-controls-sticky');
+  const siteHeader = document.querySelector(".site-header");
+  const stickyControls = document.getElementById("product-controls-sticky");
 
   // Funzione per calcolare e impostare l'altezza dell'header
   function setHeaderHeight() {
     if (siteHeader && stickyControls) {
       const headerHeight = siteHeader.offsetHeight;
-      
+
       // Imposta la posizione sticky in base all'altezza reale dell'header
       // Aggiungiamo 5px di margine per evitare sovrapposizioni
       const stickyTop = headerHeight + 5;
       stickyControls.style.top = `${stickyTop}px`;
-      
-      console.log(`🔧 Header height: ${headerHeight}px - Sticky top: ${stickyTop}px`);
+
+      console.log(
+        `🔧 Header height: ${headerHeight}px - Sticky top: ${stickyTop}px`,
+      );
     }
   }
 
@@ -24,20 +26,25 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Ricalcola quando la finestra viene ridimensionata
   let resizeTimeout;
-  window.addEventListener('resize', () => {
+  window.addEventListener("resize", () => {
     clearTimeout(resizeTimeout);
     resizeTimeout = setTimeout(setHeaderHeight, 100);
   });
 
   // Ricalcola quando cambia l'orientamento del dispositivo
-  window.addEventListener('orientationchange', () => {
+  window.addEventListener("orientationchange", () => {
     setTimeout(setHeaderHeight, 300);
   });
 
   // Ricalcola quando si scrolla verso la sezione prodotti
-  window.addEventListener('scroll', () => {
-    setHeaderHeight();
-  }, { passive: true });
+  window.addEventListener(
+    "scroll",
+    () => {
+      setHeaderHeight();
+    },
+    { passive: true },
+  );
 
   console.log("✅ Sistema sticky controls inizializzato");
 });
+
