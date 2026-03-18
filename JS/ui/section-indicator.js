@@ -72,4 +72,3 @@ document.addEventListener("DOMContentLoaded", () => {
     setTimeout(initializeObserver, 200);
   });
 });
-

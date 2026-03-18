@@ -7,7 +7,8 @@
 // ─────────────────────────────────────────────────────────────────────────────
 
 const JsonPaths = (() => {
-  const isInProjectsSubfolder = () => window.location.pathname.includes("/Projects/");
+  const isInProjectsSubfolder = () =>
+    window.location.pathname.includes("/Projects/");
 
   function get(jsonFilename) {
     if (!jsonFilename) throw new Error("JsonPaths.get: filename mancante");
@@ -17,4 +18,3 @@ const JsonPaths = (() => {
 
   return { get, isInProjectsSubfolder };
 })();
-

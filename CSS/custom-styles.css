@@ -350,7 +350,9 @@ footer {
   border: 3px solid #ffcc80;
   opacity: 0;
   transform: translateY(20px);
-  transition: opacity 0.6s ease, transform 0.6s ease;
+  transition:
+    opacity 0.6s ease,
+    transform 0.6s ease;
   position: relative;
 }
 
@@ -713,7 +715,9 @@ footer {
 /* Transizioni fluide per opacity */
 .more-info-btn,
 .filter-button {
-  transition: opacity 0.15s ease, background-color 0.3s ease,
+  transition:
+    opacity 0.15s ease,
+    background-color 0.3s ease,
     transform 0.3s ease;
 }
 
@@ -750,7 +754,9 @@ footer {
   margin-bottom: var(--spacing-md);
   opacity: 1;
   transform: translateY(0);
-  transition: opacity 0.3s ease, transform 0.3s ease;
+  transition:
+    opacity 0.3s ease,
+    transform 0.3s ease;
 }
 
 /* Responsive styles */
@@ -1182,7 +1188,6 @@ footer {
   }
 }
 
-
 .search-input {
   width: 100%;
   padding: 12px 15px;
@@ -1225,7 +1230,9 @@ footer {
 
 /* Icone Material Icons accanto ai contatti */
 .footer-list .footer-item .material-icons {
-  transition: transform 0.25s ease, color 0.25s ease;
+  transition:
+    transform 0.25s ease,
+    color 0.25s ease;
   vertical-align: middle;
 }
 
@@ -1243,7 +1250,10 @@ footer {
   height: 44px;
   border-radius: 50%;
   background-color: rgba(255, 255, 255, 0.1);
-  transition: background-color 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease;
+  transition:
+    background-color 0.25s ease,
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
 }
 
 .social-links a:hover {

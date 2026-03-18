@@ -100,7 +100,9 @@ const CategoryColors = (() => {
 
   function getBadgesHTML(categories, prefix) {
     if (!categories || categories.length === 0) return "";
-    const prefixHtml = prefix ? `<span class="categoria-label">${prefix}</span>` : "";
+    const prefixHtml = prefix
+      ? `<span class="categoria-label">${prefix}</span>`
+      : "";
     const badgesHtml = categories
       .map(
         (cat) =>
@@ -122,4 +124,3 @@ const CategoryColors = (() => {
     applyFilterButtonStyle,
   };
 })();
-

@@ -64,7 +64,11 @@ document.addEventListener("DOMContentLoaded", () => {
     document.querySelectorAll(".filter-button").forEach((btn) => {
       const isActive = btn.dataset.category === currentFilter;
       btn.classList.toggle("active", isActive);
-      CategoryColors.applyFilterButtonStyle(btn, btn.dataset.category, isActive);
+      CategoryColors.applyFilterButtonStyle(
+        btn,
+        btn.dataset.category,
+        isActive,
+      );
     });
   }
 
@@ -116,7 +120,9 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    products.forEach((p) => progettiContainer.appendChild(createProductCard(p)));
+    products.forEach((p) =>
+      progettiContainer.appendChild(createProductCard(p)),
+    );
   }
 
   function createProductCard(item) {
@@ -174,7 +180,8 @@ document.addEventListener("DOMContentLoaded", () => {
         ricerca: storedSearchTerm,
       });
 
-      if (storedCategory && storedCategory !== "null") currentFilter = storedCategory;
+      if (storedCategory && storedCategory !== "null")
+        currentFilter = storedCategory;
 
       if (storedSearchTerm && storedSearchTerm !== "null") {
         currentSearchTerm = storedSearchTerm;
@@ -215,4 +222,3 @@ document.addEventListener("DOMContentLoaded", () => {
     updateFilterButtons();
   });
 });
-

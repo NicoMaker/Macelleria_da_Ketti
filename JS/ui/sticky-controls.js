@@ -47,4 +47,3 @@ document.addEventListener("DOMContentLoaded", () => {
 
   console.log("✅ Sistema sticky controls inizializzato");
 });
-

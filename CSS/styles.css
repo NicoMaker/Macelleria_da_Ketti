@@ -474,7 +474,9 @@ h6 {
   margin-bottom: var(--spacing-md);
   opacity: 1;
   transform: translateY(0);
-  transition: opacity 0.3s ease, transform 0.3s ease;
+  transition:
+    opacity 0.3s ease,
+    transform 0.3s ease;
 }
 
 /* Features Grid */
@@ -1100,7 +1102,7 @@ h6 {
   .Progetti-card {
     min-height: 450px;
   }
-  
+
   .container-immagine {
     height: 220px; /* Immagine leggermente più piccola su mobile */
   }
@@ -1211,10 +1213,9 @@ h6 {
   margin-bottom: 1.5rem; /* aumenta/diminuisci a gusto */
 }
 
-
 /* Spazio tra icone social e titolo Legenda */
 .social-links {
-  margin-bottom: 1.5rem;   /* aumenta se vuoi più spazio */
+  margin-bottom: 1.5rem; /* aumenta se vuoi più spazio */
 }
 
 /* Allineamento verticale dei titoli nel footer */
@@ -1224,7 +1225,7 @@ h6 {
 
 /* Forza Legenda a stare sulla stessa riga “di base” di Contatti */
 .legenda-orari {
-  margin-top: 0;           /* azzera eventuali spazi extra */
+  margin-top: 0; /* azzera eventuali spazi extra */
 }
 
 /* Ogni colonna del footer è una colonna verticale */
@@ -1252,9 +1253,8 @@ h6 {
 
 /* Sposta Legenda un po' più in alto */
 .legenda-orari {
-  margin-top: -0.3rem !important;   /* aumenta in negativo se la vuoi ancora più su */
+  margin-top: -0.3rem !important; /* aumenta in negativo se la vuoi ancora più su */
 }
-
 
 .footer-grid {
   display: grid;
@@ -1294,12 +1294,12 @@ h6 {
 
 /* Spazio tra "Tradizione e qualità" e "Contatti" */
 .footer-section-tradizione-contatti .footer-subtitle {
-  margin-top: 1.5rem !important;  /* spazio verticale dopo Tradizione e qualità */
+  margin-top: 1.5rem !important; /* spazio verticale dopo Tradizione e qualità */
 }
 
 /* Allinea "Contatti" con "Legenda" */
 .legenda-orari {
-  margin-top: 1.5rem !important;  /* stesso offset di Contatti */
+  margin-top: 1.5rem !important; /* stesso offset di Contatti */
 }
 
 /* ============================================================
@@ -1315,7 +1315,9 @@ h6 {
   background-color: #f5f1e8 !important; /* Sfondo OPACO - stesso colore di --ash-lightest */
   padding: var(--spacing-md) 0;
   margin-bottom: var(--spacing-lg);
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  box-shadow:
+    0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06);
   transition: box-shadow var(--transition-base);
   /* AGGIUNGI QUESTE PROPRIETÀ CRITICHE */
   width: 100%;
@@ -1324,7 +1326,7 @@ h6 {
 
 /* Assicurati che il background copra tutto */
 .product-controls-sticky::before {
-  content: '';
+  content: "";
   position: absolute;
   top: -10px;
   left: 0;
@@ -1492,7 +1494,7 @@ h6 {
 }
 
 .product-controls-sticky::before {
-  content: '';
+  content: "";
   position: absolute;
   top: -10px;
   left: 0;

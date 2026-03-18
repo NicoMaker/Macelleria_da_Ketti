@@ -13,9 +13,9 @@ function _avviaCountdownStagione(dataCambio, nomeAttiva, nomeProssima) {
     _countdownInterval = null;
   }
 
-  const el         = document.getElementById("countdown-stagione");
-  const testoSpan  = document.getElementById("countdown-testo");
-  const labelAtt   = document.getElementById("countdown-label-attiva");
+  const el = document.getElementById("countdown-stagione");
+  const testoSpan = document.getElementById("countdown-testo");
+  const labelAtt = document.getElementById("countdown-label-attiva");
   const labelPross = document.getElementById("countdown-label-prossima");
 
   if (!el || !testoSpan) return;
@@ -39,9 +39,9 @@ function _avviaCountdownStagione(dataCambio, nomeAttiva, nomeProssima) {
     }
 
     const giorni = Math.floor(diff / (1000 * 60 * 60 * 24));
-    const ore    = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-    const min    = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-    const sec    = Math.floor((diff % (1000 * 60)) / 1000);
+    const ore = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const min = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+    const sec = Math.floor((diff % (1000 * 60)) / 1000);
 
     const parti = [];
     if (giorni > 0) parti.push(`${giorni}g`);
@@ -77,7 +77,7 @@ function _getDataCambio(transizione, dataRiferimento) {
     const a = anno + offset;
     const date = getDateCambioStagione(a);
     const candidata = new Date(
-      transizione.a === "Estivo" ? date.inizioEstivo : date.inizioInvernale
+      transizione.a === "Estivo" ? date.inizioEstivo : date.inizioInvernale,
     );
     candidata.setHours(0, 0, 0, 0);
     if (candidata >= oggi) return candidata;
@@ -92,33 +92,52 @@ function aggiornaColoreOrari(data) {
   const oggiReal = getNow();
   const oggi = new Date(oggiReal);
   oggi.setHours(0, 0, 0, 0);
-  const giornoSettimana     = oggiReal.getDay();
-  const oraCorrente         = oggiReal.getHours() * 100 + oggiReal.getMinutes();
+  const giornoSettimana = oggiReal.getDay();
+  const oraCorrente = oggiReal.getHours() * 100 + oggiReal.getMinutes();
   const indiceGiornoCorrente = giornoSettimana === 0 ? 6 : giornoSettimana - 1;
 
   configuraCambioStagione(data);
 
-  const { orari: orariAttivi, nomeStagione } = getOrariAttiviOggi(data, oggiReal);
+  const { orari: orariAttivi, nomeStagione } = getOrariAttiviOggi(
+    data,
+    oggiReal,
+  );
 
-  const unifiedFerieDates        = getUnifiedFerieDates(data, oggi.getFullYear());
-  const unifiedFerieDatesNextYear = getUnifiedFerieDates(data, oggi.getFullYear() + 1);
+  const unifiedFerieDates = getUnifiedFerieDates(data, oggi.getFullYear());
+  const unifiedFerieDatesNextYear = getUnifiedFerieDates(
+    data,
+    oggi.getFullYear() + 1,
+  );
 
   const dataOggiFormattata = formatDateDM(oggiReal);
-  const orariExtraOggi     = getOrariExtraForDate(data, dataOggiFormattata, giornoSettimana);
+  const orariExtraOggi = getOrariExtraForDate(
+    data,
+    dataOggiFormattata,
+    giornoSettimana,
+  );
 
   const singleDayClosure = getSingleDayClosureReason(
-    oggiReal, data, unifiedFerieDates, unifiedFerieDatesNextYear
+    oggiReal,
+    data,
+    unifiedFerieDates,
+    unifiedFerieDatesNextYear,
   );
-  const isFestivita   = singleDayClosure && singleDayClosure.reason === "festivita";
-  const eFerieOggi    = singleDayClosure && singleDayClosure.reason === "ferie";
-  const isMotivoExtra = singleDayClosure && singleDayClosure.reason === "motivi-extra";
+  const isFestivita =
+    singleDayClosure && singleDayClosure.reason === "festivita";
+  const eFerieOggi = singleDayClosure && singleDayClosure.reason === "ferie";
+  const isMotivoExtra =
+    singleDayClosure && singleDayClosure.reason === "motivi-extra";
 
   let eChiusoOggi = isFestivita || eFerieOggi || isMotivoExtra;
   const orariDaUsareOggi = orariExtraOggi || orariAttivi[indiceGiornoCorrente];
   if (orariExtraOggi) eChiusoOggi = false;
 
   const statoApertura = checkStatoApertura(
-    orariDaUsareOggi, oraCorrente, eChiusoOggi, orariExtraOggi, data.minutiInChiusura
+    orariDaUsareOggi,
+    oraCorrente,
+    eChiusoOggi,
+    orariExtraOggi,
+    data.minutiInChiusura,
   );
 
   const giorniDaVisualizzare = [];
@@ -136,11 +155,11 @@ function aggiornaColoreOrari(data) {
   lista.innerHTML = giorniDaVisualizzare
     .map((dataDelGiorno, i) => {
       let colore = "";
-      let peso   = "";
+      let peso = "";
 
-      const dayOfWeek  = dataDelGiorno.getDay();
+      const dayOfWeek = dataDelGiorno.getDay();
       const orariIndex = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
-      const dataFmt    = formatDateDM(dataDelGiorno);
+      const dataFmt = formatDateDM(dataDelGiorno);
       const nomeGiorno = data.nomiGiorni[dayOfWeek];
       const orariExtraGiorno = getOrariExtraForDate(data, dataFmt, dayOfWeek);
       const { orari: orariGiorno } = getOrariAttiviOggi(data, dataDelGiorno);
@@ -151,7 +170,10 @@ function aggiornaColoreOrari(data) {
       } else {
         testoOrario = orariGiorno[orariIndex];
         const closureCheck = getSingleDayClosureReason(
-          dataDelGiorno, data, unifiedFerieDates, unifiedFerieDatesNextYear
+          dataDelGiorno,
+          data,
+          unifiedFerieDates,
+          unifiedFerieDatesNextYear,
         );
         if (closureCheck && closureCheck.reason === "festivita") {
           testoOrario = `${nomeGiorno}: Chiuso (Festività)`;
@@ -195,7 +217,8 @@ function aggiornaColoreOrari(data) {
   const transizione = getRilevaTransizioneStagione(data, oggiReal);
   if (transizione && !transizione.eCambioOggi) {
     const dataCambio = _getDataCambio(transizione, oggiReal);
-    if (dataCambio) _avviaCountdownStagione(dataCambio, transizione.da, transizione.a);
+    if (dataCambio)
+      _avviaCountdownStagione(dataCambio, transizione.da, transizione.a);
   } else {
     _fermaCountdownStagione();
   }
@@ -207,7 +230,8 @@ function aggiornaColoreOrari(data) {
       const minuti = statoApertura.minutiAllaChiusura;
       testoInChiusuraSpan.textContent = `In chiusura tra ${minuti} ${minuti === 1 ? "minuto" : "minuti"}`;
     } else {
-      testoInChiusuraSpan.textContent = legenda.testo["in chiusura"] || "In chiusura";
+      testoInChiusuraSpan.textContent =
+        legenda.testo["in chiusura"] || "In chiusura";
     }
   }
 
@@ -216,24 +240,30 @@ function aggiornaColoreOrari(data) {
   if (descEl) {
     const stagioni = data.orariStagionali || [];
     const stagioneAttivaResult = getStagioneAttivaConDate(data, oggiReal);
-    const stagioneAttiva = stagioneAttivaResult ? stagioneAttivaResult.stagione : null;
+    const stagioneAttiva = stagioneAttivaResult
+      ? stagioneAttivaResult.stagione
+      : null;
     const valide = stagioni.filter((s) => s.nome && s.orari);
 
     if (!valide.length) {
       descEl.style.display = "none";
     } else {
-      const attive    = valide.filter((s) => stagioneAttiva && s.nome === stagioneAttiva.nome);
-      const nonAttive = valide.filter((s) => !stagioneAttiva || s.nome !== stagioneAttiva.nome);
+      const attive = valide.filter(
+        (s) => stagioneAttiva && s.nome === stagioneAttiva.nome,
+      );
+      const nonAttive = valide.filter(
+        (s) => !stagioneAttiva || s.nome !== stagioneAttiva.nome,
+      );
 
       const _riga = (s, isAttiva) => {
         let annoInizio, annoFine;
         if (isAttiva && stagioneAttivaResult) {
           annoInizio = stagioneAttivaResult.annoInizio;
-          annoFine   = stagioneAttivaResult.annoFine;
+          annoFine = stagioneAttivaResult.annoFine;
         } else {
           const prossima = _getProssimaIstanzaStagione(s, oggiReal);
           annoInizio = prossima.annoInizio;
-          annoFine   = prossima.annoFine;
+          annoFine = prossima.annoFine;
         }
         const testo = _testoStagioneConAnni(s, annoInizio, annoFine);
         return `<div style="${isAttiva ? "font-weight:bold;" : "opacity:0.65;"}">${testo}</div>`;

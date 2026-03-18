@@ -134,7 +134,7 @@ function getStagioneAttivaConDate(data, dataRiferimento) {
 
     // Stagione Estiva: inizioEstivo(a) → fineEstivo(a)
     const stagEstiva = stagioni.find(
-      (s) => s.nome && s.nome.toLowerCase() === "estivo"
+      (s) => s.nome && s.nome.toLowerCase() === "estivo",
     );
     if (stagEstiva) {
       const ini = new Date(date.inizioEstivo);
@@ -148,7 +148,7 @@ function getStagioneAttivaConDate(data, dataRiferimento) {
 
     // Stagione Invernale: inizioInvernale(a) → fineInvernale(a+1)
     const stagInvernale = stagioni.find(
-      (s) => s.nome && s.nome.toLowerCase() === "invernale"
+      (s) => s.nome && s.nome.toLowerCase() === "invernale",
     );
     if (stagInvernale) {
       const ini = new Date(date.inizioInvernale);
@@ -246,8 +246,7 @@ function _getProssimaIstanzaStagione(stagione, dataRiferimento) {
   const oggi = new Date(ref);
   oggi.setHours(0, 0, 0, 0);
   const anno = oggi.getFullYear();
-  const isEstivo =
-    stagione.nome && stagione.nome.toLowerCase() === "estivo";
+  const isEstivo = stagione.nome && stagione.nome.toLowerCase() === "estivo";
 
   for (const offset of [0, 1, 2]) {
     const a = anno + offset;
@@ -298,7 +297,12 @@ function getRilevaTransizioneStagione(data, dataRiferimento) {
     iniEst.setHours(0, 0, 0, 0);
     if (iniEst >= oggi && iniEst <= fine7gg) {
       const giorni = diffGiorni(iniEst, oggi);
-      return { da: "Invernale", a: "Estivo", giorniMancanti: giorni, eCambioOggi: giorni === 0 };
+      return {
+        da: "Invernale",
+        a: "Estivo",
+        giorniMancanti: giorni,
+        eCambioOggi: giorni === 0,
+      };
     }
 
     // Cambio verso Invernale: inizioInvernale cade nei 7 giorni?
@@ -306,7 +310,12 @@ function getRilevaTransizioneStagione(data, dataRiferimento) {
     iniInv.setHours(0, 0, 0, 0);
     if (iniInv >= oggi && iniInv <= fine7gg) {
       const giorni = diffGiorni(iniInv, oggi);
-      return { da: "Estivo", a: "Invernale", giorniMancanti: giorni, eCambioOggi: giorni === 0 };
+      return {
+        da: "Estivo",
+        a: "Invernale",
+        giorniMancanti: giorni,
+        eCambioOggi: giorni === 0,
+      };
     }
   }
 

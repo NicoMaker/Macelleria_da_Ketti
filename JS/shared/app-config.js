@@ -30,4 +30,3 @@ const AppConfig = (() => {
 
   return { jsonKeys, products, footer, palette };
 })();
-

@@ -32,4 +32,3 @@ const JsonConfig = (() => {
 
   return { files, paths };
 })();
-

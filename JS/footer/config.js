@@ -5,7 +5,8 @@
 
 // Per testare una data specifica, decommentare la riga sotto:
 // const TEST_DATE = new Date("2024-12-25T10:30:00");
-const getNow = () => typeof TEST_DATE !== "undefined" ? TEST_DATE : new Date();
+const getNow = () =>
+  typeof TEST_DATE !== "undefined" ? TEST_DATE : new Date();
 
 document.addEventListener("DOMContentLoaded", () => {
   const footer = document.getElementById("Contatti");
