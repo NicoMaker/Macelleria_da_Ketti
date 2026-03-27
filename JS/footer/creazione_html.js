@@ -57,44 +57,54 @@ function getAllStagioniHTML(data, dataRiferimento) {
 //
 // Il div è già nel DOM; aggiorna-orari.js aggiorna solo #countdown-testo.
 function _getCountdownHTML(transizione) {
-  // Il contenitore è sempre visibile per mantenere il layout fisso
-  const display = "display:block;"; 
+  // Dimensioni fisse per evitare "salti" nel layout
+  const styleContenitore = `
+    display:block;
+    margin-bottom:10px;
+    padding:10px 12px;
+    border-radius:8px;
+    background:rgba(255,255,255,0.07);
+    border:1px solid rgba(255,255,255,0.13);
+    width: 240px; 
+    height: 92px;
+    box-sizing: border-box;
+    overflow: hidden;
+  `; 
 
   let stagioneAttivaLabel = "";
   let stagioneProssimaLabel = "";
   let preview = "-"; 
-  let showLabels = "hidden";
+  // Se non c'è transizione, nascondiamo il contenuto ma manteniamo lo spazio (hidden)
+  let contentVisibility = (transizione && !transizione.eCambioOggi) ? "visible" : "hidden";
 
-  // Se c'è una transizione imminente, prepariamo i dati
   if (transizione && !transizione.eCambioOggi) {
     stagioneAttivaLabel = transizione.da.toUpperCase();
     stagioneProssimaLabel = transizione.a.toUpperCase();
     const g = transizione.giorniMancanti;
     preview = g === 1 ? "1g" : `${g}g`;
-    showLabels = "visible";
   }
 
   return `
-  <div id="countdown-stagione" style="${display}margin-bottom:10px;padding:10px 12px;border-radius:8px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.13);min-height:92px;">
+  <div id="countdown-stagione" style="${styleContenitore}">
+    <div id="countdown-content-wrapper" style="visibility: ${contentVisibility};">
+      <div id="countdown-header-labels" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;font-size:0.78em;letter-spacing:0.08em;font-weight:600;">
+        <span id="countdown-label-attiva" style="display:flex;align-items:center;gap:5px;">
+          <span style="width:8px;height:8px;border-radius:50%;background:#00FF7F;display:inline-block;flex-shrink:0;"></span>
+          ${stagioneAttivaLabel}
+        </span>
+        <span id="countdown-label-prossima" style="opacity:0.6;">
+          ${stagioneProssimaLabel ? stagioneProssimaLabel + " →" : ""}
+        </span>
+      </div>
 
-    <div id="countdown-header-labels" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;font-size:0.78em;letter-spacing:0.08em;font-weight:600; visibility: ${showLabels};">
-      <span id="countdown-label-attiva" style="display:flex;align-items:center;gap:5px;">
-        <span style="width:8px;height:8px;border-radius:50%;background:#00FF7F;display:inline-block;flex-shrink:0;"></span>
-        ${stagioneAttivaLabel}
-      </span>
-      <span id="countdown-label-prossima" style="opacity:0.6;">
-        ${stagioneProssimaLabel ? stagioneProssimaLabel + " →" : ""}
-      </span>
+      <div id="countdown-label-cambio" style="font-size:0.72em;letter-spacing:0.1em;text-transform:uppercase;opacity:0.55;text-align:left;margin-bottom:4px;padding-left:13px;">
+        Cambio stagione tra
+      </div>
+
+      <div style="font-size:1.45em;font-weight:700;letter-spacing:0.04em;line-height:1;text-align:left;padding-left:13px;">
+        <span id="countdown-testo">${preview}</span>
+      </div>
     </div>
-
-    <div id="countdown-label-cambio" style="font-size:0.72em;letter-spacing:0.1em;text-transform:uppercase;opacity:0.55;text-align:left;margin-bottom:4px;padding-left:13px; visibility: ${showLabels};">
-      Cambio stagione tra
-    </div>
-
-    <div style="font-size:1.45em;font-weight:700;letter-spacing:0.04em;line-height:1;text-align:left;padding-left:13px;">
-      <span id="countdown-testo" style="visibility: ${showLabels};">${preview}</span>
-    </div>
-
   </div>`;
 }
 

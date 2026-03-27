@@ -13,14 +13,16 @@ function _avviaCountdownStagione(dataCambio, nomeAttiva, nomeProssima) {
     _countdownInterval = null;
   }
 
-  const el = document.getElementById("countdown-stagione");
+  const wrapper = document.getElementById("countdown-content-wrapper");
   const testoSpan = document.getElementById("countdown-testo");
   const labelAtt = document.getElementById("countdown-label-attiva");
   const labelPross = document.getElementById("countdown-label-prossima");
 
-  if (!el || !testoSpan) return;
+  if (!testoSpan || !wrapper) return;
 
-  // Aggiorna le label stagioni (nel caso il DOM fosse stato ricreato)
+  // Rendiamo visibile il contenuto
+  wrapper.style.visibility = "visible";
+
   if (labelAtt) {
     labelAtt.innerHTML = `<span style="width:8px;height:8px;border-radius:50%;background:#00FF7F;display:inline-block;flex-shrink:0;"></span> ${nomeAttiva.toUpperCase()}`;
   }
@@ -32,7 +34,7 @@ function _avviaCountdownStagione(dataCambio, nomeAttiva, nomeProssima) {
     const diff = dataCambio.getTime() - getNow().getTime();
 
     if (diff <= 0) {
-      el.style.display = "none";
+      wrapper.style.visibility = "hidden";
       clearInterval(_countdownInterval);
       _countdownInterval = null;
       return;
@@ -50,20 +52,20 @@ function _avviaCountdownStagione(dataCambio, nomeAttiva, nomeProssima) {
     parti.push(`${String(sec).padStart(2, "0")}s`);
 
     testoSpan.textContent = parti.join("  ");
-    el.style.display = "";
   };
 
   _tick();
   _countdownInterval = setInterval(_tick, 1000);
 }
 
+
 function _fermaCountdownStagione() {
   if (_countdownInterval) {
     clearInterval(_countdownInterval);
     _countdownInterval = null;
   }
-  const el = document.getElementById("countdown-stagione");
-  if (el) el.style.display = "none";
+  const wrapper = document.getElementById("countdown-content-wrapper");
+  if (wrapper) wrapper.style.visibility = "hidden";
 }
 
 // Calcola la data esatta (mezzanotte) del prossimo cambio stagione
