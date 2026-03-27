@@ -57,41 +57,42 @@ function getAllStagioniHTML(data, dataRiferimento) {
 //
 // Il div è già nel DOM; aggiorna-orari.js aggiorna solo #countdown-testo.
 function _getCountdownHTML(transizione) {
-  // Blocco sempre presente nel DOM (display:none quando non serve)
-  const display =
-    transizione && !transizione.eCambioOggi ? "" : "display:none;";
+  // Il contenitore è sempre visibile per mantenere il layout fisso
+  const display = "display:block;"; 
 
   let stagioneAttivaLabel = "";
   let stagioneProssimaLabel = "";
-  let preview = "";
+  let preview = "-"; 
+  let showLabels = "hidden";
 
+  // Se c'è una transizione imminente, prepariamo i dati
   if (transizione && !transizione.eCambioOggi) {
     stagioneAttivaLabel = transizione.da.toUpperCase();
     stagioneProssimaLabel = transizione.a.toUpperCase();
     const g = transizione.giorniMancanti;
     preview = g === 1 ? "1g" : `${g}g`;
+    showLabels = "visible";
   }
 
   return `
-  <div id="countdown-stagione" style="${display}margin-bottom:10px;padding:10px 12px;border-radius:8px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.13);">
+  <div id="countdown-stagione" style="${display}margin-bottom:10px;padding:10px 12px;border-radius:8px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.13);min-height:92px;">
 
-    <!-- Riga stagioni: attiva ● a sinistra, prossima → a destra -->
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;font-size:0.78em;letter-spacing:0.08em;font-weight:600;">
+    <div id="countdown-header-labels" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;font-size:0.78em;letter-spacing:0.08em;font-weight:600; visibility: ${showLabels};">
       <span id="countdown-label-attiva" style="display:flex;align-items:center;gap:5px;">
         <span style="width:8px;height:8px;border-radius:50%;background:#00FF7F;display:inline-block;flex-shrink:0;"></span>
         ${stagioneAttivaLabel}
       </span>
       <span id="countdown-label-prossima" style="opacity:0.6;">
-        ${stagioneProssimaLabel} →
+        ${stagioneProssimaLabel ? stagioneProssimaLabel + " →" : ""}
       </span>
     </div>
 
-    <!-- Label cambio stagione -->
-    <div style="font-size:0.72em;letter-spacing:0.1em;text-transform:uppercase;opacity:0.55;text-align:left;margin-bottom:4px;padding-left:13px;">Cambio stagione tra</div>
+    <div id="countdown-label-cambio" style="font-size:0.72em;letter-spacing:0.1em;text-transform:uppercase;opacity:0.55;text-align:left;margin-bottom:4px;padding-left:13px; visibility: ${showLabels};">
+      Cambio stagione tra
+    </div>
 
-    <!-- Countdown grande -->
     <div style="font-size:1.45em;font-weight:700;letter-spacing:0.04em;line-height:1;text-align:left;padding-left:13px;">
-      <span id="countdown-testo">${preview}</span>
+      <span id="countdown-testo" style="visibility: ${showLabels};">${preview}</span>
     </div>
 
   </div>`;
