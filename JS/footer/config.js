@@ -60,10 +60,20 @@ function scheduleFooterRefreshAtMidnight(data) {
   setTimeout(() => {
     const footer = document.getElementById("Contatti");
     if (footer && data) {
+      // Salva l'iframe della mappa prima di ricostruire il footer
+      const mapDiv = document.getElementById("map");
+      const mapContent = mapDiv ? mapDiv.innerHTML : null;
+
       footer.innerHTML = createFooterHTML(data, getNow());
 
       setTimeout(() => {
-        if (data.mappa && data.mappa.latitudine && data.mappa.longitudine) {
+        // Ripristina l'iframe della mappa senza ricrearlo
+        const newMapDiv = document.getElementById("map");
+        if (newMapDiv && mapContent) {
+          newMapDiv.innerHTML = mapContent;
+        } else if (data.mappa && data.mappa.latitudine && data.mappa.longitudine) {
+          // Solo se non c'era già una mappa salvata
+          currentMapCoordinates = null; // forza reinizializzazione
           initMap(data.mappa.latitudine, data.mappa.longitudine);
         }
 

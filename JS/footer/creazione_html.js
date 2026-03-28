@@ -47,17 +47,17 @@ function getAllStagioniHTML(data, dataRiferimento) {
 }
 
 // ── Blocco countdown + intestazione stagioni ─────────────────
-// Mostrato solo quando il cambio è nella settimana (non oggi).
-// Layout:
-//
-//   ┌─────────────────────────────────────────┐
-//   │  ● INVERNALE          ESTIVO →          │
-//   │      2g  13h  30m  00s                  │
-//   └─────────────────────────────────────────┘
-//
-// Il div è già nel DOM; aggiorna-orari.js aggiorna solo #countdown-testo.
+// Mostrato SOLO quando il cambio è nella settimana (non oggi).
+// Se non c'è transizione imminente, non viene renderizzato nulla.
 function _getCountdownHTML(transizione) {
-  // Dimensioni fisse per evitare "salti" nel layout
+  // Nessuna transizione imminente → niente HTML, niente spazio
+  if (!transizione || transizione.eCambioOggi) return "";
+
+  const stagioneAttivaLabel = transizione.da.toUpperCase();
+  const stagioneProssimaLabel = transizione.a.toUpperCase();
+  const g = transizione.giorniMancanti;
+  const preview = g === 1 ? "1g" : `${g}g`;
+
   const styleContenitore = `
     display:block;
     margin-bottom:10px;
@@ -65,36 +65,19 @@ function _getCountdownHTML(transizione) {
     border-radius:8px;
     background:rgba(255,255,255,0.07);
     border:1px solid rgba(255,255,255,0.13);
-    width: 240px; 
-    height: 92px;
+    width: 240px;
     box-sizing: border-box;
-    overflow: hidden;
-  `; 
-
-  let stagioneAttivaLabel = "";
-  let stagioneProssimaLabel = "";
-  let preview = "-"; 
-  // Se non c'è transizione, nascondiamo il contenuto ma manteniamo lo spazio (hidden)
-  let contentVisibility = (transizione && !transizione.eCambioOggi) ? "visible" : "hidden";
-
-  if (transizione && !transizione.eCambioOggi) {
-    stagioneAttivaLabel = transizione.da.toUpperCase();
-    stagioneProssimaLabel = transizione.a.toUpperCase();
-    const g = transizione.giorniMancanti;
-    preview = g === 1 ? "1g" : `${g}g`;
-  }
+  `;
 
   return `
   <div id="countdown-stagione" style="${styleContenitore}">
-    <div id="countdown-content-wrapper" style="visibility: ${contentVisibility};">
+    <div id="countdown-content-wrapper">
       <div id="countdown-header-labels" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;font-size:0.78em;letter-spacing:0.08em;font-weight:600;">
         <span id="countdown-label-attiva" style="display:flex;align-items:center;gap:5px;">
           <span style="width:8px;height:8px;border-radius:50%;background:#00FF7F;display:inline-block;flex-shrink:0;"></span>
           ${stagioneAttivaLabel}
         </span>
-        <span id="countdown-label-prossima" style="opacity:0.6;">
-          ${stagioneProssimaLabel ? stagioneProssimaLabel + " →" : ""}
-        </span>
+        <span id="countdown-label-prossima" style="opacity:0.6;">${stagioneProssimaLabel} →</span>
       </div>
 
       <div id="countdown-label-cambio" style="font-size:0.72em;letter-spacing:0.1em;text-transform:uppercase;opacity:0.55;text-align:left;margin-bottom:4px;padding-left:13px;">
@@ -274,7 +257,6 @@ function createFooterHTML(data, giornoPartenza) {
         <!-- Orari -->
         <div class="footer-section">
           ${countdownHTML}
-          ${transizione && !transizione.eCambioOggi ? "<br>" : ""}
           <h4 id="titolo-orari" class="footer-subtitle" style="${transizione && !transizione.eCambioOggi ? "margin-top:14px;" : ""}">${titoloOrari}</h4>
           <ul id="orari-footer" class="footer-list">${orariHtml}</ul>
         </div>

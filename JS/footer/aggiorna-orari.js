@@ -34,7 +34,8 @@ function _avviaCountdownStagione(dataCambio, nomeAttiva, nomeProssima) {
     const diff = dataCambio.getTime() - getNow().getTime();
 
     if (diff <= 0) {
-      wrapper.style.visibility = "hidden";
+      const el = document.getElementById("countdown-stagione");
+      if (el) el.remove();
       clearInterval(_countdownInterval);
       _countdownInterval = null;
       return;
@@ -64,8 +65,8 @@ function _fermaCountdownStagione() {
     clearInterval(_countdownInterval);
     _countdownInterval = null;
   }
-  const wrapper = document.getElementById("countdown-content-wrapper");
-  if (wrapper) wrapper.style.visibility = "hidden";
+  const el = document.getElementById("countdown-stagione");
+  if (el) el.remove();
 }
 
 // Calcola la data esatta (mezzanotte) del prossimo cambio stagione
