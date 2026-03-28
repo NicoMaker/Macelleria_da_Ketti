@@ -6,6 +6,7 @@
 
 // ── Countdown cambio stagione ───────────────────────────────
 let _countdownInterval = null;
+let _stagionePrecedente = null; // traccia la stagione attiva per rilevare i cambi
 
 function _avviaCountdownStagione(dataCambio, nomeAttiva, nomeProssima) {
   if (_countdownInterval) {
@@ -105,6 +106,17 @@ function aggiornaColoreOrari(data) {
     data,
     oggiReal,
   );
+
+  // ── Rileva cambio stagione e ricostruisce il footer se necessario ──
+  if (_stagionePrecedente !== null && _stagionePrecedente !== nomeStagione) {
+    _stagionePrecedente = nomeStagione;
+    // Delega la ricostruzione completa (inclusa mappa) a _ricostruisciFooter
+    if (typeof _ricostruisciFooter === "function") {
+      _ricostruisciFooter(data);
+    }
+    return; // la funzione verrà richiamata da _ricostruisciFooter, usciamo ora
+  }
+  _stagionePrecedente = nomeStagione;
 
   const unifiedFerieDates = getUnifiedFerieDates(data, oggi.getFullYear());
   const unifiedFerieDatesNextYear = getUnifiedFerieDates(

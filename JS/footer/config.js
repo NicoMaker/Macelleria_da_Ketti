@@ -43,6 +43,24 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 });
 
+// ── Ricostruisce il footer e reinizializza la mappa ──────────
+function _ricostruisciFooter(data) {
+  const footer = document.getElementById("Contatti");
+  if (!footer || !data) return;
+
+  footer.innerHTML = createFooterHTML(data, getNow());
+
+  setTimeout(() => {
+    // Forza la reinizializzazione della mappa azzerando le coordinate salvate
+    if (data.mappa && data.mappa.latitudine && data.mappa.longitudine) {
+      currentMapCoordinates = null;
+      initMap(data.mappa.latitudine, data.mappa.longitudine);
+    }
+
+    aggiornaColoreOrari(data);
+  }, 100);
+}
+
 function scheduleFooterRefreshAtMidnight(data) {
   const now = new Date();
   const tomorrow = new Date(now);
@@ -58,31 +76,12 @@ function scheduleFooterRefreshAtMidnight(data) {
   );
 
   setTimeout(() => {
-    const footer = document.getElementById("Contatti");
-    if (footer && data) {
-      // Salva l'iframe della mappa prima di ricostruire il footer
-      const mapDiv = document.getElementById("map");
-      const mapContent = mapDiv ? mapDiv.innerHTML : null;
+    _ricostruisciFooter(data);
 
-      footer.innerHTML = createFooterHTML(data, getNow());
+    // Ripristina l'interval degli aggiornamenti al minuto
+    setInterval(() => aggiornaColoreOrari(data), 60000);
 
-      setTimeout(() => {
-        // Ripristina l'iframe della mappa senza ricrearlo
-        const newMapDiv = document.getElementById("map");
-        if (newMapDiv && mapContent) {
-          newMapDiv.innerHTML = mapContent;
-        } else if (data.mappa && data.mappa.latitudine && data.mappa.longitudine) {
-          // Solo se non c'era già una mappa salvata
-          currentMapCoordinates = null; // forza reinizializzazione
-          initMap(data.mappa.latitudine, data.mappa.longitudine);
-        }
-
-        aggiornaColoreOrari(data);
-        setInterval(() => aggiornaColoreOrari(data), 60000);
-
-        // Riprogramma il refresh per la prossima mezzanotte
-        scheduleFooterRefreshAtMidnight(data);
-      }, 100);
-    }
+    // Riprogramma il refresh per la prossima mezzanotte
+    scheduleFooterRefreshAtMidnight(data);
   }, msUntilMidnight);
 }
