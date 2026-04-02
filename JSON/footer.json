@@ -46,7 +46,7 @@
         "Lunedì: 8:00 - 13:00",
         "Martedì: 8:00 - 13:00 / 15:30 - 19:30",
         "Mercoledì: 8:00 - 13:00",
-        "Giovedì: 8:00 - 13:00 / 15:30 - 19:30",
+        "Giovedì: 8:19 - 13:00 / 15:30 - 19:30",
         "Venerdì: 8:00 - 13:00 / 15:30 - 19:30",
         "Sabato: 8:00 - 13:00 / 15:30 - 19:30",
         "Domenica: Chiuso"
@@ -77,11 +77,13 @@
     "titolo": "Legenda",
     "colori": {
       "aperto": "#00FF7F",
+      "in apertura": "#87CEEB",
       "in chiusura": "yellow",
       "chiuso": "orange"
     },
     "testo": {
       "aperto": "Aperto",
+      "in apertura": "In apertura",
       "in chiusura": "In chiusura",
       "chiuso": "Chiuso"
     }

@@ -204,6 +204,10 @@ function aggiornaColoreOrari(data) {
         peso = "font-weight:bold;";
         if (eChiusoOggi || statoApertura.stato === "chiuso") {
           colore = legenda.colori.chiuso || "orange";
+        } else if (statoApertura.stato === "in-apertura") {
+          colore = legenda.colori["in apertura"] || "#87CEEB";
+          const minuti = statoApertura.minutiAllaApertura;
+          testoOrario += ` (${minuti} ${minuti === 1 ? "minuto" : "minuti"})`;
         } else if (statoApertura.stato === "in-chiusura") {
           colore = legenda.colori["in chiusura"] || "#FFD700";
           const minuti = statoApertura.minutiAllaChiusura;
