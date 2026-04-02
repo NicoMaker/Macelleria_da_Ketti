@@ -222,6 +222,13 @@ function createFooterHTML(data, giornoPartenza) {
     })
     .join("");
 
+  const testoInAperturaSpan =
+    statoApertura.stato === "in-apertura"
+      ? `In apertura tra ${statoApertura.minutiAllaApertura} ${
+          statoApertura.minutiAllaApertura === 1 ? "minuto" : "minuti"
+        }`
+      : legenda.testo["in apertura"] || "In apertura";
+
   const testoInChiusuraSpan =
     statoApertura.stato === "in-chiusura"
       ? `In chiusura tra ${statoApertura.minutiAllaChiusura} ${
@@ -287,7 +294,7 @@ function createFooterHTML(data, giornoPartenza) {
           </div>
           <div class="legenda-orari">
             <h1 class="footer-subtitle"> ${legenda.titolo || "Legenda"} </h1>
-            <div><span style="height:12px;width:12px;background-color:${legenda.colori["in apertura"] || "#87CEEB"};margin-right:8px;border-radius:50%;display:inline-block;"></span>${legenda.testo["in apertura"] || "In apertura"}</div>
+            <div><span style="height:12px;width:12px;background-color:${legenda.colori["in apertura"] || "#87CEEB"};margin-right:8px;border-radius:50%;display:inline-block;"></span><span id="testo-in-apertura">${testoInAperturaSpan}</span></div>
             <div><span style="height:12px;width:12px;background-color:${legenda.colori.aperto || "#00FF7F"};margin-right:8px;border-radius:50%;display:inline-block;"></span>${legenda.testo.aperto || "Aperto"}</div>
             <div><span style="height:12px;width:12px;background-color:${legenda.colori["in chiusura"] || "#FFD700"};margin-right:8px;border-radius:50%;display:inline-block;"></span><span id="testo-in-chiusura">${testoInChiusuraSpan}</span></div>
             <div><span style="height:12px;width:12px;background-color:${legenda.colori.chiuso || "orange"};margin-right:8px;border-radius:50%;display:inline-block;"></span>${legenda.testo.chiuso || "Chiuso"}</div>

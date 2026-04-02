@@ -242,6 +242,18 @@ function aggiornaColoreOrari(data) {
     _fermaCountdownStagione();
   }
 
+  // ── Testo in-apertura ───────────────────────────────────────
+  const testoInAperturaSpan = document.getElementById("testo-in-apertura");
+  if (testoInAperturaSpan) {
+    if (statoApertura.stato === "in-apertura") {
+      const minuti = statoApertura.minutiAllaApertura;
+      testoInAperturaSpan.textContent = `In apertura tra ${minuti} ${minuti === 1 ? "minuto" : "minuti"}`;
+    } else {
+      testoInAperturaSpan.textContent =
+        legenda.testo["in apertura"] || "In apertura";
+    }
+  }
+
   // ── Testo in-chiusura ───────────────────────────────────────
   const testoInChiusuraSpan = document.getElementById("testo-in-chiusura");
   if (testoInChiusuraSpan) {
