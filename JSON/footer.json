@@ -77,7 +77,7 @@
     "titolo": "Legenda",
     "colori": {
       "aperto": "#00FF7F",
-      "in apertura": "#87CEEB",
+      "in apertura": "#90EE90",
       "in chiusura": "yellow",
       "chiuso": "orange"
     },
