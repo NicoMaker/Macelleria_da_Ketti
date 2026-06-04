@@ -4,6 +4,15 @@
 // Le date di cambio stagione sono gestite in date-utils.js
 // ============================================================
 
+// ── Costruisce l'URL WhatsApp dal numero di telefono nel JSON ──
+// Legge sempre contatti.telefono, senza nessun campo extra nel JSON.
+// Es: "+39 3357802124" → "https://wa.me/393357802124"
+function getWhatsappURL(contatti) {
+  if (!contatti || !contatti.telefono) return null;
+  const numSoloCifre = contatti.telefono.replace(/[^\d]/g, "");
+  return `https://wa.me/${numSoloCifre}`;
+}
+
 // ── HTML stagioni: attiva PRIMA (grassetto), le altre dopo (opache) ──
 function getAllStagioniHTML(data, dataRiferimento) {
   const stagioni = data.orariStagionali || [];
@@ -47,10 +56,7 @@ function getAllStagioniHTML(data, dataRiferimento) {
 }
 
 // ── Blocco countdown + intestazione stagioni ─────────────────
-// Mostrato SOLO quando il cambio è nella settimana (non oggi).
-// Se non c'è transizione imminente, non viene renderizzato nulla.
 function _getCountdownHTML(transizione) {
-  // Nessuna transizione imminente → niente HTML, niente spazio
   if (!transizione || transizione.eCambioOggi) return "";
 
   const stagioneAttivaLabel = transizione.da.toUpperCase();
@@ -92,8 +98,6 @@ function _getCountdownHTML(transizione) {
 }
 
 // ── Titolo orari ─────────────────────────────────────────────
-// Se c'è un cambio imminente (non oggi): "Orario Invernale/Estivo"
-// Altrimenti: "Orario <StagioneAttiva>"
 function _calcolaTitoloOrari(transizione, nomeStagione) {
   if (transizione && !transizione.eCambioOggi) {
     return `Orario <span style="font-weight:900;">${transizione.da}</span><span style="font-weight:400;opacity:0.6;">/${transizione.a}</span>`;
@@ -115,6 +119,9 @@ function createFooterHTML(data, giornoPartenza) {
   const contatti = data.contatti || {};
   const social = data.social || {};
   const legenda = data.legendaOrari || { colori: {}, testo: {} };
+
+  // ── Costruisce URL WhatsApp dal numero di telefono ──
+  const whatsappURL = getWhatsappURL(contatti);
 
   configuraCambioStagione(data);
 
@@ -287,8 +294,8 @@ function createFooterHTML(data, giornoPartenza) {
                 : ""
             }
             ${
-              social.whatsapp
-                ? `<a href="${social.whatsapp}" target="_blank"><img src="https://img.icons8.com/ios-filled/50/ffffff/whatsapp.png" style="width:24px;height:24px;"></a>`
+              whatsappURL
+                ? `<a href="${whatsappURL}" target="_blank"><img src="https://img.icons8.com/ios-filled/50/ffffff/whatsapp.png" style="width:24px;height:24px;"></a>`
                 : ""
             }
           </div>
