@@ -46,108 +46,58 @@ function getAllStagioniHTML(data, dataRiferimento) {
   return `<div id="descrizione-stagione" style="margin-top:14px;font-size:0.85em;">${righe.join("")}</div>`;
 }
 
-// ── Genera HTML per le chiusure programmate nel footer ──
+// ── Genera HTML per le chiusure programmate nel footer ──────────────────────
+// Mostra:
+//   - se c'è una chiusura ATTIVA → banner rosso con i dettagli
+//   - poi le 2 prossime chiusure imminenti (ferie + festività + Pasqua)
+// ─────────────────────────────────────────────────────────────────────────────
 function getClosuresHTML(data, oggiReal) {
-  const chiusure = data.chiusure || [];
-  const today = oggiReal || new Date();
-  const currentYear = today.getFullYear();
-  
-  const activeClosures = [];
-  const upcomingClosures = [];
-  
-  for (var i = 0; i < chiusure.length; i++) {
-    const chiusura = chiusure[i];
-    if (!chiusura) continue;
-    
-    if (chiusura.tipo === "periodo" && chiusura.inizio && chiusura.fine) {
-      const inizioParts = chiusura.inizio.split("/").map(Number);
-      const fineParts = chiusura.fine.split("/").map(Number);
-      const inizioDay = inizioParts[0];
-      const inizioMonth = inizioParts[1];
-      const fineDay = fineParts[0];
-      const fineMonth = fineParts[1];
-      
-      let dataInizio = new Date(currentYear, inizioMonth - 1, inizioDay);
-      let dataFine = new Date(currentYear, fineMonth - 1, fineDay);
-      
-      if (dataInizio > dataFine) {
-        dataFine = new Date(currentYear + 1, fineMonth - 1, fineDay);
-      }
-      
-      const oggiTimestamp = new Date(today.getFullYear(), today.getMonth(), today.getDate()).getTime();
-      const inizioTimestamp = new Date(dataInizio.getFullYear(), dataInizio.getMonth(), dataInizio.getDate()).getTime();
-      const fineTimestamp = new Date(dataFine.getFullYear(), dataFine.getMonth(), dataFine.getDate()).getTime();
-      
-      const motivo = (chiusura.motivo && chiusura.motivo.trim()) ? chiusura.motivo : "Ferie";
-      
-      if (oggiTimestamp >= inizioTimestamp && oggiTimestamp <= fineTimestamp) {
-        activeClosures.push({ inizio: chiusura.inizio, fine: chiusura.fine, motivo: motivo });
-      }
-      else if (oggiTimestamp < inizioTimestamp) {
-        const diffDays = Math.ceil((inizioTimestamp - oggiTimestamp) / (1000 * 60 * 60 * 24));
-        if (diffDays <= 30) {
-          upcomingClosures.push({ inizio: chiusura.inizio, fine: chiusura.fine, motivo: motivo, giorni: diffDays });
-        }
-      }
-    }
-    
-    if (chiusura.tipo === "giorno" && chiusura.data && chiusura.data.trim()) {
-      const [day, month] = chiusura.data.split("/").map(Number);
-      let dataChiusura = new Date(currentYear, month - 1, day);
-      
-      if (dataChiusura < today) {
-        dataChiusura = new Date(currentYear + 1, month - 1, day);
-      }
-      
-      const oggiTimestamp = new Date(today.getFullYear(), today.getMonth(), today.getDate()).getTime();
-      const chiusuraTimestamp = new Date(dataChiusura.getFullYear(), dataChiusura.getMonth(), dataChiusura.getDate()).getTime();
-      
-      if (oggiTimestamp <= chiusuraTimestamp) {
-        const diffDays = Math.ceil((chiusuraTimestamp - oggiTimestamp) / (1000 * 60 * 60 * 24));
-        if (diffDays <= 30) {
-          const motivo = (chiusura.motivo && chiusura.motivo.trim()) ? chiusura.motivo : "Ferie";
-          upcomingClosures.push({ 
-            inizio: chiusura.data, 
-            fine: chiusura.data, 
-            motivo: motivo, 
-            giorni: diffDays,
-            isSingleDay: true
-          });
-        }
-      }
-    }
-  }
-  
+  const oggi = oggiReal || new Date();
+
+  // Usa la nuova funzione unificata (ferie + festività + Pasqua, 365 giorni)
+  const allClosures = getAllUpcomingClosures(data, oggi, 365);
+
+  if (!allClosures.length) return "";
+
   var html = "";
-  
-  if (activeClosures.length > 0) {
+
+  // ── Chiusure attive ──
+  const active = allClosures.filter(function(c) { return c.tipo === "attiva"; });
+  for (var i = 0; i < active.length; i++) {
+    var c = active[i];
+    var motivoTesto = c.label === "Festività" ? "Festività" : ("Ferie" + (c.label !== "Ferie" ? " - " + c.label : ""));
     html += '<div class="footer-closure-alert">';
-    html += '<span class="material-icons">warning</span> <strong>🔴 CHIUSO PER FERIE</strong><br>';
-    for (var i = 0; i < activeClosures.length; i++) {
-      var c = activeClosures[i];
-      html += 'dal ' + c.inizio + ' al ' + c.fine;
-      if (c.motivo && c.motivo !== "Ferie") html += ' (' + c.motivo + ')';
+    html += '<span class="material-icons">warning</span> <strong>🔴 CHIUSO - ' + motivoTesto.toUpperCase() + '</strong>';
+    if (!c.isSingleDay) {
+      html += '<br>dal ' + c.inizioFmt + ' al ' + c.fineFmt;
+    } else {
+      html += '<br>' + c.inizioFmt;
     }
     html += '</div>';
   }
-  
-  if (upcomingClosures.length > 0 && activeClosures.length === 0) {
+
+  // ── Prossime 2 chiusure (non ancora iniziate) ──
+  const upcoming = allClosures.filter(function(c) { return c.tipo === "imminente"; });
+  const toShow = upcoming.slice(0, 2);
+
+  if (toShow.length > 0) {
     html += '<div class="footer-future-closures">';
     html += '<div class="footer-future-closures-title"><span>📅</span> Prossime chiusure:</div>';
-    
-    upcomingClosures.sort(function(a, b) { return a.giorni - b.giorni; });
-    
-    for (var i = 0; i < upcomingClosures.length; i++) {
-      var c = upcomingClosures[i];
+
+    for (var j = 0; j < toShow.length; j++) {
+      var c = toShow[j];
+      var giorni = c.giorni;
+      var giornoTesto = giorni === 0 ? "oggi" : (giorni === 1 ? "domani" : "tra " + giorni + " giorni");
+
       if (c.isSingleDay) {
-        html += '<div class="footer-future-closures-item">• ' + c.inizio + ': ' + (c.motivo === "Ferie" ? "Ferie" : c.motivo) + ' (tra ' + c.giorni + ' giorni)</div>';
+        html += '<div class="footer-future-closures-item">• ' + c.inizioFmt + ': ' + c.label + ' (' + giornoTesto + ')</div>';
       } else {
-        html += '<div class="footer-future-closures-item">• dal ' + c.inizio + ' al ' + c.fine + ': ' + (c.motivo === "Ferie" ? "Ferie" : c.motivo) + ' (tra ' + c.giorni + ' giorni)</div>';
+        html += '<div class="footer-future-closures-item">• ' + c.inizioFmt + ' → ' + c.fineFmt + ': ' + c.label + ' (' + giornoTesto + ')</div>';
       }
     }
     html += '</div>';
   }
-  
+
   return html;
 }
 
@@ -164,13 +114,10 @@ function _getCountdownHTML(transizione) {
   return '<div id="countdown-stagione" style="' + styleContenitore + '">' +
     '<div id="countdown-content-wrapper">' +
       '<div id="countdown-header-labels" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;font-size:0.78em;letter-spacing:0.08em;font-weight:600;">' +
-        '<span id="countdown-label-attiva" style="display:flex;align-items:center;gap:5px;">' +
-          '<span style="width:8px;height:8px;border-radius:50%;background:#00FF7F;display:inline-block;flex-shrink:0;"></span> ' + stagioneAttivaLabel +
-        '</span>' +
-        '<span id="countdown-label-prossima" style="opacity:0.6;">' + stagioneProssimaLabel + ' →</span>' +
+        '<span id="countdown-label-attiva" style="display:flex;align-items:center;gap:5px;"></span>' +
+        '<span id="countdown-label-prossima" style="opacity:0.55;"></span>' +
       '</div>' +
-      '<div id="countdown-label-cambio" style="font-size:0.72em;letter-spacing:0.1em;text-transform:uppercase;opacity:0.55;text-align:left;margin-bottom:4px;padding-left:13px;">Cambio stagione tra</div>' +
-      '<div style="font-size:1.45em;font-weight:700;letter-spacing:0.04em;line-height:1;text-align:left;padding-left:13px;"><span id="countdown-testo">' + preview + '</span></div>' +
+      '<div style="font-size:1.35em;font-weight:800;letter-spacing:0.12em;font-variant-numeric:tabular-nums;" id="countdown-testo">' + preview + '</div>' +
     '</div>' +
   '</div>';
 }
