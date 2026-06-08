@@ -105,8 +105,8 @@
   "chiusure": [
     {
       "tipo": "periodo",
-      "inizio": "",
-      "fine": "",
+      "inizio": "22/06",
+      "fine": "27/06",
       "motivo": ""
     },
     { "tipo": "giorno", "data": "", "motivo": "" }
