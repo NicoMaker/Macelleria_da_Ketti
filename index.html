@@ -87,95 +87,6 @@
       href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap"
       rel="stylesheet"
     />
-    
-    <style>
-      /* Stili per il banner chiusure nella hero */
-      @keyframes pulse-red {
-        0%, 100% { transform: scale(1); background: linear-gradient(135deg, #c0392b, #e74c3c); }
-        50% { transform: scale(1.02); background: linear-gradient(135deg, #e74c3c, #c0392b); }
-      }
-      
-      @keyframes shake {
-        0%, 100% { transform: translateX(0); }
-        25% { transform: translateX(-5px); }
-        75% { transform: translateX(5px); }
-      }
-      
-      .hero-closure-banner {
-        background: linear-gradient(135deg, #c0392b, #e74c3c);
-        color: white;
-        text-align: center;
-        padding: 18px 25px;
-        margin-bottom: 25px;
-        border-radius: 60px;
-        font-weight: bold;
-        font-size: 1.4rem;
-        box-shadow: 0 8px 25px rgba(0,0,0,0.3);
-        border: 3px solid #ffcc80;
-        animation: pulse-red 1.5s infinite;
-        cursor: pointer;
-        transition: all 0.3s ease;
-      }
-      
-      .hero-closure-banner:hover {
-        transform: scale(1.03);
-        box-shadow: 0 12px 30px rgba(0,0,0,0.4);
-      }
-      
-      .hero-closure-banner span:first-child {
-        font-size: 32px;
-        vertical-align: middle;
-        margin-right: 15px;
-        display: inline-block;
-        animation: shake 0.5s ease infinite;
-      }
-      
-      /* Stili per il footer alert */
-      .footer-closure-alert {
-        background: linear-gradient(135deg, #c0392b, #e74c3c);
-        border-left: 5px solid #ffcc80;
-        padding: 14px 16px;
-        border-radius: 12px;
-        margin-top: 18px;
-        font-size: 0.95rem;
-        font-weight: bold;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-        animation: pulse-red 1.5s infinite;
-      }
-      
-      .footer-closure-alert .material-icons {
-        vertical-align: middle;
-        margin-right: 10px;
-        font-size: 22px;
-      }
-      
-      .footer-future-closures {
-        margin-top: 18px;
-        font-size: 0.85rem;
-        background: rgba(255,255,255,0.08);
-        padding: 12px;
-        border-radius: 10px;
-      }
-      
-      .footer-future-closures-title {
-        font-weight: bold;
-        margin-bottom: 10px;
-        font-size: 0.9rem;
-        color: #ffcc80;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-      }
-      
-      .footer-future-closures-item {
-        padding: 6px 0;
-        border-bottom: 1px dashed rgba(255,255,255,0.2);
-      }
-      
-      .footer-future-closures-item:last-child {
-        border-bottom: none;
-      }
-    </style>
   </head>
 
   <body>
@@ -222,7 +133,11 @@
       <div class="hero-overlay"></div>
       <div class="hero-content">
         <!-- Banner Chiusure Dinamico - EVIDENTISSIMO -->
-        <div id="hero-closure-banner" class="hero-closure-banner" style="display: none;">
+        <div
+          id="hero-closure-banner"
+          class="hero-closure-banner"
+          style="display: none"
+        >
           <span>🔴</span>
           <span id="hero-closure-text"></span>
         </div>
@@ -390,7 +305,7 @@
     <script src="JS/ui/active-section.js"></script>
     <script src="JS/products/progetti.js"></script>
     <script src="JS/ui/sticky-controls.js"></script>
-    
+
     <!-- Script per banner chiusure hero (DEVE ESSERE DOPO json-loader) -->
     <script src="JS/ui/closure-banner.js"></script>
 
