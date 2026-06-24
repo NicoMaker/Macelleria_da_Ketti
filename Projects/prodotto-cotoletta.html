@@ -19,6 +19,36 @@
       rel="stylesheet"
     />
     <link rel="icon" type="image/png" href="../img/logo.png" />
+
+    <!-- STILE PER BREADCRUMB (aggiungi qui per sicurezza) -->
+    <style>
+      .product-breadcrumb {
+        font-size: 0.9rem;
+        color: #888;
+        margin-bottom: 0.5rem;
+        padding: 0.2rem 0;
+      }
+      .product-breadcrumb a {
+        color: #b8860b;
+        text-decoration: none;
+        transition: color 0.2s;
+      }
+      .product-breadcrumb a:hover {
+        text-decoration: underline;
+        color: #a06b0a;
+      }
+      .product-breadcrumb .sep {
+        margin: 0 0.4rem;
+        color: #aaa;
+      }
+      .nav-list a.active,
+      .mobile-nav-list a.active {
+        color: #b8860b !important;
+        font-weight: 600;
+        border-bottom: 2px solid #b8860b;
+        padding-bottom: 2px;
+      }
+    </style>
   </head>
   <body>
     <header class="site-header">
@@ -59,9 +89,7 @@
             <a href="../index.html#novita" class="mobile-nav-link">Novità</a>
           </li>
           <li>
-            <a href="../index.html#Prodotti" class="mobile-nav-link"
-              >Prodotti</a
-            >
+            <a href="../index.html#Prodotti" class="mobile-nav-link">Prodotti</a>
           </li>
           <li>
             <a href="#Contatti" class="mobile-nav-link">Contatti</a>
@@ -98,12 +126,13 @@
             <a class="prev" onclick="plusSlides(-1)">&#10094;</a>
             <a class="next" onclick="plusSlides(1)">&#10095;</a>
           </div>
-          <!-- Contenitore per i pallini di navigazione -->
-          <div class="dots-container" style="text-align: center">
-            <!-- I pallini verranno generati da slider.js -->
-          </div>
+          <div class="dots-container" style="text-align: center"></div>
         </div>
+
         <div class="product-info">
+          <!-- 🔴 BREADCRUMB: DEVE ESSERE QUI, PRIMA DEL TITOLO -->
+          <div class="product-breadcrumb"></div>
+
           <h1 class="product-title">Cotoletta di Suino</h1>
           <div class="product-category" id="product-category-badges"></div>
 
@@ -142,6 +171,10 @@
       <!-- Il contenuto del footer verrà generato dinamicamente da footer.js -->
     </footer>
 
+    <!-- ===== CARICA BREADCRUMB PER PRIMO ===== -->
+    <script src="../JS/ui/breadcrumb.js"></script>
+
+    <!-- Gli altri script -->
     <script src="../JS/shared/json-paths.js"></script>
     <script src="../JS/shared/json-config.js"></script>
     <script src="../JS/shared/app-config.js"></script>
@@ -150,7 +183,6 @@
     <script src="../JS/product/product-page.js"></script>
     <script src="../JS/product/slider.js"></script>
     <script src="../JS/ui/mobile-menu.js"></script>
-
     <script src="../JS/footer/date-utils.js"></script>
     <script src="../JS/footer/Gestisci_chiusure.js"></script>
     <script src="../JS/footer/gestisci_apertura.js"></script>

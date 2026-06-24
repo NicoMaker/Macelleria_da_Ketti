@@ -300,3 +300,28 @@
   position: absolute !important;
   top: 50% !important;
 }
+
+
+.product-breadcrumb {
+  font-size: 0.9rem;
+  color: #888;
+  margin-bottom: 0.5rem;
+}
+.product-breadcrumb a {
+  color: #b8860b;
+  text-decoration: none;
+}
+.product-breadcrumb a:hover {
+  text-decoration: underline;
+}
+.product-breadcrumb .sep {
+  margin: 0 0.4rem;
+  color: #aaa;
+}
+.nav-list a.active,
+.mobile-nav-list a.active {
+  color: #b8860b !important;
+  font-weight: 600;
+  border-bottom: 2px solid #b8860b;
+  padding-bottom: 2px;
+}
