@@ -67,10 +67,10 @@ function checkStatoApertura(
       const minutiTotaliInizio = oreInizio * 60 + minInizio;
       const minutiMancanti = minutiTotaliInizio - minutiTotaliCorrente;
 
-      return { 
-        stato: "in-apertura", 
-        minutiAllaApertura: minutiMancanti, 
-        minutiAllaChiusura: 0 
+      return {
+        stato: "in-apertura",
+        minutiAllaApertura: minutiMancanti,
+        minutiAllaChiusura: 0,
       };
     }
 
@@ -86,23 +86,23 @@ function checkStatoApertura(
         const minutiTotaliFine = oreFine * 60 + minFine;
         const minutiMancanti = minutiTotaliFine - minutiTotaliCorrente;
 
-        return { 
-          stato: "in-chiusura", 
-          minutiAllaApertura: 0, 
-          minutiAllaChiusura: minutiMancanti 
+        return {
+          stato: "in-chiusura",
+          minutiAllaApertura: 0,
+          minutiAllaChiusura: minutiMancanti,
         };
       }
-      return { 
-        stato: "aperto", 
-        minutiAllaApertura: 0, 
-        minutiAllaChiusura: 0 
+      return {
+        stato: "aperto",
+        minutiAllaApertura: 0,
+        minutiAllaChiusura: 0,
       };
     }
   }
 
-  return { 
-    stato: "chiuso", 
-    minutiAllaApertura: 0, 
-    minutiAllaChiusura: 0 
+  return {
+    stato: "chiuso",
+    minutiAllaApertura: 0,
+    minutiAllaChiusura: 0,
   };
 }

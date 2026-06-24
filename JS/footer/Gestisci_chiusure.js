@@ -249,9 +249,10 @@ function getAllUpcomingClosures(data, oggiReal, maxFutureDays) {
       return; // già passata
     }
 
-    const giorni = tipo === "attiva"
-      ? 0
-      : Math.round((inizioTs - oggiTs) / (1000 * 60 * 60 * 24));
+    const giorni =
+      tipo === "attiva"
+        ? 0
+        : Math.round((inizioTs - oggiTs) / (1000 * 60 * 60 * 24));
 
     result.push({
       tipo,
@@ -287,29 +288,64 @@ function getAllUpcomingClosures(data, oggiReal, maxFutureDays) {
     for (const chiusura of chiusure) {
       if (!chiusura) continue;
 
-      if (chiusura.tipo === "periodo" && chiusura.inizio && chiusura.inizio.trim() && chiusura.fine && chiusura.fine.trim()) {
+      if (
+        chiusura.tipo === "periodo" &&
+        chiusura.inizio &&
+        chiusura.inizio.trim() &&
+        chiusura.fine &&
+        chiusura.fine.trim()
+      ) {
         const inizioParts = chiusura.inizio.split("/").map(Number);
         const fineParts = chiusura.fine.split("/").map(Number);
-        let dataInizio = new Date(anno, inizioParts[1] - 1, inizioParts[0], 0, 0, 0, 0);
-        let dataFine = new Date(anno, fineParts[1] - 1, fineParts[0], 0, 0, 0, 0);
+        let dataInizio = new Date(
+          anno,
+          inizioParts[1] - 1,
+          inizioParts[0],
+          0,
+          0,
+          0,
+          0,
+        );
+        let dataFine = new Date(
+          anno,
+          fineParts[1] - 1,
+          fineParts[0],
+          0,
+          0,
+          0,
+          0,
+        );
         // Periodo a cavallo d'anno
         if (dataInizio.getTime() > dataFine.getTime()) {
-          dataFine = new Date(anno + 1, fineParts[1] - 1, fineParts[0], 0, 0, 0, 0);
+          dataFine = new Date(
+            anno + 1,
+            fineParts[1] - 1,
+            fineParts[0],
+            0,
+            0,
+            0,
+            0,
+          );
         }
-        const motivo = (chiusura.motivo && chiusura.motivo.trim()) ? chiusura.motivo : "Ferie";
+        const motivo =
+          chiusura.motivo && chiusura.motivo.trim() ? chiusura.motivo : "Ferie";
         _add(dataInizio, dataFine, motivo);
-
-      } else if (chiusura.tipo === "giorno" && chiusura.data && chiusura.data.trim()) {
+      } else if (
+        chiusura.tipo === "giorno" &&
+        chiusura.data &&
+        chiusura.data.trim()
+      ) {
         const parts = chiusura.data.split("/").map(Number);
         const d = new Date(anno, parts[1] - 1, parts[0], 0, 0, 0, 0);
-        const motivo = (chiusura.motivo && chiusura.motivo.trim()) ? chiusura.motivo : "Ferie";
+        const motivo =
+          chiusura.motivo && chiusura.motivo.trim() ? chiusura.motivo : "Ferie";
         _add(d, d, motivo);
       }
     }
   }
 
   // Ordina: attive prima, poi per data di inizio crescente
-  result.sort(function(a, b) {
+  result.sort(function (a, b) {
     if (a.tipo === "attiva" && b.tipo !== "attiva") return -1;
     if (b.tipo === "attiva" && a.tipo !== "attiva") return 1;
     return a.inizio.getTime() - b.inizio.getTime();

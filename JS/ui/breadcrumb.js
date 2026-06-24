@@ -8,7 +8,9 @@ document.addEventListener("DOMContentLoaded", function () {
   const container = document.querySelector(".product-breadcrumb");
   if (container) {
     // Prende il nome dal titolo H1
-    const h1 = document.querySelector("h1.product-title") || document.querySelector("h1");
+    const h1 =
+      document.querySelector("h1.product-title") ||
+      document.querySelector("h1");
     const productName = h1 ? h1.innerText.trim() : "Prodotto";
 
     // Percorso FISSO: torna sempre alla root con ../
@@ -26,7 +28,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // ===== 2. EVIDENZIA IL LINK "PRODOTTI" =====
   const links = document.querySelectorAll(
-    '.nav-list a[href*="#Prodotti"], .mobile-nav-list a[href*="#Prodotti"]'
+    '.nav-list a[href*="#Prodotti"], .mobile-nav-list a[href*="#Prodotti"]',
   );
   if (links.length > 0) {
     links.forEach(function (link) {

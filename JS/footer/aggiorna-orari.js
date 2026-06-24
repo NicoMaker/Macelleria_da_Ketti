@@ -60,7 +60,6 @@ function _avviaCountdownStagione(dataCambio, nomeAttiva, nomeProssima) {
   _countdownInterval = setInterval(_tick, 1000);
 }
 
-
 function _fermaCountdownStagione() {
   if (_countdownInterval) {
     clearInterval(_countdownInterval);
