@@ -106,7 +106,9 @@ function getOrariExtraForDate(data, dataFormattata, dayOfWeek) {
 
   for (const item of orariExtra) {
     if (item.giorno === dataFormattata && item.orari) {
-      return `${nomiGiorni[dayOfWeek]}: ${item.orari} (${item.motivo})`;
+      const motivoTesto =
+        item.motivo === "" || item.motivo == null ? "" : ` (${item.motivo})`;
+      return `${nomiGiorni[dayOfWeek]}: ${item.orari}${motivoTesto}`;
     }
   }
   return null;
