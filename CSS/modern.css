@@ -230,7 +230,7 @@ html.anim [data-reveal].reveal-in {
   justify-content: center;
   gap: 14px;
   max-width: 520px;
-  margin: 0 auto;
+  margin: 2.5rem auto;
   padding: 0 var(--spacing-md);
 }
 .section-divider::before,
