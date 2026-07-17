@@ -1303,12 +1303,12 @@ footer {
 /* Hero section: occupa almeno l’80% del viewport e lascia spazio all’header */
 @media (max-width: 768px) {
   .hero-section {
-    min-height: 85vh !important;          /* più altezza per contenere tutto */
-    padding-top: 70px;                    /* evita sovrapposizione con l'header sticky */
+    min-height: 85vh !important; /* più altezza per contenere tutto */
+    padding-top: 70px; /* evita sovrapposizione con l'header sticky */
   }
 
   .hero-content {
-    padding: 1rem 1.5rem !important;      /* riduci i padding laterali */
+    padding: 1rem 1.5rem !important; /* riduci i padding laterali */
     width: 100%;
     box-sizing: border-box;
   }

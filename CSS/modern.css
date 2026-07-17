@@ -72,7 +72,9 @@ html {
 
 /* Hamburger → X */
 .mobile-menu-toggle .hamburger-line {
-  transition: transform 0.35s var(--ease-out), opacity 0.25s ease;
+  transition:
+    transform 0.35s var(--ease-out),
+    opacity 0.25s ease;
 }
 .mobile-menu-toggle.active .hamburger-line:nth-child(1) {
   transform: translateY(7px) rotate(45deg);
@@ -124,8 +126,13 @@ html.anim .hero-cta-container {
   display: inline-block;
 }
 @keyframes bobDown {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(8px); }
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(8px);
+  }
 }
 
 /* ---------- 4. Titoli di sezione: la riga esistente si "disegna" ----------
@@ -304,9 +311,17 @@ html.anim [data-reveal].reveal-in {
   background: var(--ash-darkest);
 }
 @keyframes callPulse {
-  0% { transform: scale(0.9); opacity: 0.7; }
-  60% { transform: scale(1.35); opacity: 0; }
-  100% { opacity: 0; }
+  0% {
+    transform: scale(0.9);
+    opacity: 0.7;
+  }
+  60% {
+    transform: scale(1.35);
+    opacity: 0;
+  }
+  100% {
+    opacity: 0;
+  }
 }
 .back-to-top {
   bottom: 22px;
