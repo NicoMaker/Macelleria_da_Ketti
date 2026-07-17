@@ -1429,3 +1429,12 @@ footer {
 .mobile-menu-toggle.active .hamburger-line:nth-child(3) {
   transform: translateY(-7.5px) rotate(-45deg) !important;
 }
+
+@media (min-width: 1025px) {
+  .main-nav {
+    display: block;
+  }
+  .mobile-menu-toggle {
+    display: none;
+  }
+}
