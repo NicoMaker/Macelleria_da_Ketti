@@ -132,9 +132,16 @@
   function scanForTargets(root) {
     root = root || document;
 
-    // Titoli e sottotitoli
+    // Titoli e sottotitoli: reveal con sfocatura
     root
       .querySelectorAll(".section-title, .section-subtitle")
+      .forEach(function (el) {
+        markReveal(el, "blur");
+      });
+
+    // Bottoni CTA nelle sezioni
+    root
+      .querySelectorAll("section .hero-cta-container")
       .forEach(function (el) {
         markReveal(el, "up");
       });
@@ -160,6 +167,10 @@
       .forEach(function (grid) {
         Array.prototype.forEach.call(grid.children, function (card, i) {
           markReveal(card, "up", i);
+          var img = card.querySelector("img");
+          if (img && !img.hasAttribute("data-reveal-img")) {
+            img.setAttribute("data-reveal-img", "");
+          }
         });
       });
 
@@ -199,6 +210,78 @@
     });
   }
 
+  // ── 6. Parallasse allo scroll (hero e sezione storia) ──
+  function initParallax() {
+    var hero = document.querySelector(".hero-image");
+    var aboutImgs = document.querySelectorAll(".about-image img");
+    if (!hero && !aboutImgs.length) return;
+
+    var ticking = false;
+    function update() {
+      var y = window.scrollY || document.documentElement.scrollTop;
+      if (hero) {
+        // la hero scorre più lenta del resto (max ±60px, coperto dal 120% di altezza)
+        var shift = Math.min(y * 0.18, 60);
+        hero.style.setProperty("--par", shift.toFixed(1) + "px");
+      }
+      aboutImgs.forEach(function (img) {
+        var r = img.getBoundingClientRect();
+        var center = r.top + r.height / 2 - window.innerHeight / 2;
+        var shift = Math.max(-24, Math.min(24, -center * 0.05));
+        img.style.setProperty("--par", shift.toFixed(1) + "px");
+      });
+      ticking = false;
+    }
+    window.addEventListener(
+      "scroll",
+      function () {
+        if (!ticking) {
+          ticking = true;
+          requestAnimationFrame(update);
+        }
+      },
+      { passive: true }
+    );
+    update();
+  }
+
+  // ── 7. Transizioni tra le pagine: sipario in uscita ──
+  function initPageTransitions() {
+    var curtain = document.createElement("div");
+    curtain.className = "page-curtain";
+    curtain.setAttribute("aria-hidden", "true");
+    document.body.appendChild(curtain);
+
+    document.addEventListener("click", function (e) {
+      var link = e.target.closest ? e.target.closest("a") : null;
+      if (!link) return;
+      var href = link.getAttribute("href");
+      if (!href) return;
+      // solo navigazioni interne verso altre pagine html (niente ancore, tel, wa, ecc.)
+      if (
+        href.indexOf("#") === 0 ||
+        href.indexOf("http") === 0 ||
+        href.indexOf("tel:") === 0 ||
+        href.indexOf("mailto:") === 0 ||
+        link.target === "_blank" ||
+        e.metaKey || e.ctrlKey || e.shiftKey || e.altKey
+      )
+        return;
+      if (!/\.html(\?|#|$)/.test(href) && href.indexOf("/") === -1) return;
+
+      e.preventDefault();
+      curtain.classList.add("rise");
+      setTimeout(function () {
+        window.location.href = href;
+      }, 520);
+    });
+
+    // se si torna indietro dalla bfcache, togli il sipario
+    window.addEventListener("pageshow", function (e) {
+      if (e.persisted) curtain.classList.remove("rise");
+    });
+  }
+
   // ── 5. Separatori artigianali tra le sezioni della home ──
   function initSectionDividers() {
     var sections = document.querySelectorAll(
@@ -230,6 +313,8 @@
     }
 
     initHero();
+    initParallax();
+    initPageTransitions();
     scanForTargets(document);
     watchDynamicContent();
 

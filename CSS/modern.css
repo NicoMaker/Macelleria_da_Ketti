@@ -376,3 +376,140 @@ html.anim [data-reveal].reveal-in {
     animation: none;
   }
 }
+
+/* ============================================================
+   13. LIVELLO EXTRA — parallasse, blur-reveal, transizioni pagina
+   ============================================================ */
+
+/* ── Transizione di ENTRATA pagina (pura CSS: robusta anche senza JS) ── */
+html.anim body {
+  animation: pageEnter 0.85s var(--ease-out) both;
+}
+@keyframes pageEnter {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* ── Transizione di USCITA pagina: sipario che sale ── */
+.page-curtain {
+  position: fixed;
+  inset: 0;
+  z-index: 3000;
+  background: var(--ash-darkest);
+  transform: translateY(101%);
+  pointer-events: none;
+}
+.page-curtain::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--accent-rust);
+  transform: translateY(101%);
+}
+.page-curtain.rise {
+  transition: transform 0.45s var(--ease-out);
+  transform: translateY(0);
+}
+.page-curtain.rise::after {
+  transition: transform 0.45s var(--ease-out) 0.08s;
+  transform: translateY(0);
+}
+
+/* ── Parallasse (trasformazioni applicate dal JS via --par) ── */
+html.anim .hero-image {
+  top: -10%;
+  height: 120%;
+  transform: translateY(var(--par, 0px));
+  will-change: transform;
+}
+html.anim .about-image img {
+  transform: scale(1.08) translateY(var(--par, 0px));
+  will-change: transform;
+}
+html.anim .about-image:hover img {
+  transform: scale(1.12) translateY(var(--par, 0px));
+}
+
+/* ── Nuova variante reveal: blur (per titoli e sottotitoli) ── */
+html.anim [data-reveal="blur"] {
+  opacity: 0;
+  transform: translateY(18px);
+  filter: blur(8px);
+  transition:
+    opacity var(--reveal-duration) var(--ease-out),
+    transform var(--reveal-duration) var(--ease-out),
+    filter var(--reveal-duration) var(--ease-out);
+  transition-delay: calc(var(--reveal-index, 0) * 90ms);
+}
+html.anim [data-reveal="blur"].reveal-in {
+  opacity: 1;
+  transform: none;
+  filter: blur(0);
+}
+
+/* ── Icone feature: rimbalzo quando la card appare ── */
+html.anim .feature-card .feature-icon {
+  opacity: 0;
+  transform: translateY(14px) scale(0.7);
+}
+html.anim .feature-card.reveal-in .feature-icon {
+  animation: iconPop 0.7s var(--ease-out) 0.25s forwards;
+}
+@keyframes iconPop {
+  0% {
+    opacity: 0;
+    transform: translateY(14px) scale(0.7);
+  }
+  60% {
+    opacity: 1;
+    transform: translateY(-4px) scale(1.12);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* ── Immagini card: rivelazione con "tendina" dal basso ── */
+html.anim .Progetti-card [data-reveal-img],
+html.anim .novita-card [data-reveal-img] {
+  clip-path: inset(100% 0 0 0);
+  transition: clip-path 1s var(--ease-out) 0.1s;
+}
+html.anim .reveal-in [data-reveal-img] {
+  clip-path: inset(0 0 0 0);
+}
+
+/* ── Riduzione movimento ── */
+@media (prefers-reduced-motion: reduce) {
+  html.anim body {
+    animation: none;
+  }
+  html.anim .hero-image,
+  html.anim .about-image img {
+    transform: none !important;
+    top: 0;
+    height: 100%;
+  }
+  html.anim [data-reveal="blur"] {
+    opacity: 1 !important;
+    transform: none !important;
+    filter: none !important;
+  }
+  html.anim .feature-card .feature-icon {
+    opacity: 1;
+    transform: none;
+    animation: none !important;
+  }
+  html.anim .Progetti-card [data-reveal-img],
+  html.anim .novita-card [data-reveal-img] {
+    clip-path: none !important;
+  }
+  .page-curtain {
+    display: none;
+  }
+}
