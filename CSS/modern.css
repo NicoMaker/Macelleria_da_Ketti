@@ -1,0 +1,378 @@
+/* ============================================================
+   MODERN.CSS — Macelleria da Ketti
+   Layer moderno in stile "Da Prat Falegnameria": animazioni,
+   reveal allo scroll, micro-interazioni, pulsanti flottanti.
+   NESSUN colore nuovo: usa solo le variabili già definite
+   in styles.css (palette legno/ruggine). Testi e font invariati.
+   ============================================================ */
+
+:root {
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --reveal-duration: 1.1s;
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 96px;
+}
+
+::selection {
+  background: var(--accent-warm);
+  color: var(--white);
+}
+
+/* ---------- 1. Barra di progresso lettura ---------- */
+.scroll-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 3px;
+  width: 100%;
+  transform-origin: left;
+  transform: scaleX(0);
+  background: linear-gradient(90deg, var(--accent-warm), var(--accent-rust));
+  z-index: 1200;
+  pointer-events: none;
+}
+
+/* ---------- 2. Header: si compatta allo scroll ---------- */
+.site-header {
+  transition: box-shadow 0.4s ease;
+}
+.site-header.is-scrolled {
+  box-shadow: 0 8px 30px -12px rgba(44, 36, 22, 0.25);
+}
+.logo {
+  transition: transform 0.35s var(--ease-out);
+}
+.site-header.is-scrolled .logo {
+  transform: scale(0.9);
+}
+.logo-link:hover .logo {
+  transform: scale(0.95) rotate(-2deg);
+}
+.nav-link {
+  position: relative;
+}
+.nav-link::after {
+  content: "";
+  position: absolute;
+  bottom: -3px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--accent-rust);
+  transition: width 0.35s var(--ease-out);
+}
+.nav-link:hover::after,
+.nav-link.active::after {
+  width: 100%;
+}
+
+/* Hamburger → X */
+.mobile-menu-toggle .hamburger-line {
+  transition: transform 0.35s var(--ease-out), opacity 0.25s ease;
+}
+.mobile-menu-toggle.active .hamburger-line:nth-child(1) {
+  transform: translateY(7px) rotate(45deg);
+}
+.mobile-menu-toggle.active .hamburger-line:nth-child(2) {
+  opacity: 0;
+}
+.mobile-menu-toggle.active .hamburger-line:nth-child(3) {
+  transform: translateY(-7px) rotate(-45deg);
+}
+
+/* ---------- 3. Hero cinematografica ---------- */
+html.anim .hero-image img {
+  transform: scale(1.12);
+}
+.hero-loaded .hero-image img {
+  animation: heroZoom 8s var(--ease-out) forwards;
+}
+@keyframes heroZoom {
+  to {
+    transform: scale(1.02);
+  }
+}
+
+/* Entrata orchestrata (solo con JS attivo: html.anim) */
+html.anim .hero-title,
+html.anim .hero-subtitle,
+html.anim .hero-cta-container {
+  opacity: 0;
+  transform: translateY(30px);
+}
+.hero-loaded .hero-title {
+  animation: riseIn 1.1s var(--ease-out) 0.15s forwards;
+}
+.hero-loaded .hero-subtitle {
+  animation: riseIn 1.1s var(--ease-out) 0.35s forwards;
+}
+.hero-loaded .hero-cta-container {
+  animation: riseIn 1.1s var(--ease-out) 0.55s forwards;
+}
+@keyframes riseIn {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.scroll-down-arrow .material-icons {
+  animation: bobDown 2s ease-in-out infinite;
+  display: inline-block;
+}
+@keyframes bobDown {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(8px); }
+}
+
+/* ---------- 4. Titoli di sezione: la riga esistente si "disegna" ----------
+   La sottolineatura (#ffcc80, definita in custom-styles.css) resta identica:
+   qui viene solo animata quando il titolo entra nel viewport. */
+html.anim .section-title::after {
+  transform: scaleX(0);
+  transform-origin: center;
+  transition: transform 0.9s var(--ease-out) 0.15s;
+}
+html.anim .section-title.reveal-in::after {
+  transform: scaleX(1);
+}
+
+/* ---------- 5. Reveal allo scroll ---------- */
+html.anim [data-reveal] {
+  opacity: 0;
+  transform: translateY(24px);
+  transition:
+    opacity var(--reveal-duration) var(--ease-out),
+    transform var(--reveal-duration) var(--ease-out);
+  transition-delay: calc(var(--reveal-index, 0) * 90ms);
+  will-change: opacity, transform;
+}
+html.anim [data-reveal="left"] {
+  transform: translateX(-32px);
+}
+html.anim [data-reveal="right"] {
+  transform: translateX(32px);
+}
+html.anim [data-reveal="zoom"] {
+  transform: scale(0.96) translateY(14px);
+}
+html.anim [data-reveal].reveal-in {
+  opacity: 1;
+  transform: none;
+}
+/* ---------- 6. Card: sollevamento e zoom immagine ---------- */
+.Progetti-card,
+.novita-card,
+.feature-card {
+  transition:
+    transform 0.45s var(--ease-out),
+    box-shadow 0.45s var(--ease-out) !important;
+}
+.Progetti-card:hover,
+.novita-card:hover,
+.feature-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 24px 50px -16px rgba(44, 36, 22, 0.3);
+}
+.Progetti-card img,
+.novita-card img {
+  transition: transform 0.8s var(--ease-out);
+}
+.Progetti-card:hover img,
+.novita-card:hover img {
+  transform: scale(1.06);
+}
+.feature-card .feature-icon {
+  transition: transform 0.4s var(--ease-out);
+}
+.feature-card:hover .feature-icon {
+  transform: translateY(-4px) scale(1.1);
+}
+
+/* ---------- 7. Sezione storia (about) ---------- */
+.about-image {
+  overflow: hidden;
+}
+.about-image img {
+  transition: transform 1s var(--ease-out);
+}
+.about-image:hover img {
+  transform: scale(1.05);
+}
+
+/* ---------- 8. Bottoni: freccia che appare all'hover ---------- */
+.cta-button {
+  transition:
+    transform 0.3s var(--ease-out),
+    box-shadow 0.3s var(--ease-out),
+    background 0.3s ease,
+    color 0.3s ease !important;
+}
+.cta-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px -10px rgba(160, 82, 45, 0.45);
+}
+.cta-button:active {
+  transform: translateY(0);
+}
+.cta-button:focus-visible {
+  outline: 3px solid var(--accent-warm);
+  outline-offset: 3px;
+}
+
+/* ---------- 9. Separatore artigianale tra le sezioni ---------- */
+.section-divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  max-width: 520px;
+  margin: 0 auto;
+  padding: 0 var(--spacing-md);
+}
+.section-divider::before,
+.section-divider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--gray-medium);
+}
+.section-divider span {
+  width: 6px;
+  height: 6px;
+  background: var(--accent-rust);
+  transform: rotate(45deg);
+  flex-shrink: 0;
+}
+
+/* ---------- 10. Pulsanti flottanti: WhatsApp, telefono, torna su ---------- */
+.quick-whatsapp,
+.quick-call,
+.back-to-top {
+  position: fixed;
+  right: 22px;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  color: var(--white);
+  box-shadow: 0 10px 25px -8px rgba(44, 36, 22, 0.4);
+  z-index: 1100;
+  transition:
+    transform 0.3s var(--ease-out),
+    background 0.3s ease,
+    box-shadow 0.3s ease,
+    opacity 0.35s ease;
+}
+.quick-whatsapp {
+  bottom: 142px;
+  background: #25d366; /* colore ufficiale del brand WhatsApp */
+}
+.quick-whatsapp svg {
+  width: 26px;
+  height: 26px;
+  fill: currentColor;
+  display: block;
+}
+.quick-whatsapp:hover {
+  transform: translateY(-3px) scale(1.05);
+  background: #1ebe5b;
+}
+.quick-whatsapp::after {
+  content: "";
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  border: 2px solid #25d366;
+  opacity: 0;
+  animation: callPulse 3s ease-out infinite;
+  pointer-events: none;
+}
+.quick-call {
+  bottom: 82px;
+  background: var(--accent-rust);
+}
+.quick-call .material-icons {
+  font-size: 22px;
+}
+.quick-call:hover {
+  transform: translateY(-3px) scale(1.05);
+  background: var(--ash-darkest);
+}
+@keyframes callPulse {
+  0% { transform: scale(0.9); opacity: 0.7; }
+  60% { transform: scale(1.35); opacity: 0; }
+  100% { opacity: 0; }
+}
+.back-to-top {
+  bottom: 22px;
+  background: var(--ash-darkest);
+  font-size: 20px;
+  line-height: 1;
+  border: none;
+  cursor: pointer;
+  opacity: 0;
+  transform: translateY(16px) scale(0.9);
+  pointer-events: none;
+}
+.back-to-top.visible {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  pointer-events: auto;
+}
+.back-to-top:hover {
+  background: var(--accent-rust);
+}
+.quick-whatsapp:focus-visible,
+.quick-call:focus-visible,
+.back-to-top:focus-visible {
+  outline: 3px solid var(--accent-warm);
+  outline-offset: 3px;
+}
+
+/* ---------- 11. Pagina prodotto ---------- */
+.product-detail-card,
+.main-product-image,
+.slider-container {
+  transition: box-shadow 0.45s var(--ease-out);
+}
+.main-product-image img,
+.slide img {
+  transition: transform 0.8s var(--ease-out);
+}
+.main-product-image:hover img {
+  transform: scale(1.04);
+}
+.back-button {
+  transition: transform 0.3s var(--ease-out) !important;
+}
+.back-button:hover {
+  transform: translateX(-4px);
+}
+
+/* ---------- 12. Accessibilità: riduzione movimento ---------- */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  html.anim [data-reveal],
+  html.anim .hero-title,
+  html.anim .hero-subtitle,
+  html.anim .hero-cta-container,
+  html.anim .hero-image img {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+  .quick-whatsapp::after {
+    animation: none;
+  }
+}
