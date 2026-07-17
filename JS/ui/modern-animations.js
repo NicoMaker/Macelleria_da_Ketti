@@ -245,19 +245,13 @@
     update();
   }
 
-  // ── 7. Transizioni tra le pagine: sipario in uscita ──
+  // ── 7. Transizioni tra le pagine: dissolvenza leggera (nessun sipario) ──
   function initPageTransitions() {
-    var curtain = document.createElement("div");
-    curtain.className = "page-curtain";
-    curtain.setAttribute("aria-hidden", "true");
-    document.body.appendChild(curtain);
-
     document.addEventListener("click", function (e) {
       var link = e.target.closest ? e.target.closest("a") : null;
       if (!link) return;
       var href = link.getAttribute("href");
       if (!href) return;
-      // solo navigazioni interne verso altre pagine html (niente ancore, tel, wa, ecc.)
       if (
         href.indexOf("#") === 0 ||
         href.indexOf("http") === 0 ||
@@ -270,15 +264,15 @@
       if (!/\.html(\?|#|$)/.test(href) && href.indexOf("/") === -1) return;
 
       e.preventDefault();
-      curtain.classList.add("rise");
+      document.body.classList.add("page-exit");
       setTimeout(function () {
         window.location.href = href;
-      }, 520);
+      }, 280);
     });
 
-    // se si torna indietro dalla bfcache, togli il sipario
+    // tornando indietro dalla bfcache, ripristina la pagina visibile
     window.addEventListener("pageshow", function (e) {
-      if (e.persisted) curtain.classList.remove("rise");
+      if (e.persisted) document.body.classList.remove("page-exit");
     });
   }
 
