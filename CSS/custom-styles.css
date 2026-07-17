@@ -1297,3 +1297,49 @@ footer {
     filter: none !important;
   }
 }
+
+/* ===== FIX MOBILE: Hero title sempre visibile ===== */
+
+/* Hero section: occupa almeno l’80% del viewport e lascia spazio all’header */
+@media (max-width: 768px) {
+  .hero-section {
+    min-height: 85vh !important;          /* più altezza per contenere tutto */
+    padding-top: 70px;                    /* evita sovrapposizione con l'header sticky */
+  }
+
+  .hero-content {
+    padding: 1rem 1.5rem !important;      /* riduci i padding laterali */
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  /* Titolo più piccolo su mobile, ma ben leggibile */
+  .hero-title {
+    font-size: clamp(2rem, 8vw, 2.8rem) !important;
+    line-height: 1.2;
+  }
+
+  /* Banner delle chiusure: più compatto */
+  .hero-closure-banner {
+    font-size: 0.95rem !important;
+    padding: 12px 16px !important;
+    margin-bottom: 16px !important;
+    border-radius: 40px !important;
+  }
+
+  .hero-closure-banner span:first-child {
+    font-size: 24px !important;
+    margin-right: 10px !important;
+  }
+}
+
+/* Per schermi molto piccoli (≤ 400px) */
+@media (max-width: 400px) {
+  .hero-title {
+    font-size: 1.8rem !important;
+  }
+  .hero-closure-banner {
+    font-size: 0.85rem !important;
+    padding: 10px 12px !important;
+  }
+}
