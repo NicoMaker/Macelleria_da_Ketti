@@ -1,12 +1,13 @@
 // ============================================================
 // footer-main.js — Entry point e scheduler mezzanotte
-// Dipende da: tutti gli altri file footer-*.js
 // ============================================================
 
 // Per testare una data specifica, decommentare la riga sotto:
 // const TEST_DATE = new Date("2024-12-25T10:30:00");
-const getNow = () =>
-  typeof TEST_DATE !== "undefined" ? TEST_DATE : new Date();
+let getNow = function() {
+  if (typeof TEST_DATE !== "undefined") return TEST_DATE;
+  return new Date();
+};
 
 document.addEventListener("DOMContentLoaded", () => {
   const footer = document.getElementById("Contatti");
@@ -14,6 +15,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
   JsonData.load(AppConfig.footer.jsonKey)
     .then((data) => {
+      configuraTimezone(data);
+      getNow = getShopNow;
+
       footer.innerHTML = createFooterHTML(data, getNow());
 
       setTimeout(() => {
@@ -32,8 +36,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }, secondsToNextMinute * 1000);
 
         aggiornaColoreOrari(data);
-
-        // Schedula il refresh intelligente a mezzanotte
         scheduleFooterRefreshAtMidnight(data);
       }, 100);
     })
@@ -43,7 +45,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 });
 
-// ── Ricostruisce il footer e reinizializza la mappa ──────────
 function _ricostruisciFooter(data) {
   const footer = document.getElementById("Contatti");
   if (!footer || !data) return;
@@ -51,21 +52,19 @@ function _ricostruisciFooter(data) {
   footer.innerHTML = createFooterHTML(data, getNow());
 
   setTimeout(() => {
-    // Forza la reinizializzazione della mappa azzerando le coordinate salvate
     if (data.mappa && data.mappa.latitudine && data.mappa.longitudine) {
       currentMapCoordinates = null;
       initMap(data.mappa.latitudine, data.mappa.longitudine);
     }
-
     aggiornaColoreOrari(data);
   }, 100);
 }
 
 function scheduleFooterRefreshAtMidnight(data) {
-  const now = new Date();
+  const now = getNow();
   const tomorrow = new Date(now);
-  tomorrow.setDate(tomorrow.getDate() + 1);
-  tomorrow.setHours(0, 0, 0, 0);
+  tomorrow.setUTCDate(tomorrow.getUTCDate() + 1);
+  tomorrow.setUTCHours(0, 0, 0, 0);
 
   const msUntilMidnight = tomorrow.getTime() - now.getTime();
 
@@ -77,11 +76,7 @@ function scheduleFooterRefreshAtMidnight(data) {
 
   setTimeout(() => {
     _ricostruisciFooter(data);
-
-    // Ripristina l'interval degli aggiornamenti al minuto
     setInterval(() => aggiornaColoreOrari(data), 60000);
-
-    // Riprogramma il refresh per la prossima mezzanotte
     scheduleFooterRefreshAtMidnight(data);
   }, msUntilMidnight);
 }

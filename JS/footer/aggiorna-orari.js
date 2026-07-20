@@ -1,12 +1,9 @@
 // ============================================================
 // aggiorna-orari.js — Aggiornamento live della lista orari
-// Dipende da: date-utils.js, Gestisci_chiusure.js, gestisci_apertura.js
-// Le date di cambio stagione sono gestite in date-utils.js
 // ============================================================
 
-// ── Countdown cambio stagione ───────────────────────────────
 let _countdownInterval = null;
-let _stagionePrecedente = null; // traccia la stagione attiva per rilevare i cambi
+let _stagionePrecedente = null;
 
 function _avviaCountdownStagione(dataCambio, nomeAttiva, nomeProssima) {
   if (_countdownInterval) {
@@ -21,7 +18,6 @@ function _avviaCountdownStagione(dataCambio, nomeAttiva, nomeProssima) {
 
   if (!testoSpan || !wrapper) return;
 
-  // Rendiamo visibile il contenuto
   wrapper.style.visibility = "visible";
 
   if (labelAtt) {
@@ -69,12 +65,11 @@ function _fermaCountdownStagione() {
   if (el) el.remove();
 }
 
-// Calcola la data esatta (mezzanotte) del prossimo cambio stagione
 function _getDataCambio(transizione, dataRiferimento) {
   if (!transizione) return null;
   const oggi = new Date(dataRiferimento || getNow());
-  oggi.setHours(0, 0, 0, 0);
-  const anno = oggi.getFullYear();
+  oggi.setUTCHours(0, 0, 0, 0);
+  const anno = oggi.getUTCFullYear();
 
   for (const offset of [-1, 0, 1]) {
     const a = anno + offset;
@@ -82,21 +77,44 @@ function _getDataCambio(transizione, dataRiferimento) {
     const candidata = new Date(
       transizione.a === "Estivo" ? date.inizioEstivo : date.inizioInvernale,
     );
-    candidata.setHours(0, 0, 0, 0);
+    candidata.setUTCHours(0, 0, 0, 0);
     if (candidata >= oggi) return candidata;
   }
   return null;
 }
 
-// ── Funzione principale ─────────────────────────────────────
+function _aggiornaOraUtente() {
+  const el = document.getElementById("user-local-time-display");
+  if (!el) return;
+  const now = getUserNow();
+  const str = String(now.getHours()).padStart(2, "0") + ":" + String(now.getMinutes()).padStart(2, "0");
+  el.textContent = str;
+
+  const offsetContainer = el.closest('.user-local-time');
+  if (offsetContainer) {
+    const offsetSpan = offsetContainer.querySelector('span:last-child');
+    if (offsetSpan) {
+      const offsetHours = getTimezoneOffsetHours();
+      // Usa la funzione di formattazione
+      const info = window._footerData ? window._footerData.info : {};
+      const shopName = info.titolo || 'Macelleria da Ketti';
+      const offsetText = formatTimezoneOffsetText(offsetHours, shopName);
+      offsetSpan.textContent = offsetText;
+    }
+  }
+}
+
 function aggiornaColoreOrari(data) {
+  // Salva i dati per usarli in _aggiornaOraUtente
+  window._footerData = data;
+
   const legenda = data.legendaOrari || { colori: {}, testo: {} };
 
   const oggiReal = getNow();
   const oggi = new Date(oggiReal);
-  oggi.setHours(0, 0, 0, 0);
-  const giornoSettimana = oggiReal.getDay();
-  const oraCorrente = oggiReal.getHours() * 100 + oggiReal.getMinutes();
+  oggi.setUTCHours(0, 0, 0, 0);
+  const giornoSettimana = oggiReal.getUTCDay();
+  const oraCorrente = oggiReal.getUTCHours() * 100 + oggiReal.getUTCMinutes();
   const indiceGiornoCorrente = giornoSettimana === 0 ? 6 : giornoSettimana - 1;
 
   configuraCambioStagione(data);
@@ -106,21 +124,19 @@ function aggiornaColoreOrari(data) {
     oggiReal,
   );
 
-  // ── Rileva cambio stagione e ricostruisce il footer se necessario ──
   if (_stagionePrecedente !== null && _stagionePrecedente !== nomeStagione) {
     _stagionePrecedente = nomeStagione;
-    // Delega la ricostruzione completa (inclusa mappa) a _ricostruisciFooter
     if (typeof _ricostruisciFooter === "function") {
       _ricostruisciFooter(data);
     }
-    return; // la funzione verrà richiamata da _ricostruisciFooter, usciamo ora
+    return;
   }
   _stagionePrecedente = nomeStagione;
 
-  const unifiedFerieDates = getUnifiedFerieDates(data, oggi.getFullYear());
+  const unifiedFerieDates = getUnifiedFerieDates(data, oggi.getUTCFullYear());
   const unifiedFerieDatesNextYear = getUnifiedFerieDates(
     data,
-    oggi.getFullYear() + 1,
+    oggi.getUTCFullYear() + 1,
   );
 
   const dataOggiFormattata = formatDateDM(oggiReal);
@@ -157,21 +173,22 @@ function aggiornaColoreOrari(data) {
   const giorniDaVisualizzare = [];
   for (let i = 0; i < 7; i++) {
     const d = new Date(oggi);
-    d.setDate(oggi.getDate() + i);
-    d.setHours(0, 0, 0, 0);
+    d.setUTCDate(oggi.getUTCDate() + i);
+    d.setUTCHours(0, 0, 0, 0);
     giorniDaVisualizzare.push(d);
   }
 
-  // ── Lista orari ─────────────────────────────────────────────
   const lista = document.querySelector("#orari-footer");
   if (!lista) return;
+
+  const diffHours = -getTimezoneOffsetHours();
 
   lista.innerHTML = giorniDaVisualizzare
     .map((dataDelGiorno, i) => {
       let colore = "";
       let peso = "";
 
-      const dayOfWeek = dataDelGiorno.getDay();
+      const dayOfWeek = dataDelGiorno.getUTCDay();
       const orariIndex = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
       const dataFmt = formatDateDM(dataDelGiorno);
       const nomeGiorno = data.nomiGiorni[dayOfWeek];
@@ -199,6 +216,11 @@ function aggiornaColoreOrari(data) {
         }
       }
 
+      if (Math.abs(diffHours) > 0.01 && !testoOrario.toLowerCase().includes("chiuso")) {
+        const orarioConvertito = convertOrarioString(testoOrario, diffHours);
+        testoOrario = `${testoOrario} (${orarioConvertito})`;
+      }
+
       if (i === 0) {
         peso = "font-weight:bold;";
         if (eChiusoOggi || statoApertura.stato === "chiuso") {
@@ -220,7 +242,6 @@ function aggiornaColoreOrari(data) {
     })
     .join("");
 
-  // ── Titolo orari (stagione attiva, o Da/A se cambio imminente) ─
   const titoloEl = document.getElementById("titolo-orari");
   if (titoloEl) {
     const transizione = getRilevaTransizioneStagione(data, oggiReal);
@@ -231,7 +252,6 @@ function aggiornaColoreOrari(data) {
     }
   }
 
-  // ── Countdown ───────────────────────────────────────────────
   const transizione = getRilevaTransizioneStagione(data, oggiReal);
   if (transizione && !transizione.eCambioOggi) {
     const dataCambio = _getDataCambio(transizione, oggiReal);
@@ -241,7 +261,6 @@ function aggiornaColoreOrari(data) {
     _fermaCountdownStagione();
   }
 
-  // ── Testo in-apertura ───────────────────────────────────────
   const testoInAperturaSpan = document.getElementById("testo-in-apertura");
   if (testoInAperturaSpan) {
     if (statoApertura.stato === "in-apertura") {
@@ -253,7 +272,6 @@ function aggiornaColoreOrari(data) {
     }
   }
 
-  // ── Testo in-chiusura ───────────────────────────────────────
   const testoInChiusuraSpan = document.getElementById("testo-in-chiusura");
   if (testoInChiusuraSpan) {
     if (statoApertura.stato === "in-chiusura") {
@@ -265,7 +283,6 @@ function aggiornaColoreOrari(data) {
     }
   }
 
-  // ── Legenda stagioni ────────────────────────────────────────
   const descEl = document.getElementById("descrizione-stagione");
   if (descEl) {
     const stagioni = data.orariStagionali || [];
@@ -307,4 +324,6 @@ function aggiornaColoreOrari(data) {
       descEl.style.display = "";
     }
   }
+
+  _aggiornaOraUtente();
 }

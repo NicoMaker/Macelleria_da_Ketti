@@ -13,7 +13,7 @@ function getAllStagioniHTML(data, dataRiferimento) {
   if (!stagioni.length)
     return `<div id="descrizione-stagione" style="display:none;"></div>`;
 
-  const ref = dataRiferimento || new Date();
+  const ref = dataRiferimento || getShopNow();
   const stagioneAttivaResult = getStagioneAttivaConDate(data, ref);
   const stagioneAttiva = stagioneAttivaResult
     ? stagioneAttivaResult.stagione
@@ -54,22 +54,14 @@ function getAllStagioniHTML(data, dataRiferimento) {
   return `<div id="descrizione-stagione" style="margin-top:14px;font-size:0.85em;">${righe.join("")}</div>`;
 }
 
-// ── Genera HTML per le chiusure programmate nel footer ──────────────────────
-// Mostra:
-//   - se c'è una chiusura ATTIVA → banner rosso con i dettagli
-//   - poi le 2 prossime chiusure imminenti (ferie + festività + Pasqua)
-// ─────────────────────────────────────────────────────────────────────────────
 function getClosuresHTML(data, oggiReal) {
-  const oggi = oggiReal || new Date();
-
-  // Usa la nuova funzione unificata (ferie + festività + Pasqua, 365 giorni)
+  const oggi = oggiReal || getShopNow();
   const allClosures = getAllUpcomingClosures(data, oggi, 365);
 
   if (!allClosures.length) return "";
 
   var html = "";
 
-  // ── Chiusure attive ──
   const active = allClosures.filter(function (c) {
     return c.tipo === "attiva";
   });
@@ -92,7 +84,6 @@ function getClosuresHTML(data, oggiReal) {
     html += "</div>";
   }
 
-  // ── Prossime 2 chiusure (non ancora iniziate) ──
   const upcoming = allClosures.filter(function (c) {
     return c.tipo === "imminente";
   });
@@ -184,12 +175,12 @@ function _calcolaTitoloOrari(transizione, nomeStagione) {
 }
 
 function createFooterHTML(data, giornoPartenza) {
-  const oggiReal = giornoPartenza || new Date();
+  const oggiReal = giornoPartenza || getShopNow();
   const oggi = new Date(oggiReal);
-  oggi.setHours(0, 0, 0, 0);
+  oggi.setUTCHours(0, 0, 0, 0);
 
-  const giornoSettimana = oggiReal.getDay();
-  const oraCorrente = oggiReal.getHours() * 100 + oggiReal.getMinutes();
+  const giornoSettimana = oggiReal.getUTCDay();
+  const oraCorrente = oggiReal.getUTCHours() * 100 + oggiReal.getUTCMinutes();
   const indiceGiornoCorrente = giornoSettimana === 0 ? 6 : giornoSettimana - 1;
 
   const info = data.info || {};
@@ -210,10 +201,10 @@ function createFooterHTML(data, giornoPartenza) {
   const stagioniHTML = getAllStagioniHTML(data, oggiReal);
   const closuresHTML = getClosuresHTML(data, oggiReal);
 
-  const unifiedFerieDates = getUnifiedFerieDates(data, oggi.getFullYear());
+  const unifiedFerieDates = getUnifiedFerieDates(data, oggi.getUTCFullYear());
   const unifiedFerieDatesNextYear = getUnifiedFerieDates(
     data,
-    oggi.getFullYear() + 1,
+    oggi.getUTCFullYear() + 1,
   );
 
   const dataOggiFormattata = formatDateDM(oggiReal);
@@ -250,9 +241,12 @@ function createFooterHTML(data, giornoPartenza) {
   const giorniDaVisualizzare = [];
   for (var i = 0; i < 7; i++) {
     var d = new Date(oggi);
-    d.setDate(oggi.getDate() + i);
+    d.setUTCDate(oggi.getUTCDate() + i);
+    d.setUTCHours(0, 0, 0, 0);
     giorniDaVisualizzare.push(d);
   }
+
+  const diffHours = -getTimezoneOffsetHours();
 
   var orariHtmlItems = [];
   for (var i = 0; i < giorniDaVisualizzare.length; i++) {
@@ -260,7 +254,7 @@ function createFooterHTML(data, giornoPartenza) {
     var colore = "";
     var peso = "";
 
-    var dayOfWeek = dataDelGiorno.getDay();
+    var dayOfWeek = dataDelGiorno.getUTCDay();
     var orariIndex = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
     var dataFmt = formatDateDM(dataDelGiorno);
     var nomeGiorno = data.nomiGiorni[dayOfWeek];
@@ -293,6 +287,11 @@ function createFooterHTML(data, giornoPartenza) {
         testoOrario =
           nomeGiorno + ": Chiuso (" + closureCheck.motivoSpecifico + ")";
       }
+    }
+
+    if (Math.abs(diffHours) > 0.01 && !testoOrario.toLowerCase().includes("chiuso")) {
+      const orarioConvertito = convertOrarioString(testoOrario, diffHours);
+      testoOrario = `${testoOrario} (${orarioConvertito})`;
     }
 
     if (i === 0) {
@@ -342,6 +341,16 @@ function createFooterHTML(data, giornoPartenza) {
         (statoApertura.minutiAllaChiusura === 1 ? "minuto" : "minuti")
       : legenda.testo["in chiusura"] || "In chiusura";
 
+  const userNow = getUserNow();
+  const userTimeStr =
+    String(userNow.getHours()).padStart(2, "0") +
+    ":" +
+    String(userNow.getMinutes()).padStart(2, "0");
+
+  // Usa la nuova funzione per il testo dell'offset
+  const offsetHours = getTimezoneOffsetHours();
+  const offsetText = formatTimezoneOffsetText(offsetHours, info.titolo);
+
   return `
     <div class="footer-content">
       <div class="footer-grid">
@@ -362,6 +371,10 @@ function createFooterHTML(data, giornoPartenza) {
           ${countdownHTML}
           <h4 id="titolo-orari" class="footer-subtitle" style="${transizione && !transizione.eCambioOggi ? "margin-top:14px;" : ""}">${titoloOrari}</h4>
           <ul id="orari-footer" class="footer-list">${orariHtml}</ul>
+          <div class="user-local-time" style="margin-top:10px;font-size:0.8em;opacity:0.7;">
+            <span>🕒 La tua ora locale: <span id="user-local-time-display">${userTimeStr}</span></span>
+            <span style="display:block;font-size:0.85em;opacity:0.6;">${offsetText}</span>
+          </div>
         </div>
 
         <div class="footer-section">
@@ -386,7 +399,7 @@ function createFooterHTML(data, giornoPartenza) {
       <div class="footer-map"><div id="map"></div></div>
     </div>
     <div class="footer-bottom">
-      <p>© ${oggiReal.getFullYear()} ${info.titolo || ""}. Tutti i diritti riservati.${info.p_iva ? " - P.IVA " + info.p_iva : ""}</p>
+      <p>© ${oggiReal.getUTCFullYear()} ${info.titolo || ""}. Tutti i diritti riservati.${info.p_iva ? " - P.IVA " + info.p_iva : ""}</p>
     </div>
   `;
 }

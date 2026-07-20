@@ -28,6 +28,8 @@
     "Sabato"
   ],
 
+  "timezone": "Europe/Rome",
+
   "orari": [
     "Lunedì: 8:00 - 13:00",
     "Martedì: 8:00 - 13:00 / 15:00 - 19:00",

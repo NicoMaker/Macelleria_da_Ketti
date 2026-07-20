@@ -1742,3 +1742,11 @@ h6 {
 .footer-future-closures-item:last-child {
   border-bottom: none;
 }
+
+
+.user-local-time {
+  margin-top: 10px;
+  font-size: 0.8em;
+  opacity: 0.7;
+  color: #ddd;
+}
