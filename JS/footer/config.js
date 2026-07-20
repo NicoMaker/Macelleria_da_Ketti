@@ -4,7 +4,7 @@
 
 // Per testare una data specifica, decommentare la riga sotto:
 // const TEST_DATE = new Date("2024-12-25T10:30:00");
-let getNow = function() {
+let getNow = function () {
   if (typeof TEST_DATE !== "undefined") return TEST_DATE;
   return new Date();
 };

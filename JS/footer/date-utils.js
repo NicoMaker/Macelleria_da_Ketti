@@ -3,7 +3,7 @@
 // ============================================================
 
 // ── Variabili per il fuso orario del negozio ──
-let _shopTimezone = 'Europe/London';
+let _shopTimezone = "Europe/London";
 
 // ── Funzioni per il fuso orario ──
 function configuraTimezone(data) {
@@ -14,27 +14,31 @@ function configuraTimezone(data) {
 
 function getShopOffsetMinutes() {
   const now = new Date();
-  const formatter = new Intl.DateTimeFormat('en-US', {
+  const formatter = new Intl.DateTimeFormat("en-US", {
     timeZone: _shopTimezone,
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-    hour: '2-digit',
-    minute: '2-digit',
-    second: '2-digit',
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
     hour12: false,
   });
   const parts = formatter.formatToParts(now);
   const obj = {};
-  parts.forEach(p => { obj[p.type] = p.value; });
-  const localDate = new Date(Date.UTC(
-    parseInt(obj.year),
-    parseInt(obj.month) - 1,
-    parseInt(obj.day),
-    parseInt(obj.hour),
-    parseInt(obj.minute),
-    parseInt(obj.second)
-  ));
+  parts.forEach((p) => {
+    obj[p.type] = p.value;
+  });
+  const localDate = new Date(
+    Date.UTC(
+      parseInt(obj.year),
+      parseInt(obj.month) - 1,
+      parseInt(obj.day),
+      parseInt(obj.hour),
+      parseInt(obj.minute),
+      parseInt(obj.second),
+    ),
+  );
   return (localDate.getTime() - now.getTime()) / 60000;
 }
 
@@ -60,10 +64,10 @@ function convertOrarioString(orarioStr, diffHours) {
   if (!matches) return orarioStr;
   let result = orarioStr;
   for (const match of matches) {
-    const [h, m] = match.split(':').map(Number);
+    const [h, m] = match.split(":").map(Number);
     let newH = h + diffHours;
     newH = ((newH % 24) + 24) % 24;
-    const newStr = `${String(Math.floor(newH)).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
+    const newStr = `${String(Math.floor(newH)).padStart(2, "0")}:${String(m).padStart(2, "0")}`;
     result = result.replace(match, newStr);
   }
   return result;
@@ -77,7 +81,7 @@ function formatTimezoneOffsetText(offsetHours, shopName) {
 
   // Se la differenza è meno di 1 minuto
   if (ore === 0 && minuti === 0) {
-    return 'stesso fuso orario';
+    return "stesso fuso orario";
   }
 
   // Arrotonda se i minuti sono 60
@@ -88,23 +92,23 @@ function formatTimezoneOffsetText(offsetHours, shopName) {
     minutiFinali = 0;
   }
 
-  let diffText = '';
+  let diffText = "";
   if (oreFinale > 0 && minutiFinali > 0) {
     diffText = `${oreFinale}h ${minutiFinali}m`;
   } else if (oreFinale > 0) {
     // CORREZIONE: "ora" al singolare, "ore" al plurale
-    diffText = `${oreFinale} ${oreFinale === 1 ? 'ora' : 'ore'}`;
+    diffText = `${oreFinale} ${oreFinale === 1 ? "ora" : "ore"}`;
   } else {
     diffText = `${minutiFinali} minuti`;
   }
 
-  const direction = offsetHours > 0 ? 'avanti' : 'indietro';
-  const shopDisplay = shopName || 'Macelleria da Ketti';
+  const direction = offsetHours > 0 ? "avanti" : "indietro";
+  const shopDisplay = shopName || "Macelleria da Ketti";
   return `Il negozio è ${diffText} ${direction} rispetto a te`;
 }
 
 // ── Sovrascriviamo getNow (definita in config.js) ──
-if (typeof getNow !== 'undefined') {
+if (typeof getNow !== "undefined") {
   getNow = getShopNow;
 }
 
@@ -327,14 +331,24 @@ function getRilevaTransizioneStagione(data, dataRiferimento) {
     iniEst.setUTCHours(0, 0, 0, 0);
     if (iniEst >= oggi && iniEst <= fine7gg) {
       const giorni = diffGiorni(iniEst, oggi);
-      return { da: "Invernale", a: "Estivo", giorniMancanti: giorni, eCambioOggi: giorni === 0 };
+      return {
+        da: "Invernale",
+        a: "Estivo",
+        giorniMancanti: giorni,
+        eCambioOggi: giorni === 0,
+      };
     }
 
     const iniInv = new Date(date.inizioInvernale);
     iniInv.setUTCHours(0, 0, 0, 0);
     if (iniInv >= oggi && iniInv <= fine7gg) {
       const giorni = diffGiorni(iniInv, oggi);
-      return { da: "Estivo", a: "Invernale", giorniMancanti: giorni, eCambioOggi: giorni === 0 };
+      return {
+        da: "Estivo",
+        a: "Invernale",
+        giorniMancanti: giorni,
+        eCambioOggi: giorni === 0,
+      };
     }
   }
   return null;

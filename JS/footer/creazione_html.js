@@ -289,7 +289,10 @@ function createFooterHTML(data, giornoPartenza) {
       }
     }
 
-    if (Math.abs(diffHours) > 0.01 && !testoOrario.toLowerCase().includes("chiuso")) {
+    if (
+      Math.abs(diffHours) > 0.01 &&
+      !testoOrario.toLowerCase().includes("chiuso")
+    ) {
       const orarioConvertito = convertOrarioString(testoOrario, diffHours);
       testoOrario = `${testoOrario} (${orarioConvertito})`;
     }
