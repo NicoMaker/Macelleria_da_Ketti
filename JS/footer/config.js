@@ -9,6 +9,25 @@ let getNow = function () {
   return new Date();
 };
 
+// Anno mostrato nel footer al momento della costruzione.
+// Serve come guardia: se la scheda resta aperta oltre la mezzanotte del
+// 1° gennaio e il setTimeout di mezzanotte non scatta (dispositivo sospeso,
+// tab congelato dal browser), il giro al minuto se ne accorge e ricostruisce
+// tutto il footer aggiornando anche l'anno del ©.
+let _annoFooterCostruzione = null;
+
+// Giro eseguito ogni minuto: aggiorna gli orari, ma se è cambiato l'anno
+// ricostruisce l'intero footer.
+function _giroAlMinuto(data) {
+  const annoOra = getNow().getUTCFullYear();
+  if (_annoFooterCostruzione !== null && annoOra !== _annoFooterCostruzione) {
+    _annoFooterCostruzione = annoOra;
+    _ricostruisciFooter(data);
+  } else {
+    aggiornaColoreOrari(data);
+  }
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   const footer = document.getElementById("Contatti");
   if (!footer) return;
@@ -19,6 +38,7 @@ document.addEventListener("DOMContentLoaded", () => {
       getNow = getShopNow;
 
       footer.innerHTML = createFooterHTML(data, getNow());
+      _annoFooterCostruzione = getNow().getUTCFullYear();
 
       setTimeout(() => {
         if (data.mappa && data.mappa.latitudine && data.mappa.longitudine) {
@@ -32,7 +52,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         setTimeout(() => {
           aggiornaColoreOrari(data);
-          setInterval(() => aggiornaColoreOrari(data), 60000);
+          setInterval(() => _giroAlMinuto(data), 60000);
         }, secondsToNextMinute * 1000);
 
         aggiornaColoreOrari(data);
@@ -50,6 +70,7 @@ function _ricostruisciFooter(data) {
   if (!footer || !data) return;
 
   footer.innerHTML = createFooterHTML(data, getNow());
+  _annoFooterCostruzione = getNow().getUTCFullYear();
 
   setTimeout(() => {
     if (data.mappa && data.mappa.latitudine && data.mappa.longitudine) {
@@ -76,7 +97,7 @@ function scheduleFooterRefreshAtMidnight(data) {
 
   setTimeout(() => {
     _ricostruisciFooter(data);
-    setInterval(() => aggiornaColoreOrari(data), 60000);
+    setInterval(() => _giroAlMinuto(data), 60000);
     scheduleFooterRefreshAtMidnight(data);
   }, msUntilMidnight);
 }
