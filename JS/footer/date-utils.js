@@ -74,7 +74,7 @@ function getTimezoneOffsetHours() {
 // Converte gli orari di una stringa nel fuso dell'utente.
 // - Lavora in MINUTI totali → i fusi con mezz'ora (es. +5:30) sono corretti.
 // - Se un orario scavalca la mezzanotte e vengono passati baseDate + nomiGiorni,
-//   accanto all'orario compare il NOME del giorno reale (es. "04:00 Lunedì").
+//   l'orario viene scritto col NOME del giorno reale (es. "Mercoledì alle 05:00").
 //   Se baseDate/nomiGiorni non ci sono, ripiega sul marcatore (+1g)/(-1g).
 //
 // Parametri:
@@ -100,7 +100,8 @@ function convertOrarioString(orarioStr, diffHours, baseDate, nomiGiorni) {
         const d = new Date(baseDate);
         d.setUTCDate(d.getUTCDate() + shift);
         const nome = nomiGiorni[d.getUTCDay()];
-        if (nome) s += ` ${nome}`;
+        // Es. "Mercoledì alle 05:00" quando l'orario finisce in un altro giorno
+        if (nome) s = `${nome} alle ${s}`;
         else s += shift > 0 ? `(+${shift}g)` : `(${shift}g)`;
       } else {
         s += shift > 0 ? `(+${shift}g)` : `(${shift}g)`;
