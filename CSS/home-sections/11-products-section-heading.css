@@ -1,0 +1,5 @@
+/* ===== Products Section ===== */
+.products-section {
+  padding: var(--spacing-lg) var(--spacing-md);
+  background-color: var(--background);
+}

@@ -1,0 +1,90 @@
+/* Products Grid */
+.progetti-container,
+.novita-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: var(--spacing-lg);
+}
+
+.Progetti-card {
+  background-color: var(--surface);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  transition: all var(--transition-base);
+  cursor: pointer;
+  border: 2px solid transparent;
+  display: flex;
+  flex-direction: column;
+  min-height: 520px;
+}
+
+.Progetti-card:hover {
+  transform: translateY(-8px);
+  border-color: var(--primary);
+}
+
+.container-immagine {
+  width: 100%;
+  height: 250px;
+  overflow: hidden;
+  background-color: var(--gray-light);
+  flex-shrink: 0;
+}
+
+.immagine {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  transition: transform var(--transition-slow);
+}
+
+.Progetti-card-content {
+  padding: var(--spacing-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  flex-grow: 1;
+  text-align: center;
+}
+
+.Progetti-card h3 {
+  font-size: 1.5rem;
+  padding: 0;
+  color: var(--primary);
+  margin-bottom: var(--spacing-xs);
+}
+
+.descrizione {
+  padding: 0;
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  line-height: 1.6;
+  margin-bottom: auto;
+  padding-bottom: var(--spacing-sm);
+  flex-grow: 1;
+}
+
+.prezzo {
+  padding: 0;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--secondary);
+  margin-bottom: var(--spacing-xs);
+}
+
+.categoria {
+  padding: 0;
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-xs);
+}
+
+.no-results {
+  text-align: center;
+  padding: var(--spacing-2xl);
+  color: var(--text-muted);
+  font-size: 1.125rem;
+}

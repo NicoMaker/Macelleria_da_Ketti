@@ -1,0 +1,34 @@
+/* ---------- 2. Header: si compatta allo scroll ---------- */
+.site-header {
+  transition: box-shadow 0.4s ease;
+}
+.site-header.is-scrolled {
+  box-shadow: 0 8px 30px -12px rgba(44, 36, 22, 0.25);
+}
+.logo {
+  transition: transform 0.35s var(--ease-out);
+}
+.site-header.is-scrolled .logo {
+  transform: scale(0.9);
+}
+.logo-link:hover .logo {
+  transform: scale(0.95) rotate(-2deg);
+}
+.nav-link {
+  position: relative;
+}
+.nav-link::after {
+  content: "";
+  position: absolute;
+  bottom: -3px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--accent-rust);
+  transition: width 0.35s var(--ease-out);
+}
+.nav-link:hover::after,
+.nav-link.active::after {
+  width: 100%;
+}

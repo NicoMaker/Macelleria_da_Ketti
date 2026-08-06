@@ -1,0 +1,24 @@
+/* Novita Card Specific Styles */
+.novita-card {
+  background-color: var(--accent-cream);
+  border-color: transparent;
+}
+
+.novita-card:hover {
+  border-color: var(--accent-warm);
+}
+
+.novita-badge {
+  position: absolute;
+  top: var(--spacing-md);
+  left: var(--spacing-md);
+  background-color: #8b5a2b;
+  color: var(--white);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  font-size: 0.8rem;
+  font-weight: 600;
+  border-radius: var(--radius-md);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  z-index: 2;
+}

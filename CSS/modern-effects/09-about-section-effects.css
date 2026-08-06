@@ -1,0 +1,10 @@
+/* ---------- 7. Sezione storia (about) ---------- */
+.about-image {
+  overflow: hidden;
+}
+.about-image img {
+  transition: transform 1s var(--ease-out);
+}
+.about-image:hover img {
+  transform: scale(1.05);
+}

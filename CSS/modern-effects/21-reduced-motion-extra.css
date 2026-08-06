@@ -1,0 +1,26 @@
+/* ── Riduzione movimento ── */
+@media (prefers-reduced-motion: reduce) {
+  html.anim body {
+    animation: none;
+  }
+  html.anim .hero-image,
+  html.anim .about-image img {
+    transform: none !important;
+    top: 0;
+    height: 100%;
+  }
+  html.anim [data-reveal="blur"] {
+    opacity: 1 !important;
+    transform: none !important;
+    filter: none !important;
+  }
+  html.anim .feature-card .feature-icon {
+    opacity: 1;
+    transform: none;
+    animation: none !important;
+  }
+  html.anim .Progetti-card [data-reveal-img],
+  html.anim .novita-card [data-reveal-img] {
+    clip-path: none !important;
+  }
+}

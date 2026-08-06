@@ -1,0 +1,36 @@
+/* ============================================================
+   MODERN.CSS — Macelleria da Ketti
+   Layer moderno in stile "Da Prat Falegnameria": animazioni,
+   reveal allo scroll, micro-interazioni, pulsanti flottanti.
+   NESSUN colore nuovo: usa solo le variabili già definite
+   in styles.css (palette legno/ruggine). Testi e font invariati.
+   ============================================================ */
+
+:root {
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --reveal-duration: 1.1s;
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 96px;
+}
+
+::selection {
+  background: var(--accent-warm);
+  color: var(--white);
+}
+
+/* ---------- 1. Barra di progresso lettura ---------- */
+.scroll-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 3px;
+  width: 100%;
+  transform-origin: left;
+  transform: scaleX(0);
+  background: linear-gradient(90deg, var(--accent-warm), var(--accent-rust));
+  z-index: 1200;
+  pointer-events: none;
+}

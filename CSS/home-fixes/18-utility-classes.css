@@ -1,0 +1,21 @@
+/* ===== Utility Classes ===== */
+.fade-in {
+  animation: fadeIn var(--transition-base);
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.nome {
+  color: #8b7355 !important;
+}
+
+.color_opening {
+  background-color: #8b5a2b !important;
+}

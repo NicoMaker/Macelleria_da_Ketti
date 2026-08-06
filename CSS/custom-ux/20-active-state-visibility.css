@@ -1,0 +1,5 @@
+/* Stato attivo visibile */
+.filter-button.active {
+  background-color: #5a3a1a !important;
+  opacity: 1 !important;
+}

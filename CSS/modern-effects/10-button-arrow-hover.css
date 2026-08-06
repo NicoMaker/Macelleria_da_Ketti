@@ -1,0 +1,19 @@
+/* ---------- 8. Bottoni: freccia che appare all'hover ---------- */
+.cta-button {
+  transition:
+    transform 0.3s var(--ease-out),
+    box-shadow 0.3s var(--ease-out),
+    background 0.3s ease,
+    color 0.3s ease !important;
+}
+.cta-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px -10px rgba(160, 82, 45, 0.45);
+}
+.cta-button:active {
+  transform: translateY(0);
+}
+.cta-button:focus-visible {
+  outline: 3px solid var(--accent-warm);
+  outline-offset: 3px;
+}

@@ -1,0 +1,35 @@
+/* Entrata orchestrata (solo con JS attivo: html.anim) */
+html.anim .hero-title,
+html.anim .hero-subtitle,
+html.anim .hero-cta-container {
+  opacity: 0;
+  transform: translateY(30px);
+}
+.hero-loaded .hero-title {
+  animation: riseIn 1.1s var(--ease-out) 0.15s forwards;
+}
+.hero-loaded .hero-subtitle {
+  animation: riseIn 1.1s var(--ease-out) 0.35s forwards;
+}
+.hero-loaded .hero-cta-container {
+  animation: riseIn 1.1s var(--ease-out) 0.55s forwards;
+}
+@keyframes riseIn {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.scroll-down-arrow .material-icons {
+  animation: bobDown 2s ease-in-out infinite;
+  display: inline-block;
+}
+@keyframes bobDown {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(8px);
+  }
+}

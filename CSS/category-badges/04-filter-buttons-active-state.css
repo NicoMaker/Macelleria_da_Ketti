@@ -1,0 +1,10 @@
+/* Annulla il marrone fisso dell'active per permettere i colori per categoria */
+.filter-button.active,
+.filter-button.active:hover {
+  background-color: unset !important;
+  color: unset !important;
+  transform: none !important;
+  /* Un bordo più spesso segnala visivamente il filtro attivo */
+  outline: 3px solid currentColor;
+  outline-offset: 2px;
+}

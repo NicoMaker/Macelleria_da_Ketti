@@ -1,0 +1,26 @@
+/* Contatti: link telefono, email, indirizzo */
+.footer-list .footer-item a {
+  color: #fff;
+  text-decoration: none;
+  transition: color 0.25s ease;
+  position: relative;
+}
+
+.footer-list .footer-item a::after {
+  content: "";
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 1px;
+  background-color: #ffcc80;
+  transition: width 0.3s ease;
+}
+
+.footer-list .footer-item a:hover {
+  color: #ffcc80;
+}
+
+.footer-list .footer-item a:hover::after {
+  width: 100%;
+}

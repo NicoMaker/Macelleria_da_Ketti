@@ -1,0 +1,26 @@
+/* Hero CTA Container */
+.hero-cta-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+
+.cta-button.cta-button-secondary {
+  background-color: transparent;
+  border: 2px solid white;
+  color: white;
+  transition: all 0.3s ease;
+}
+
+.cta-button.cta-button-secondary:hover {
+  background-color: white;
+  color: #8b5a2b;
+  transform: translateY(-3px);
+}
+
+.hero-cta-container .cta-button {
+  margin-bottom: 0;
+}

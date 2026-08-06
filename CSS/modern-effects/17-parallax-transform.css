@@ -1,0 +1,14 @@
+/* ── Parallasse (trasformazioni applicate dal JS via --par) ── */
+html.anim .hero-image {
+  top: -10%;
+  height: 120%;
+  transform: translateY(var(--par, 0px));
+  will-change: transform;
+}
+html.anim .about-image img {
+  transform: scale(1.08) translateY(var(--par, 0px));
+  will-change: transform;
+}
+html.anim .about-image:hover img {
+  transform: scale(1.12) translateY(var(--par, 0px));
+}

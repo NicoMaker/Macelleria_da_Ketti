@@ -1,0 +1,30 @@
+/* Responsive */
+@media (min-width: 768px) {
+  .product-detail-card {
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-2xl);
+  }
+
+  .main-product-image {
+    height: 500px;
+  }
+}
+
+@media (max-width: 767px) {
+  .back-button {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .main-product-image {
+    height: 300px;
+  }
+
+  .prev,
+  .next {
+    padding: var(--spacing-sm);
+    font-size: 18px;
+    width: 40px;
+    height: 40px;
+  }
+}

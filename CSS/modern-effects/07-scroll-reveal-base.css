@@ -1,0 +1,23 @@
+/* ---------- 5. Reveal allo scroll ---------- */
+html.anim [data-reveal] {
+  opacity: 0;
+  transform: translateY(24px);
+  transition:
+    opacity var(--reveal-duration) var(--ease-out),
+    transform var(--reveal-duration) var(--ease-out);
+  transition-delay: calc(var(--reveal-index, 0) * 90ms);
+  will-change: opacity, transform;
+}
+html.anim [data-reveal="left"] {
+  transform: translateX(-32px);
+}
+html.anim [data-reveal="right"] {
+  transform: translateX(32px);
+}
+html.anim [data-reveal="zoom"] {
+  transform: scale(0.96) translateY(14px);
+}
+html.anim [data-reveal].reveal-in {
+  opacity: 1;
+  transform: none;
+}

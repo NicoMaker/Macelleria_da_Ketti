@@ -1,0 +1,15 @@
+/* Stili personalizzati per migliorare l'UX design */
+
+/* Header e Layout */
+header {
+  padding: 8px 20px;
+}
+
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+}

@@ -1,0 +1,22 @@
+/* RESPONSIVE: TABLET */
+@media (max-width: 1024px) {
+  .product-controls-sticky {
+    top: 65px;
+    padding: 8px 0 20px 0;
+    margin-bottom: 35px;
+  }
+
+  .product-controls-sticky .search-container {
+    padding: 0 18px;
+    margin-bottom: 18px;
+  }
+
+  .product-controls-sticky .filter-container {
+    padding: 0 18px;
+    gap: 10px;
+  }
+
+  .progetti-container {
+    margin-top: 25px !important;
+  }
+}

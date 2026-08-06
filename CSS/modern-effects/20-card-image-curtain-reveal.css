@@ -1,0 +1,9 @@
+/* ── Immagini card: rivelazione con "tendina" dal basso ── */
+html.anim .Progetti-card [data-reveal-img],
+html.anim .novita-card [data-reveal-img] {
+  clip-path: inset(100% 0 0 0);
+  transition: clip-path 1s var(--ease-out) 0.1s;
+}
+html.anim .reveal-in [data-reveal-img] {
+  clip-path: inset(0 0 0 0);
+}

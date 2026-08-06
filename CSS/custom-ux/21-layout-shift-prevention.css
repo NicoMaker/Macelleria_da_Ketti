@@ -1,0 +1,5 @@
+/* Prevenzione layout shift */
+.more-info-btn {
+  backface-visibility: hidden;
+  transform: translateZ(0);
+}

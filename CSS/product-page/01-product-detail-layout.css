@@ -1,0 +1,15 @@
+/* Product detail page styles */
+.product-detail-container {
+  max-width: 1200px;
+  margin: var(--spacing-lg) auto;
+  padding: var(--spacing-md);
+}
+
+.product-detail-card {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--spacing-xl);
+  background-color: var(--surface);
+  padding: var(--spacing-xl);
+  border-radius: var(--radius-lg);
+}

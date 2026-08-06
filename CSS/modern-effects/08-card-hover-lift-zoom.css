@@ -1,0 +1,28 @@
+/* ---------- 6. Card: sollevamento e zoom immagine ---------- */
+.Progetti-card,
+.novita-card,
+.feature-card {
+  transition:
+    transform 0.45s var(--ease-out),
+    box-shadow 0.45s var(--ease-out) !important;
+}
+.Progetti-card:hover,
+.novita-card:hover,
+.feature-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 24px 50px -16px rgba(44, 36, 22, 0.3);
+}
+.Progetti-card img,
+.novita-card img {
+  transition: transform 0.8s var(--ease-out);
+}
+.Progetti-card:hover img,
+.novita-card:hover img {
+  transform: scale(1.06);
+}
+.feature-card .feature-icon {
+  transition: transform 0.4s var(--ease-out);
+}
+.feature-card:hover .feature-icon {
+  transform: translateY(-4px) scale(1.1);
+}

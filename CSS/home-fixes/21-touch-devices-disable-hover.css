@@ -1,0 +1,88 @@
+/* Disabilita gli effetti hover su dispositivi touch */
+@media (hover: none) and (pointer: coarse) {
+  /* Rimuovi tutti gli effetti hover generici */
+  *:hover {
+    transform: none !important;
+  }
+
+  /* Logo */
+  .logo:hover {
+    transform: none !important;
+  }
+
+  /* Social links */
+  .social-link:hover {
+    transform: none !important;
+    background-color: rgba(255, 255, 255, 0.1) !important;
+  }
+
+  /* CTA Buttons */
+  .cta-button:hover {
+    transform: none !important;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1) !important;
+    background-color: var(--accent-warm) !important;
+  }
+
+  .cta-button:active {
+    transform: none !important;
+  }
+
+  /* Filter buttons */
+  .filter-button:hover {
+    transform: none !important;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1) !important;
+    background-color: var(--accent-warm) !important;
+  }
+
+  .filter-button:active {
+    transform: none !important;
+  }
+
+  /* Product cards */
+  .Progetti-card:hover {
+    transform: none !important;
+    border-color: transparent !important;
+  }
+
+  .immagine:hover {
+    transform: none !important;
+  }
+
+  /* Navigation links */
+  .nav-link:hover {
+    color: var(--text-secondary) !important;
+  }
+
+  .nav-link:hover::after {
+    width: 0 !important;
+  }
+
+  /* More info button */
+  .more-info-btn:hover {
+    gap: var(--spacing-xs) !important;
+    color: var(--primary) !important;
+  }
+
+  .more-info-btn:hover .btn-icon {
+    transform: none !important;
+  }
+
+  /* Feature cards */
+  .feature-card:hover {
+    transform: none !important;
+  }
+
+  /* About image */
+  .about-image img:hover {
+    transform: none !important;
+  }
+
+  /* Search input */
+  .search-input:focus {
+    transform: none !important;
+  }
+}
+
+.white-text {
+  color: white !important;
+}

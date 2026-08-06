@@ -1,0 +1,109 @@
+/* Disabilita gli effetti hover su dispositivi touch */
+@media (hover: none) and (pointer: coarse) {
+  /* Logo */
+  .logo-link:hover,
+  .logo-container:hover {
+    transform: none !important;
+  }
+
+  /* Navigation links */
+  header nav ul li a:hover {
+    color: #edf2f7 !important;
+    transform: none !important;
+  }
+
+  header nav ul li a:hover::after {
+    width: 0 !important;
+  }
+
+  /* Cards */
+  .Progetti-card:hover {
+    transform: none !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+    border-color: transparent !important;
+  }
+
+  .Progetti-card:hover .container-immagine img {
+    transform: none !important;
+  }
+
+  /* Contact and Social links */
+  .contact-list a:hover,
+  .social-list a:hover {
+    background-color: rgba(0, 0, 0, 0.2) !important;
+    transform: none !important;
+  }
+
+  /* Map link */
+  .map-link:hover {
+    background-color: rgba(139, 90, 43, 0.8) !important;
+    color: #fff !important;
+    transform: none !important;
+  }
+
+  /* Filter buttons */
+  .filter-button:hover {
+    background-color: #8b5a2b !important;
+    transform: none !important;
+  }
+
+  .filter-button:active {
+    transform: none !important;
+  }
+
+  /* Search input */
+  .search-input:focus {
+    transform: none !important;
+  }
+
+  /* CTA Buttons */
+  .cta-button:hover {
+    background-color: #8b5a2b !important;
+    transform: none !important;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1) !important;
+  }
+
+  .cta-button:active {
+    transform: none !important;
+  }
+
+  .cta-button-secondary:hover {
+    background-color: transparent !important;
+    color: white !important;
+    transform: none !important;
+  }
+
+  /* Scroll down arrow */
+  .scroll-down-arrow:hover {
+    background-color: transparent !important;
+    transform: none !important;
+  }
+
+  /* More info button */
+  .more-info-btn:hover {
+    gap: var(--spacing-xs) !important;
+    color: var(--primary) !important;
+  }
+
+  .more-info-btn:hover .btn-icon {
+    transform: none !important;
+  }
+
+  /* Opening soon banner */
+  .opening-soon-banner:hover,
+  .opening-soon-banner.cta-button:hover {
+    transform: none !important;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1) !important;
+    background-color: var(--accent-warm) !important;
+  }
+
+  /* Product controls sticky */
+  .product-controls-sticky .search-input:focus {
+    transform: none !important;
+  }
+
+  .product-controls-sticky .filter-button:hover {
+    background-color: #8b5a2b !important;
+    transform: none !important;
+  }
+}

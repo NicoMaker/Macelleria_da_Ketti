@@ -1,0 +1,12 @@
+/* ---------- 3. Hero cinematografica ---------- */
+html.anim .hero-image img {
+  transform: scale(1.12);
+}
+.hero-loaded .hero-image img {
+  animation: heroZoom 8s var(--ease-out) forwards;
+}
+@keyframes heroZoom {
+  to {
+    transform: scale(1.02);
+  }
+}

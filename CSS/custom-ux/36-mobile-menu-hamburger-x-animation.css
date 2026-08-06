@@ -1,0 +1,50 @@
+/* ============================================================
+   FIX 2: HAMBURGER X PERFETTA E CENTRATA
+   ============================================================ */
+.mobile-menu-toggle {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  width: 44px;
+  height: 44px;
+  padding: 8px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+.mobile-menu-toggle .hamburger-line {
+  display: block;
+  width: 26px;
+  height: 2.5px;
+  background-color: var(--primary);
+  border-radius: 4px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transform-origin: center;
+  flex-shrink: 0;
+}
+
+/* Quando il menu è aperto: linea superiore e inferiore ruotano per formare la X */
+.mobile-menu-toggle.active .hamburger-line:nth-child(1) {
+  transform: translateY(7.5px) rotate(45deg) !important;
+}
+
+.mobile-menu-toggle.active .hamburger-line:nth-child(2) {
+  opacity: 0 !important;
+  transform: scaleX(0) !important;
+}
+
+.mobile-menu-toggle.active .hamburger-line:nth-child(3) {
+  transform: translateY(-7.5px) rotate(-45deg) !important;
+}
+
+@media (min-width: 1025px) {
+  .main-nav {
+    display: block;
+  }
+  .mobile-menu-toggle {
+    display: none;
+  }
+}

@@ -1,0 +1,27 @@
+/* Opening Soon Banner */
+.opening-soon-banner {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background-color: var(--accent-warm);
+  color: var(--white);
+  padding: 10px 20px;
+  border-radius: 50px;
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-bottom: 20px;
+  border: none;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.opening-soon-banner .material-icons {
+  font-size: 20px;
+  background-color: transparent;
+  color: inherit;
+}
+
+.opening-soon-banner.cta-button:hover {
+  transform: none;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  background-color: var(--accent-warm);
+}

@@ -1,0 +1,21 @@
+/* Stili per i pallini di navigazione */
+.dots-container {
+  text-align: center;
+  padding-top: var(--spacing-sm);
+}
+
+.dot {
+  cursor: pointer;
+  height: 15px;
+  width: 15px;
+  margin: 0 5px;
+  background-color: var(--gray-medium);
+  border-radius: 50%;
+  display: inline-block;
+  transition: background-color var(--transition-fast);
+}
+
+.dot:hover,
+.dot.active {
+  background-color: var(--primary);
+}

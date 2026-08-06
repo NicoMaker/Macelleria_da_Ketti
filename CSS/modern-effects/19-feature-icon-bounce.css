@@ -1,0 +1,22 @@
+/* ── Icone feature: rimbalzo quando la card appare ── */
+html.anim .feature-card .feature-icon {
+  opacity: 0;
+  transform: translateY(14px) scale(0.7);
+}
+html.anim .feature-card.reveal-in .feature-icon {
+  animation: iconPop 0.7s var(--ease-out) 0.25s forwards;
+}
+@keyframes iconPop {
+  0% {
+    opacity: 0;
+    transform: translateY(14px) scale(0.7);
+  }
+  60% {
+    opacity: 1;
+    transform: translateY(-4px) scale(1.12);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}

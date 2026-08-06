@@ -1,0 +1,59 @@
+/* ===== CSS Variables - Ash Wood Theme ===== */
+:root {
+  /* Ash Wood Color Palette */
+  --ash-lightest: #f5f1e8;
+  --ash-light: #e8dcc8;
+  --ash-medium: #c9b99b;
+  --ash-dark: #8b7355;
+  --ash-darkest: #5c4a3a;
+
+  /* Accent Colors */
+  --accent-warm: #bf8b67;
+  --accent-rust: #a0522d;
+  --accent-cream: #fff8e7;
+
+  /* Neutral Colors */
+  --white: #ffffff;
+  --black: #2c2416;
+  --gray-light: #f9f7f4;
+  --gray-medium: #d4cfc5;
+  --gray-dark: #6b6456;
+
+  /* Semantic Colors */
+  --primary: var(--ash-dark);
+  --secondary: var(--accent-warm);
+  --background: var(--ash-lightest);
+  --surface: var(--white);
+  --text-primary: var(--black);
+  --text-secondary: var(--ash-darkest);
+  --text-muted: var(--gray-dark);
+
+  /* Spacing */
+  --spacing-xs: 0.5rem;
+  --spacing-sm: 1rem;
+  --spacing-md: 1.5rem;
+  --spacing-lg: 2rem;
+  --spacing-xl: 3rem;
+  --spacing-2xl: 4rem;
+
+  /* Typography */
+  --font-heading: "Playfair Display", serif;
+  --font-body: "Inter", sans-serif;
+
+  /* Shadows */
+  --shadow-sm: none;
+  --shadow-md: none;
+  --shadow-lg: none;
+
+  /* Border Radius */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-button: 50px;
+
+  /* Transitions */
+  --transition-fast: 0.2s ease;
+  --transition-base: 0.3s ease;
+  --transition-slow: 0.5s ease;
+}

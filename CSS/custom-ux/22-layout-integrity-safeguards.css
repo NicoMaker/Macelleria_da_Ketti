@@ -1,0 +1,25 @@
+/* Prevenzione sformattamenti */
+.about-section {
+  contain: layout; /* Isola il layout della sezione */
+}
+
+.more-info-content {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.5s ease-in-out;
+  will-change: max-height;
+}
+
+.more-info-content.active {
+  max-height: 1000px; /* Aumentato per contenuti più lunghi */
+  overflow: visible; /* Permette al contenuto di essere visibile */
+}
+
+.more-info-content p {
+  margin-bottom: var(--spacing-md);
+  opacity: 1;
+  transform: translateY(0);
+  transition:
+    opacity 0.3s ease,
+    transform 0.3s ease;
+}

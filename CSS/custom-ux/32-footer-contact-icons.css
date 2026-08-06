@@ -1,0 +1,12 @@
+/* Icone Material Icons accanto ai contatti */
+.footer-list .footer-item .material-icons {
+  transition:
+    transform 0.25s ease,
+    color 0.25s ease;
+  vertical-align: middle;
+}
+
+.footer-list .footer-item:hover .material-icons {
+  transform: scale(1.2);
+  color: #ffcc80;
+}

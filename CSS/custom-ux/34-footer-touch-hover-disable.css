@@ -1,0 +1,25 @@
+/* Disabilita hover footer su touch */
+@media (hover: none) and (pointer: coarse) {
+  .footer-list .footer-item a:hover {
+    color: #fff !important;
+  }
+
+  .footer-list .footer-item a:hover::after {
+    width: 0 !important;
+  }
+
+  .footer-list .footer-item:hover .material-icons {
+    transform: none !important;
+    color: inherit !important;
+  }
+
+  .social-links a:hover {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+    transform: none !important;
+    box-shadow: none !important;
+  }
+
+  .social-links a:hover img {
+    filter: none !important;
+  }
+}

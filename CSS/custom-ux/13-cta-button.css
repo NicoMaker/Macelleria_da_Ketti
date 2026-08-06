@@ -1,0 +1,18 @@
+/* CTA Button */
+.cta-button {
+  border-radius: 50px;
+  display: inline-block;
+  padding: 12px 30px;
+  background-color: #8b5a2b;
+  color: white;
+  text-decoration: none;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  margin: 10px;
+}
+
+.cta-button:hover {
+  background-color: #a0522d;
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+}

@@ -1,0 +1,37 @@
+/* Filter Buttons */
+.filter-container {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin-bottom: 30px;
+  flex-wrap: wrap;
+  contain: layout; /* Isola i bottoni filtro */
+}
+
+.filter-button {
+  padding: 12px 25px;
+  border: none;
+  cursor: pointer;
+  background-color: #8b5a2b;
+  color: white;
+  border-radius: 30px;
+  transition: all 0.3s ease;
+  font-weight: 500;
+  font-size: 1.1em;
+  box-shadow: none;
+  backface-visibility: hidden;
+  transform: translateZ(0);
+}
+
+.filter-button:hover {
+  background-color: #5c4033; /* Marrone Scuro */
+  color: #ffffff; /* Testo Bianco */
+  transform: translateY(-3px);
+}
+
+.filter-button.active,
+.filter-button.active:hover {
+  background-color: #5c4033 !important; /* Marrone Scuro */
+  transform: none;
+  color: #ffffff !important; /* Testo Bianco */
+}

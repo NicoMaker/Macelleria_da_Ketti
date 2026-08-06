@@ -1,0 +1,41 @@
+/* STICKY SEARCH AND FILTERS */
+.product-controls-sticky {
+  position: sticky;
+  top: 70px;
+  z-index: 100;
+  background-color: #f5f1e8;
+  padding: 5px 0 25px 0;
+  margin-bottom: 40px;
+  transition: padding 0.2s ease;
+}
+
+.product-controls-sticky .search-container {
+  padding: 0 20px;
+  margin-bottom: 20px;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.product-controls-sticky .search-input {
+  background-color: #ffffff;
+  border: 2px solid #8b5a2b;
+}
+
+.product-controls-sticky .search-input:focus {
+  border-color: #5a3a1a;
+}
+
+.product-controls-sticky .filter-container {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 0;
+  padding: 0 20px;
+}
+
+.progetti-container {
+  margin-top: 30px !important;
+  padding-top: 0;
+}

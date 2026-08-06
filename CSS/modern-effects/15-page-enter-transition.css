@@ -1,0 +1,16 @@
+/* ============================================================
+   13. LIVELLO EXTRA — parallasse, blur-reveal, transizioni pagina
+   ============================================================ */
+
+/* ── Transizione di ENTRATA pagina (pura CSS: robusta anche senza JS) ── */
+html.anim body {
+  animation: pageEnter 0.85s var(--ease-out) both;
+}
+@keyframes pageEnter {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}

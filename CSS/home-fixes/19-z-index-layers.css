@@ -1,0 +1,17 @@
+/* Z-index hierarchy */
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background-color: white;
+}
+
+.product-controls-sticky {
+  z-index: 100;
+  position: sticky;
+}
+
+.Progetti-card {
+  z-index: 1;
+  position: relative;
+}

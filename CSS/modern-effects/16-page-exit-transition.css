@@ -1,0 +1,9 @@
+/* ── Transizione di USCITA pagina: semplice dissolvenza, senza sipario ── */
+body.page-exit {
+  animation: pageExit 0.28s ease forwards;
+}
+@keyframes pageExit {
+  to {
+    opacity: 0;
+  }
+}

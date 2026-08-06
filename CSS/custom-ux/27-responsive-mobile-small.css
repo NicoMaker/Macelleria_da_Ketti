@@ -1,0 +1,32 @@
+/* RESPONSIVE: MOBILE PICCOLO */
+@media (max-width: 480px) {
+  .product-controls-sticky {
+    top: 55px;
+    padding: 3px 0 15px 0;
+    margin-bottom: 25px;
+  }
+
+  .product-controls-sticky .search-container {
+    padding: 0 10px;
+    margin-bottom: 12px;
+  }
+
+  .product-controls-sticky .search-input {
+    font-size: 0.9em;
+    padding: 8px 12px;
+  }
+
+  .product-controls-sticky .filter-container {
+    padding: 0 10px;
+    gap: 6px;
+  }
+
+  .product-controls-sticky .filter-button {
+    font-size: 0.85em;
+    padding: 8px 15px;
+  }
+
+  .progetti-container {
+    margin-top: 15px !important;
+  }
+}

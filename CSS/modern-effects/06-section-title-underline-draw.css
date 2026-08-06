@@ -1,0 +1,11 @@
+/* ---------- 4. Titoli di sezione: la riga esistente si "disegna" ----------
+   La sottolineatura (#ffcc80, definita in custom-styles.css) resta identica:
+   qui viene solo animata quando il titolo entra nel viewport. */
+html.anim .section-title::after {
+  transform: scaleX(0);
+  transform-origin: center;
+  transition: transform 0.9s var(--ease-out) 0.15s;
+}
+html.anim .section-title.reveal-in::after {
+  transform: scaleX(1);
+}

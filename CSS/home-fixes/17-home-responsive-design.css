@@ -1,0 +1,54 @@
+/* ===== Responsive Design ===== */
+@media (min-width: 1025px) {
+  .main-nav {
+    display: block;
+  }
+
+  .mobile-menu-toggle {
+    display: none;
+  }
+
+  .hero-section {
+    min-height: 100vh;
+  }
+
+  .about-grid {
+    grid-template-columns: 0.8fr 1.2fr;
+    max-width: none;
+    gap: var(--spacing-2xl);
+    align-items: center;
+  }
+
+  .features-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .progetti-container {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .footer-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .progetti-container {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .footer-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+@media (max-width: 1024px) {
+  .progetti-container,
+  .novita-container {
+    grid-template-columns: 1fr;
+  }
+
+  .hero-section {
+    min-height: 60vh;
+  }
+}

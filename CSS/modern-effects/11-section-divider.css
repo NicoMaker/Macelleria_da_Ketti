@@ -1,0 +1,24 @@
+/* ---------- 9. Separatore artigianale tra le sezioni ---------- */
+.section-divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  max-width: 520px;
+  margin: 2.5rem auto;
+  padding: 0 var(--spacing-md);
+}
+.section-divider::before,
+.section-divider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--gray-medium);
+}
+.section-divider span {
+  width: 6px;
+  height: 6px;
+  background: var(--accent-rust);
+  transform: rotate(45deg);
+  flex-shrink: 0;
+}
