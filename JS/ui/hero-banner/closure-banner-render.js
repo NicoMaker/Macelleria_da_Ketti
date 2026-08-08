@@ -125,9 +125,7 @@ HeroClosureBanner.render = function () {
         console.log("✅ Banner CHIUSURA ATTIVA mostrato");
       } else if (upcomingClosure) {
         const tipoChiusura =
-          upcomingClosure.motivo === "Ferie"
-            ? "ferie"
-            : upcomingClosure.motivo;
+          upcomingClosure.motivo === "Ferie" ? "ferie" : upcomingClosure.motivo;
         bannerText.innerHTML = `⚠️ ATTENZIONE: Chiusura per ${tipoChiusura} dal ${upcomingClosure.inizio} al ${upcomingClosure.fine} (tra ${upcomingClosure.giorni} giorni) ⚠️`;
         bannerContainer.style.display = "block";
         console.log("✅ Banner CHIUSURA IMMINENTE mostrato");

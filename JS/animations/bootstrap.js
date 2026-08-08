@@ -10,10 +10,7 @@
     SiteAnimations.initFloatingButtons();
     SiteAnimations.initSectionDividers();
 
-    if (
-      SiteAnimations.reduceMotion ||
-      !("IntersectionObserver" in window)
-    ) {
+    if (SiteAnimations.reduceMotion || !("IntersectionObserver" in window)) {
       document.body.classList.add("hero-loaded");
       return;
     }

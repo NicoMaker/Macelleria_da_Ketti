@@ -49,7 +49,7 @@ function convertOrarioString(orarioStr, diffHours, baseDate, nomiGiorni) {
 //   orarioConvertito → stesso orario convertito nel fuso dell'utente
 function formattaOrarioConFuso(testoBase, orarioConvertito) {
   const lbl =
-    'font-size:0.8em;opacity:0.55;font-weight:400;letter-spacing:0.02em;';
+    "font-size:0.8em;opacity:0.55;font-weight:400;letter-spacing:0.02em;";
   return (
     testoBase +
     ` <span style="${lbl}">(negozio)</span> → ` +

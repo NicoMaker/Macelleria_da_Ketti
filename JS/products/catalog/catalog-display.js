@@ -55,7 +55,10 @@ ProductsCatalog.createProductCard = function (item) {
 
   // Mostra i badge solo quando il filtro è "Tutti" —
   // se è già selezionata una categoria specifica è ridondante mostrarla.
-  if (categories.length > 0 && ProductsCatalog.currentFilter === CONFIG.defaultFilter) {
+  if (
+    categories.length > 0 &&
+    ProductsCatalog.currentFilter === CONFIG.defaultFilter
+  ) {
     categoriaHtml = CategoryColors.getBadgesHTML(categories);
   }
 

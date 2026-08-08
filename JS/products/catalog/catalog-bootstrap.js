@@ -9,9 +9,7 @@ document.addEventListener("DOMContentLoaded", () => {
   ProductsCatalog.progettiContainer = document.querySelector(
     ".progetti-container",
   );
-  ProductsCatalog.filterContainer = document.querySelector(
-    ".filter-container",
-  );
+  ProductsCatalog.filterContainer = document.querySelector(".filter-container");
   ProductsCatalog.searchInput = document.getElementById("search-progetti");
 
   if (!ProductsCatalog.progettiContainer) return;
