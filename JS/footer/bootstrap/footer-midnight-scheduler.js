@@ -6,8 +6,8 @@
 function scheduleFooterRefreshAtMidnight(data) {
   const now = getNow();
   const tomorrow = new Date(now);
-  tomorrow.setUTCDate(tomorrow.getUTCDate() + 1);
-  tomorrow.setUTCHours(0, 0, 0, 0);
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  tomorrow.setHours(0, 0, 0, 0);
 
   const msUntilMidnight = tomorrow.getTime() - now.getTime();
 

@@ -13,7 +13,7 @@
 //   orarioStr  — stringa con gli orari (es. "09:00 - 22:00")
 //   diffHours  — differenza in ore da applicare (può essere frazionaria)
 //   baseDate   — (opzionale) Date UTC del giorno a cui appartengono gli orari
-//   nomiGiorni — (opzionale) array nomi giorni indicizzato come getUTCDay() (0 = Domenica)
+//   nomiGiorni — (opzionale) array nomi giorni indicizzato come getDay() (0 = Domenica)
 function convertOrarioString(orarioStr, diffHours, baseDate, nomiGiorni) {
   if (Math.abs(diffHours) < 0.01) return orarioStr;
   const deltaMin = Math.round(diffHours * 60);
@@ -30,8 +30,8 @@ function convertOrarioString(orarioStr, diffHours, baseDate, nomiGiorni) {
     if (shift !== 0) {
       if (baseDate && nomiGiorni) {
         const d = new Date(baseDate);
-        d.setUTCDate(d.getUTCDate() + shift);
-        const nome = nomiGiorni[d.getUTCDay()];
+        d.setDate(d.getDate() + shift);
+        const nome = nomiGiorni[d.getDay()];
         // Es. "Mercoledì alle 05:00" quando l'orario finisce in un altro giorno
         if (nome) s = `${nome} alle ${s}`;
         else s += shift > 0 ? `(+${shift}g)` : `(${shift}g)`;
@@ -98,8 +98,8 @@ if (typeof getNow !== "undefined") {
 
 // ── Utility di formattazione data ──
 const formatDateDM = (date) => {
-  const giorno = String(date.getUTCDate()).padStart(2, "0");
-  const mese = String(date.getUTCMonth() + 1).padStart(2, "0");
+  const giorno = String(date.getDate()).padStart(2, "0");
+  const mese = String(date.getMonth() + 1).padStart(2, "0");
   return `${giorno}/${mese}`;
 };
 

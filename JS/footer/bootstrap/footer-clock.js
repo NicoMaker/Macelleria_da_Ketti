@@ -20,7 +20,7 @@ let _annoFooterCostruzione = null;
 // Giro eseguito ogni minuto: aggiorna gli orari, ma se è cambiato l'anno
 // ricostruisce l'intero footer.
 function _giroAlMinuto(data) {
-  const annoOra = getNow().getUTCFullYear();
+  const annoOra = getNow().getFullYear();
   if (_annoFooterCostruzione !== null && annoOra !== _annoFooterCostruzione) {
     _annoFooterCostruzione = annoOra;
     _ricostruisciFooter(data);

@@ -14,7 +14,7 @@ document.addEventListener("DOMContentLoaded", () => {
       getNow = getShopNow;
 
       footer.innerHTML = createFooterHTML(data, getNow());
-      _annoFooterCostruzione = getNow().getUTCFullYear();
+      _annoFooterCostruzione = getNow().getFullYear();
 
       setTimeout(() => {
         if (data.mappa && data.mappa.latitudine && data.mappa.longitudine) {

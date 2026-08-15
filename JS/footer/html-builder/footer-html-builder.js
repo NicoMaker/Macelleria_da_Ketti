@@ -9,10 +9,10 @@
 function createFooterHTML(data, giornoPartenza) {
   const oggiReal = giornoPartenza || getShopNow();
   const oggi = new Date(oggiReal);
-  oggi.setUTCHours(0, 0, 0, 0);
+  oggi.setHours(0, 0, 0, 0);
 
-  const giornoSettimana = oggiReal.getUTCDay();
-  const oraCorrente = oggiReal.getUTCHours() * 100 + oggiReal.getUTCMinutes();
+  const giornoSettimana = oggiReal.getDay();
+  const oraCorrente = oggiReal.getHours() * 100 + oggiReal.getMinutes();
   const indiceGiornoCorrente = giornoSettimana === 0 ? 6 : giornoSettimana - 1;
 
   const info = data.info || {};
@@ -33,10 +33,10 @@ function createFooterHTML(data, giornoPartenza) {
   const stagioniHTML = getAllStagioniHTML(data, oggiReal);
   const closuresHTML = getClosuresHTML(data, oggiReal);
 
-  const unifiedFerieDates = getUnifiedFerieDates(data, oggi.getUTCFullYear());
+  const unifiedFerieDates = getUnifiedFerieDates(data, oggi.getFullYear());
   const unifiedFerieDatesNextYear = getUnifiedFerieDates(
     data,
-    oggi.getUTCFullYear() + 1,
+    oggi.getFullYear() + 1,
   );
 
   const dataOggiFormattata = formatDateDM(oggiReal);
@@ -73,8 +73,8 @@ function createFooterHTML(data, giornoPartenza) {
   const giorniDaVisualizzare = [];
   for (var i = 0; i < 7; i++) {
     var d = new Date(oggi);
-    d.setUTCDate(oggi.getUTCDate() + i);
-    d.setUTCHours(0, 0, 0, 0);
+    d.setDate(oggi.getDate() + i);
+    d.setHours(0, 0, 0, 0);
     giorniDaVisualizzare.push(d);
   }
 
@@ -84,7 +84,7 @@ function createFooterHTML(data, giornoPartenza) {
     var colore = "";
     var peso = "";
 
-    var dayOfWeek = dataDelGiorno.getUTCDay();
+    var dayOfWeek = dataDelGiorno.getDay();
     var orariIndex = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
     var dataFmt = formatDateDM(dataDelGiorno);
     var nomeGiorno = data.nomiGiorni[dayOfWeek];
@@ -240,7 +240,7 @@ function createFooterHTML(data, giornoPartenza) {
       <div class="footer-map"><div id="map"></div></div>
     </div>
     <div class="footer-bottom">
-      <p>© ${oggiReal.getUTCFullYear()} ${info.titolo || ""}. Tutti i diritti riservati.${info.p_iva ? " - P.IVA " + info.p_iva : ""}</p>
+      <p>© ${oggiReal.getFullYear()} ${info.titolo || ""}. Tutti i diritti riservati.${info.p_iva ? " - P.IVA " + info.p_iva : ""}</p>
     </div>
   `;
 }

@@ -68,8 +68,8 @@ function _fermaCountdownStagione() {
 function _getDataCambio(transizione, dataRiferimento) {
   if (!transizione) return null;
   const oggi = new Date(dataRiferimento || getNow());
-  oggi.setUTCHours(0, 0, 0, 0);
-  const anno = oggi.getUTCFullYear();
+  oggi.setHours(0, 0, 0, 0);
+  const anno = oggi.getFullYear();
 
   for (const offset of [-1, 0, 1]) {
     const a = anno + offset;
@@ -77,7 +77,7 @@ function _getDataCambio(transizione, dataRiferimento) {
     const candidata = new Date(
       transizione.a === "Estivo" ? date.inizioEstivo : date.inizioInvernale,
     );
-    candidata.setUTCHours(0, 0, 0, 0);
+    candidata.setHours(0, 0, 0, 0);
     if (candidata >= oggi) return candidata;
   }
   return null;

@@ -8,7 +8,7 @@ function _ricostruisciFooter(data) {
   if (!footer || !data) return;
 
   footer.innerHTML = createFooterHTML(data, getNow());
-  _annoFooterCostruzione = getNow().getUTCFullYear();
+  _annoFooterCostruzione = getNow().getFullYear();
 
   setTimeout(() => {
     if (data.mappa && data.mappa.latitudine && data.mappa.longitudine) {

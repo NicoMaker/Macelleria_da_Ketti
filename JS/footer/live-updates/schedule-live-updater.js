@@ -15,9 +15,9 @@ function aggiornaColoreOrari(data) {
 
   const oggiReal = getNow();
   const oggi = new Date(oggiReal);
-  oggi.setUTCHours(0, 0, 0, 0);
-  const giornoSettimana = oggiReal.getUTCDay();
-  const oraCorrente = oggiReal.getUTCHours() * 100 + oggiReal.getUTCMinutes();
+  oggi.setHours(0, 0, 0, 0);
+  const giornoSettimana = oggiReal.getDay();
+  const oraCorrente = oggiReal.getHours() * 100 + oggiReal.getMinutes();
   const indiceGiornoCorrente = giornoSettimana === 0 ? 6 : giornoSettimana - 1;
 
   configuraCambioStagione(data);
@@ -36,10 +36,10 @@ function aggiornaColoreOrari(data) {
   }
   _stagionePrecedente = nomeStagione;
 
-  const unifiedFerieDates = getUnifiedFerieDates(data, oggi.getUTCFullYear());
+  const unifiedFerieDates = getUnifiedFerieDates(data, oggi.getFullYear());
   const unifiedFerieDatesNextYear = getUnifiedFerieDates(
     data,
-    oggi.getUTCFullYear() + 1,
+    oggi.getFullYear() + 1,
   );
 
   const dataOggiFormattata = formatDateDM(oggiReal);
@@ -76,8 +76,8 @@ function aggiornaColoreOrari(data) {
   const giorniDaVisualizzare = [];
   for (let i = 0; i < 7; i++) {
     const d = new Date(oggi);
-    d.setUTCDate(oggi.getUTCDate() + i);
-    d.setUTCHours(0, 0, 0, 0);
+    d.setDate(oggi.getDate() + i);
+    d.setHours(0, 0, 0, 0);
     giorniDaVisualizzare.push(d);
   }
 
@@ -89,7 +89,7 @@ function aggiornaColoreOrari(data) {
       let colore = "";
       let peso = "";
 
-      const dayOfWeek = dataDelGiorno.getUTCDay();
+      const dayOfWeek = dataDelGiorno.getDay();
       const orariIndex = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
       const dataFmt = formatDateDM(dataDelGiorno);
       const nomeGiorno = data.nomiGiorni[dayOfWeek];
